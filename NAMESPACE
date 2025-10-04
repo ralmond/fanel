@@ -1,1 +1,29 @@
-exportPattern("^[[:alpha:]]+")
+import(rlang)
+import(R6)
+import(parallel)
+importFrom(Hmisc,wtd.Ecdf,wtd.loess.noiter,
+           wtd.quantile,wtd.rank,wtd.table,
+           wtd.var,wtd.mean)
+importFrom(stats,simulate)
+export(wtd.Ecdf,wtd.loess.noiter,
+       wtd.quantile,wtd.rank,wtd.table,
+       wtd.var,wtd.mean)
+
+
+export(Workers)
+
+exportClass(Panmat, TDT, Panel_Data)
+export(panmat, mat, "mat<-", as.Panmat, nsubj, "nsubj<-",
+       nocc, "nocc<-", normalForm, panel_data)
+
+exportMethods(as.Panmat, nsubj, "nsubj<-", nocc, "nocc<-",
+              "[", "[<-")
+
+export(squareWindow,linearWindow,exponentialWindow,gaussianWindow,
+       parzenWindow,welchWindow,sineWindow,cosineSumWindow,
+       tukeyWindow,plankWindow
+       )
+export(HannConstants,HammingConstants,BlackmanConsts,
+       BlackmanExact,NuttallConstants,
+       BlackmanNuttallConstants,
+       BlackmanHarrisConstants,FlattopConstants)
