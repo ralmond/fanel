@@ -1,0 +1,41 @@
+Package: fanel
+Type: Package
+Title: Filters for Pannel Data
+Version: 0.1.1
+Maintainer: Russell Almond <ralmond@fsu.edu>
+Authors@R: c(
+    person(given = "Russell",
+           family = "Almond",
+           role = c("aut", "cre"),
+           email = "ralmond@fsu.edu",
+           comment = c(ORCID = "0000-0002-8876-9337"))
+  )
+Description: Provides a framework for describing Hidden Markov Models
+	     for panel data (multiple individuals, limited measurement
+	     occasions).  Can simulate data from the models, produce
+	     smoothed estimates of latent variable trajectories using
+	     particle filter, and combines particle filter and EM
+	     algorithm to produce parameter estimates.  Also includes
+	     general filters, and Baumn--Welsh filters.
+License: MIT License
+URL: http://ralmond.net/fannel
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    parallel, R6, rlang,
+    R (>= 4.4.0)
+Imports: stats, dplyr, Hmisc, ggplot2
+Suggests: 
+    plotly,
+    knitr,
+    shiny,
+    rmarkdown,
+    tidyverse,
+    cowplot,
+    vdiffr,
+    withr,
+    kableExtra,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+
