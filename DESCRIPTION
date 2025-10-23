@@ -17,14 +17,14 @@ Description: Provides a framework for describing Hidden Markov Models
 	     particle filter, and combines particle filter and EM
 	     algorithm to produce parameter estimates.  Also includes
 	     general filters, and Baumn--Welsh filters.
-License: MIT License
-URL: http://ralmond.net/fannel
+License: MIT License + file LICENSE
+URL: http://ralmond.net/fanel
 Encoding: UTF-8
 LazyData: true
 Depends: 
     parallel, R6, rlang,
     R (>= 4.4.0)
-Imports: stats, dplyr, Hmisc, ggplot2
+Imports: stats, dplyr, Hmisc, ggplot2, methods, parallelly
 Suggests: 
     plotly,
     knitr,
@@ -38,4 +38,4 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-
+RoxygenNote: 7.3.2

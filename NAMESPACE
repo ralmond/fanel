@@ -1,3 +1,4 @@
+import(methods)
 import(rlang)
 import(R6)
 import(parallel)
@@ -12,12 +13,17 @@ export(wtd.Ecdf,wtd.loess.noiter,
 
 export(Workers)
 
-exportClass(Panmat, TDT, Panel_Data)
+exportClass(Panmat, Panel_Frame, Panel_Data)
+export(Panel_Data)
 export(panmat, mat, "mat<-", as.Panmat, nsubj, "nsubj<-",
-       nocc, "nocc<-", normalForm, panel_data)
+       nocc, "nocc<-", maxocc, "maxocc<-", minocc, "minocc<-",
+       panel_frame, as_longform,
+       time2occ, panel_data, long2panel)
 
 exportMethods(as.Panmat, nsubj, "nsubj<-", nocc, "nocc<-",
-              "[", "[<-")
+              maxocc, "maxocc<-", minocc, "minocc<-",
+              "[", "[<-",as_longform, diff, cumsum, names)
+
 
 export(squareWindow,linearWindow,exponentialWindow,gaussianWindow,
        parzenWindow,welchWindow,sineWindow,cosineSumWindow,

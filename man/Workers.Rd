@@ -7,7 +7,7 @@
 \description{
 
   This object wraps a \code{parallel::cluster}
-  (\link[parallel]{makecluster}) allowing a bit more control.
+  (\link[parallel]{makeCluster}) allowing a bit more control.
   In particular, it runs in a single threaded mode when debugging.
 
 }
@@ -29,6 +29,7 @@
       in the current R instance and not in a worker, so that the
       debugger can be run.}
    }
+}
 \section{Public Methods}{
 
   \describe{
@@ -60,15 +61,15 @@
   To create a new worker cluster, use the expression
   \code{Workers$new(\var{clspec},\var{clargs},\var{seed},
     \var{stopClusterOnError},\var{debug},\var{type})}.  The \code{type}
-  argument defaults to \dquote{FORK} on POSIX machines and defaults to
-  \dquote{SOCK} on Windows.
+  argument defaults to \dQuote{FORK} on POSIX machines and defaults to
+  \dQuote{SOCK} on Windows.
 
   In the simplest use case,
   \code{$clspec} is the number of cores to use.  I recomend
   using \code{parallel::detectCores()-2} (leaving one core for RStudio
   and one for your operating system).  If unspecified it defaults to
   \code{\link[base]{options}("mc.cores")} or 2 if that option is unspecified.
-  
+
 }
 \section{Parallel Computations}{
 
@@ -77,7 +78,7 @@
   \code{($clspec,$cltype,$clargs)}.  See the docs for
   \code{\link[parallel]{makeCluster}} for running across multiple
   machines.  If \code{debug} is true, then the cluster is not started
-  and the loop is run in the main process (this facilitates debugging). 
+  and the loop is run in the main process (this facilitates debugging).
 
   The methods \code{$lapply(...)} and \code{$sapply(...)} behave like the base
   versions.  In particular, if the cluster was started, they use
@@ -116,7 +117,7 @@
 \seealso{
 
   \code{\link[parallel]{makeCluster}},
-  \code{\link[parallel]{parLapply}}, \code{\link[base]{lapply}}, 
+  \code{\link[parallel]{parLapply}}, \code{\link[base]{lapply}},
   \code{\link{particleFilter}}, \code{\link{simulate.HMM}},
 
 }
@@ -136,7 +137,7 @@
     w.lapply(caseList,\(x) {commands})
     w$flagStop() # So cluster will close when function exits.
   }
-  
+
 }
 
 }

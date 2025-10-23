@@ -36,14 +36,14 @@ Workers <- R6Class(
         parSapply(private$cl,...)
     },
     start = function(envir=parent.frame()) {
-      if(!isTRUE(debug)) {
+      if(!isTRUE(self$debug)) {
         if (!is.null(private$cl)) {
           warning("Trying to start the cluster twice.")
           return()
         }
         private$cl <- inject(makeCluster(self$clspec,self$cltype,
                                     !!!self$clargs))
-        private$stopFlage <- self$stopClusterOnError
+        private$stopFlag <- self$stopClusterOnError
         if (!is.null(self$seed)) {
           clusterSetRNGStream(private$cl,self$seed)
           mc.reset.stream()
@@ -54,6 +54,14 @@ Workers <- R6Class(
     },
     flagStop=function() {
       private$stopFlag <- TRUE
+    },
+    isAlive=function() {
+      if (is.null(private$cl)) return(FALSE)
+      if (is(private$cl[[1]],"forknode")) {
+        all(sapply(private$cl,\(x) parallelly::isConnectionValid(x$con)))
+      } else {
+        all(parallelly::isNodeAlive(private$cl))
+      }
     },
     stop = function() {
       if (!is.null(private$cl)) {
@@ -72,3 +80,6 @@ Workers <- R6Class(
   )
 )
 
+isNodeAlive.SOCK0node <- function (x, ...) {
+  parallelly::isConnectionValid(x$con)
+}
