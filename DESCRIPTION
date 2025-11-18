@@ -22,9 +22,9 @@ URL: http://ralmond.net/fanel
 Encoding: UTF-8
 LazyData: true
 Depends: 
-    parallel, R6, rlang,
+    parallel, R6, rlang, dplyr, purr
     R (>= 4.4.0)
-Imports: stats, dplyr, Hmisc, ggplot2, methods, parallelly
+Imports: stats, Hmisc, ggplot2, methods, parallelly
 Suggests: 
     plotly,
     knitr,

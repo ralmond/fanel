@@ -1,0 +1,38 @@
+simulate.HMM <- function(object,covars, nsim=nsubj(object),...,
+                         workers=Workers$new()) {
+
+  workers$start()
+
+  ldata <- as_longform(covars)
+
+  workers$lapply(split(ldata,~subj),\(cov,hmm){
+    isubj <- cov$subj[1]
+
+    tnames <- hmm$population$tnames
+    theta <- as.data.frame(lapply(tnames,\(n) rep(NA,nocc(cov))))
+    names(theta) <- tnames
+
+    dnames <- hmm$evidence$dnames
+    data <- as.data.frame(lapply(dnames,\(n) rep(NA,nocc(cov))))
+    names(data) <- dnames
+
+    theta[1L,] <- hmm$population$drawInit(subj,1L,cov[1L,])
+
+    for (iocc in 1L:maxocc(cov)) {
+      theta[iocc+1L,] <- hmm$activities$drawNext(subj,iocc,
+                                                 theta[iocc,],
+                                                 cov[iocc+1L,"deltaT"],
+                                                 cov[iocc+1L,])
+      data[iocc,] <- hmm$evidence$drawObs(subj,iocc,
+                                          theta[iocc,],
+                                          cov[iocc+1L,])
+    }
+    names(theta) <- paste0(tnames,"_sim")
+    cbind(cov,theta,data)
+  }, object) |> purr::list_rbind() -> result
+
+  workers$stopFlag()
+  long2panel(result,datacols=object$evidence$dnames,
+             invcols=covars$invarnames)
+}
+
