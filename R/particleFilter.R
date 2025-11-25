@@ -1,5 +1,5 @@
 particleFilter.HMM <- function (object, covars, quad=NULL, nquad=nquad(quad),
-                                ..., workers=Workers$new())
+                                ..., workers=Workers$new()) {
 
   if (missing(quad)) {
     if (missing(nquad)) {
@@ -8,41 +8,32 @@ particleFilter.HMM <- function (object, covars, quad=NULL, nquad=nquad(quad),
     quad <- particleQuad(covars$time,nquad,object$population$tnames)
   }
 
-  ## Setup Clusters
-  psapply <- sapply
-  if (!debug) {
-    clust <- inject(makeCluster(hmm$clspec,hmm$cltype,!!!hmm$clargs))
-    stopOnExit <- hmm$stopClusterOnError
-    withr::defer({if (stopOnExit) stopCluster(clust)})
-    psapply <- function(...) parSapply(clust,...)
-    if (!missing(seed)) {
-      clusterSetRNGStream(clust,seed)
-      mc.reset.stream()
+  workers$start()
+
+  workers$lapply(split_subj(covars), \(cov,hmm,qua) {
+    nq <- nquad(qua)
+    isubj <- cov$isubj
+    qua <- qua$clone()
+    qua$isubj <- isubj
+    qua$resetWeights()
+    lweights <- rep(0.0,nq)
+    thetas <- hmm$PopulationModels$drawInit(isubj,nq,cov$getInvar(isubj))
+    if (!all(is.na(cov$getData(isubj,0L))) {
+      lweights <- hmm$evidence$evalEvidence(isubj,0L,thetas,cov$getVar(isubj,0L))
     }
-  }
-  if(isTRUE(weightLog)) hmm$weightLog <- list()
+    qua$theta(1L,0L,) <- thetas
+    qua$lweight(1L,0L,) <- lweights
+    for (iocc in 1L:hmm$maxocc) {
+      thetas <- hmm$activities(isubj,iocc,thetas,cov$dt[isubj,iocc],cov$getVar(isubj,iocc))
+      lweights <- lweights + hmm$evidence$llike(isubj,iocc,cov$getData(isubj,iocc),thetas,
+                                                cov$getVar(isubj,iocc))
+      qua$theta(1L,iocc,) <- thetas
+      qua$lweights(1L,iocc,) <- lweights
+    }
+    qua
+  }, object,quad) -> qlist
 
-  hmm$npart <- npart
-  hmm$lweights <- matrix(0,npart,hmm$nsubjects)
-  hmm$theta <- array(NA_real_,c(npart,hmm$nsubjects,hmm$maxocc+1L))
-  hmm$theta[,,1L] <- psapply(1L:hmm$nsubjects, \(subj) {
-    hmm$drawPop(subj,npart)
-  })
-
-  for (it in 1L:hmm$maxocc) {
-    if (debug) cat("Time: ",it,".\n")
-    hmm$theta[,,it+1L] <- psapply(1L:hmm$nsubjects, \(subj) {
-      hmm$drawGrowth(subj,it)
-    })
-
-    hmm$lweights <- hmm$lweights +
-      psapply(1L:hmm$nsubjects, \(subj) {
-        hmm$evalEvidence(subj,it)
-      })
-    if(isTRUE(weightLog))
-      hmm$weightLog <- c(hmm$weightLog,hmm$lweights)
-  }
-  stopOnExit <- TRUE
-  invisible(hmm)
+  workers$stopFlag()
+  bind_subj(qlist)
 }
 

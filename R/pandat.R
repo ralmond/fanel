@@ -4,8 +4,10 @@
 Panel_Data <- R6Class(
   "Panel_Data",
   public=list(
+    isubj=NA_integer_,
     initialize=function(time,dt,vari=NULL,invar=NULL,
-                        datacols=character()) {
+                        datacols=character(),
+                        isubj=NA_integer_) {
       if (missing(time)) {
         self$dt <- dt
       } else {
@@ -25,6 +27,7 @@ Panel_Data <- R6Class(
         self$invar <- invar
       }
       self$datacols <- datacols
+      self$isubj <- isubj
     },
     toString = function(...) {
       print(paste("<Panel Data: ",nsubj(self),
@@ -190,7 +193,7 @@ setMethod("get_subj","Panel_Data", function(x,subj) {
   invar <- x$invar
   if (!is.null(invar)) invar <- invar[subj,]
   panel_data(time=get_subj(x$time,subj),vari=get_subj(x$vari,subj),
-             invar=invar,datacols=x$datacols)
+             invar=invar,datacols=x$datacols,isubj=subj)
 })
 
 setMethod("get_subj<-","Panel_Data", function(x,subj,value) {
@@ -201,5 +204,7 @@ setMethod("get_subj<-","Panel_Data", function(x,subj,value) {
 })
 
 setMethod("add_subj","Panel_Data", function(x,xnew) {
-  get_subj(x,nsubj(x)+1L) <- xnew
+  isubj <- xnew$isubj
+  if (is.na(isubj)) isubj <- nsubj(x)+1L
+  get_subj(x,isubj) <- xnew
 })

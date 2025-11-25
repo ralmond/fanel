@@ -17,14 +17,17 @@ Quadrature <- R6Class(
     bysubj=FALSE,
     wname="w",
     lweights=array(NA_real_,c(1,1,1)),
+    isubj=NA_integer_,
     initialize = function(times, qpoints, tnames=vnames(qpoints),
                           static=TRUE, bysubj=TRUE,
-                          nsubjects=nsubj(times)) {
+                          nsubjects=nsubj(times),
+                          isubj<-NA_integer_) {
       self$static <- static
       self$bysubj <- bysubj
       private$Times <- as.Panmat(times,mimocc=1L)
       self$thetas <- qpoints
       self$nsubj <- nsubjects
+      self$isubj <- isubj
     },
     weights = function(type="default") {
       weights <- exp(self$lweights)
@@ -67,10 +70,17 @@ Quadrature <- R6Class(
     },
     theta = function(subj,occ,quad,value) {
       if (static) occ <- 1L
+      else occ <- occ +1L
       if (!bysubj) subj <- 1L
       if (missing(quad)) quad <- 1L:nquad(self)
       if (mising(value)) return(private$Theta[subj,occ,quad,])
       private$Theta[subj,occ,quad,] <- value
+    },
+    lweight = function(subj,occ,quad,value) {
+      occ <- occ +1L
+      if (missing(quad)) quad <- 1L:nquad(self)
+      if (mising(value)) return(self$lweights[subj,occ,quad])
+      private$lweights[subj,occ,quad] <- value
     },
     tnames=function(value) {
       if (missing(value)) return(private$Tnames)
@@ -194,18 +204,8 @@ setMethod("as_longform","Quadrature",
 
 
 setMethod("get_subj","Quadrature", function(x,subj) {
-    initialize = function(times, qpoints, tnames=vnames(qpoints),
-                          static=TRUE, bysubj=TRUE,
-                          nsubjects=nsubj(times)) {
-      self$static <- static
-      self$bysubj <- bysubj
-      private$Times <- as.Panmat(times,mimocc=1L)
-      self$thetas <- qpoints
-      self$nsubj <- nsubjects
-    },
   new("Quadrature",times=x$times[subj,,],nsubj=1L,
-      minocc=minocc(x),nocc1=nocc(x)-1L)
-
+      minocc=minocc(x),nocc1=nocc(x)-1L,isubj=subj)
 })
 
 setMethod("get_subj<-","Panel_Frame", function(x,subj,value) {
@@ -214,7 +214,9 @@ setMethod("get_subj<-","Panel_Frame", function(x,subj,value) {
 })
 
 setMethod("add_subj","Panel_Frame", function(x,xnew) {
-  get_subj(x,nsubj(x)+1L) <- xnew
+  isubj <- xnew$isubj
+  if (is.na(isubj)) isubj <- nsubj(s) +1L
+  get_subj(x,isubj) <- xnew
 })
 
 
@@ -223,16 +225,15 @@ FixedQuad <- R6Class(
   "FixedQuad",
   inherit =  Quadrature,
   public = list(
-
-
   )
 )
 
 fixedQuad <- function(times,qpoints,tnames=vnames(qpoints),
                       static=TRUE, bysubj=(nsubj(times)>1L),
-                      nsubjects=nsubj(times)) {
+                      nsubjects=nsubj(times),isubj=NA_integer_) {
   FixedQuad$new(times=times, qpoints=qpoints, tnames=tnames,
-                static=static, bysubj=bysubj, nsubjects=nsubjects)
+                static=static, bysubj=bysubj, nsubjects=nsubjects,
+                isubj=isubj)
 }
 
 
@@ -242,11 +243,13 @@ ParticleQuad <- R6Class(
   public = list(
     initialize = function(times, nquadrature, tnames="theta",
                           static=TRUE, bysubj=FALSE,
-                          nsubjects=nsubj(times)) {
+                          nsubjects=nsubj(times),
+                          isubj=NA_integer_) {
       qpoints <- array(NA_real_,c(nsubjects,nocc(times),nquadrature,
                                   length(tnames)))
       super$initialize(times,qpoints,tnames,static,bysubj,nsubjects)
       self$nquad <- nquadrature
+      self$isubj <- isubj
     },
     weights = function(type="default") {
       if (type=="history") {
@@ -265,6 +268,7 @@ ParticleQuad <- R6Class(
     resetWeights = function() {
       self$lweights <- array(NA_real_,
                              c(self$nsubj,self$nocc,self$nquad))
+      self$lweights[,1L,] <- 0
       private$Theta <- array(NA_real_,
                              c(self$nsubj,self$nocc,
                                self$nquad,self$dtheta))
@@ -283,9 +287,11 @@ ParticleQuad <- R6Class(
 
 particleQuad <- function(times,nquadrature,tnames,
                       static=TRUE, bysubj=(nsubj(times)>1L),
-                      nsubjects=nsubj(times)) {
+                      nsubjects=nsubj(times),
+                      isubj=NA_integer_) {
   ParticleQuad$new(times=times, nquadrature=nqudrature, tnames=tnames,
-                static=static, bysubj=bysubj, nsubjects=nsubjects)
+                   static=static, bysubj=bysubj, nsubjects=nsubjects,
+                   isubj=isubj)
 }
 
 
@@ -298,20 +304,21 @@ BWQuad <- R6Class(
     rweights=array(NA_real_,c(1,1,1)),
     initialize = function(times, qpoints, tnames=vnames(qpoints),
                           static=TRUE, bysubj=FALSE,
-                          nsubjects=nsubj(times)) {
-      super$initialize(times,qpoints,tnames,static,bysubj,nsubjects)
+                          nsubjects=nsubj(times),
+                          isubj=NA_integer_) {
+      super$initialize(times,qpoints,tnames,static,bysubj,nsubjects,isubj)
     },
     weights = function(type="default") {
       switch(type,
         default = {
-          weights <- exp(self$lweights+self$rweights)
+          weights <- self$lweights*self$rweights
           sweep(weights,1:2,apply(weights,1:2,sum),"/")
         },
         left = {
-          weights <- exp(self$lweights)
+          weights <- self$lweights
           sweep(weights,1:2,apply(weights,1:2,sum),"/")
         },
-        right = exp(self$rweights),
+        right = self$rweights,
         default=data.frame(full=self$weights("default"),
                            left=self$weights("left"),
                            right=self$weights("right"))
@@ -328,8 +335,9 @@ BWQuad <- R6Class(
 
 BWquad <- function(times,qpoints,tnames=vnames(qpoints),
                    static=TRUE, bysubj=(nsubj(times)>1L),
-                   nsubjects=nsubj(times)) {
+                   nsubjects=nsubj(times),isubj=NA_integer_) {
   BWQuad$new(times=times, qpoints=qpoints, tnames=tnames,
-             static=static, bysubj=bysubj, nsubjects=nsubjects)
+             static=static, bysubj=bysubj, nsubjects=nsubjects,
+             isubj=isubj)
 }
 

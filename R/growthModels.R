@@ -1,8 +1,8 @@
-GrowthModelC <- R6Class(
-  classname="GrowthModelC",
+GrowthModel <- R6Class(
+  classname="GrowthModel",
   inherit=FModel,
   public = list(
-    name="GrowthModelC",
+    name="GrowthModel",
     continuous=TRUE,  
     drawNext = function(theta,deltaT,covars=list()) {
       stop("DrawNext not implemented for ", class(self))
@@ -13,7 +13,7 @@ GrowthModelC <- R6Class(
 
 BrownianGrowth <- R6Class(
   classname="BrownianGrowth",
-  inherit=GrowthModelC,
+  inherit=GrowthModel,
   public=list(
     initialize = function(name,gain,inovSD,tname="theta",wname="w") {
       self$name <- name
@@ -55,7 +55,7 @@ BrownianGrowth <- R6Class(
 
 SpurtGrowth <- R6Class(
   classname="SpurtGrowth",
-  inherit=GrowthModelC,
+  inherit=GrowthModel,
   public=list(
     initialize = function(name,gain0,gain1,p,inovSD,tname="theta",wname="w") {
       self$name <- name
@@ -137,7 +137,7 @@ Activities <- R6Class(
       workers$start()
       workers$lapply(unique(data$action), \(act) {
         mstep(self$growthModels[[act]], select(data,action==act),
-              its=its,control=control,workers=workers)
+              its=its,control=control,workers=NULL)
       })
     },
     toString=function(...) {
@@ -151,8 +151,8 @@ Activities <- R6Class(
   )
 )
 
-ActivitiesC <- R6Class(
-  "ActivitiesC",
+Activities <- R6Class(
+  "Activities",
   inherit=Activities,
   public=list(
     mstep = function(data,its=3,control=list(),workers=Workers$new()) {

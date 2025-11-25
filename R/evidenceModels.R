@@ -154,7 +154,7 @@ Evidence <- R6Class(
     },
     evalEvidence = function(subj,it,theta,Y,cov=NULL) {
       task <- self$task(subj,it)
-      if (is.na(Y) || is.na(task)) {
+      if (all(is.na(Y)) || is.na(task)) {
         return(rep(0,dim(self$theta)[1]))
       } else {
         self$models[[task]]$llike(Y,theta,cov)
@@ -162,8 +162,8 @@ Evidence <- R6Class(
     },
     drawObs = function(subj,it,theta,cov=NULL) {
       task <- self$task(subj,it)
-      if (is.na(Y) || is.na(task)) {
-        return(rep(0,dim(self$theta)[1]))
+      if (is.na(task)) {
+        return(rep(NA,dim(self$theta)[1]))
       } else {
         self$models[[task]]$drawObs(theta,cov)
       }

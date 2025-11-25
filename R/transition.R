@@ -7,23 +7,34 @@ expLambdaT <- function(Lambda,nmoments=10) {
 
 
 
-GrowthModelD <- R6Class(
-  classname="GrowthModelD",
+TransitionModel <- R6Class(
+  classname="TransitionModel",
   inherit=FModel,  
   public = list(
-    name="GrowthModel",
+    name="TransitionModel",
     continuous=FALSE,
     nmoments = 10,
     splitter = ~deltaT,
+    xtime=character(),
     rmat = function(pvec=pvec(self),deltaT,covars=list()) {
       stop("No matrix definition provided for ", class(self))
     },
     tmat = function(pvec=pvec(self),deltaT,covars=list()) {
-      expLambdaT(rmat(pvec,deltaT,covars),self$nmoments)
+      key <- c(deltaT,as.numeric(covars[1L,self$xtime]))
+      cached <- self$cache(key)$get(key)
+      if (is.null(cached)) {
+        cached <- expLambdaT(rmat(pvec,deltaT,covars),self$nmoments)
+        self$cache(key)$assign(key,cached)
+      }
+      cached
     },
-    advance = function(weights,deltaT,covars=list()) {
-      if (abs(deltaT) < .0001) return(weights)
-      weights %*% tmat(self(pvec),deltaT,covars)
+    advance = function(lweights,deltaT,covars=list()) {
+      if (abs(deltaT) < .0001) return(lweights)
+      tmat(self(pvec),deltaT,covars) %*% lweights
+    },
+    retreat = function(rweights,deltaT,covars=list()) {
+      if (abs(deltaT) < .0001) return(rweights)
+      tmat(self(pvec),deltaT,covars) %*% rweights
     },
     drawNext = function(theta,deltaT,covars=list()) {
       split(data.frame(theta=theta,deltaT=deltaT,covars,order=1L:nrow(covars)),
@@ -38,6 +49,7 @@ GrowthModelD <- R6Class(
         select(result)
     },
     lprob=function(par=pvec(self),data) {
+      self$cache$clear()
       split(data,self$splitter) |>
         purr::map_dbl(\(sdata) self$lpinner(par,sdata)) |>
         purr::reduce("+")
@@ -50,6 +62,24 @@ GrowthModelD <- R6Class(
           rweight=sdata[[self$wname[3]]]
           sum(lweight*log(rweight%*%G))
         }) |> purr::reduce("+")
+    },
+    fillCache = function(par=pvec(self),data) {
+      self$cache$clear()
+      split(data,self$splitter) |>
+        purr::walk(\(sdata) {
+          self$tmat(par,data[1,"deltaT"],data[1,])
+        })
+    }
+  ),
+  private=list(
+    acache=NULL
+  ),
+  active=list(
+    cache=function(key) {
+      if (is.null(private$acache)) {
+        private$acache <- memoTree$new(length(key))
+      }
+      private$acache
     }
   )
 )
@@ -59,23 +89,31 @@ UpDownGrowth <- R6Class(
   inherit=GrowthModelC,
   public=list(
     initialize = function(name,nStates,uprate,downrate,
-                          tname="theta", wname="w") {
+                          tname="theta", wname="w",
+                          xTime="xTime") {
       self$name <- name
       self$nStates <- nStates
       self$uprate <- uprate
       self$downrate <- downrate
       self$tnames <- tname
       self$wname <- wname
+      self$xtime <- xTime
     },
     uprate=0,
     downrate=0,
+    xtime=character()
     nStates=2,
     rmat = function(pvec=pvec(self),deltaT,covar) {
-      up <- exp(value[1:(self$nStates-1)])
-      down <- exp(value[self$nStates:length(value)])
+      if (length(self$xtime)==0L) {
+        xTime <- deltaT
+      } else {
+        xTime <- covar[1L,self$xtime]
+      }
+      up <- exp(pvec[1:(self$nStates-1)])
+      down <- exp(pvec[self$nStates:length(pvec)])
       matR <- matrix(0,self$nStates,self$nStates)
-      mgcv::sdiag(matR,1) <- up*deltaT/2^self$v
-      mgcv::sdiag(matR,-1) <- down*deltaT/2^self$v
+      mgcv::sdiag(matR,1) <- up*xTime
+      mgcv::sdiag(matR,-1) <- down*deltaT
       diag(matR) <- -rowSums(matR)
       matR
     },
@@ -107,17 +145,24 @@ ActivitiesD <- R6Class(
   "ActivitiesD",
   inherit=Activities,
   public=list(
-    advance = function(subj,it,weights,deltaT,covar=NULL) {
+    advance = function(subj,it,lweights,deltaT,covar=NULL) {
       self$models[[self$action(subj,it)]]$
-        advance(weights,deltaT,covar)
+        advance(lweights,deltaT,covar)
     },
-    rmat = function(subj,it,deltaT,covar) {
-      mod <- self$models[[self$action(subj,it)]]
-      mod$rmat(pvec(rmat),deltaT,covar)
+    retreat = function(subj,it,rweights,deltaT,covar=NULL) {
+      self$models[[self$action(subj,it)]]$
+        retreat(rweights,deltaT,covar)
     },
     tmat = function(subj,it,deltaT,covar) {
       mod <- self$models[[self$action(subj,it)]]
-      mod$rmat(pvec(rmat),deltaT,covar)
+      mod$tmat(pvec(mod),deltaT,covar)
+    },
+    fillCache = function(data,workers=Workers$new()) {
+      workers$start()
+      workers$lapply(unique(data$action), \(act) {
+        mod <- self$growthModels[[act]]
+        mod$fillCache(pvec(mod),select(data,action==act))
+      }
     }
   ),
   active=list(
