@@ -62,7 +62,7 @@ softmax <- function (vec) {
 }
 
 
-CatigoricalPop <- R6Class(
+CategoricalPop <- R6Class(
   classname = "CategoricalPop",
   inherit=PopulationModel,
   public=list(

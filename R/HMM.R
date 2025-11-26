@@ -12,6 +12,8 @@ HMM <- function(name,population,activities,evidence,
   result
 }
 
+setOldClass(HMM)
+
 setMethod("nsubj","HMM", function(obj) {
   nsubj(obj$population)
 }

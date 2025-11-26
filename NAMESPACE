@@ -13,16 +13,47 @@ export(wtd.Ecdf,wtd.loess.noiter,
 
 export(Workers)
 
+export(FModel,ModelSet)
+exportClass(FMolde)
+export(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
+       minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
+       split_subj, add_subj, bind_subj, pvec, "pvec<-", lprob, mstep)
+exportMethods(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
+       minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
+       add_subj, pvec, "pvec<-", lprob, mstep
+
+)
 exportClass(Panmat, Panel_Frame, Panel_Data)
 export(Panel_Data)
-export(panmat, mat, "mat<-", as.Panmat, nsubj, "nsubj<-",
-       nocc, "nocc<-", maxocc, "maxocc<-", minocc, "minocc<-",
+export(panmat, mat, "mat<-", as.Panmat, 
        panel_frame, as_longform,
        time2occ, panel_data, long2panel)
-
-exportMethods(as.Panmat, nsubj, "nsubj<-", nocc, "nocc<-",
-              maxocc, "maxocc<-", minocc, "minocc<-",
+exportMethods(as.Panmat, 
               "[", "[<-",as_longform, diff, cumsum, names)
+
+export(Quadrature, FixedQuad, PartilceQuad, BWQuad)
+exportClass(Quadrature)
+export(vnames, fixedQuad, particleQuad, BWQuad)
+
+export(PopulationModel, NormalPop, CategoricalPop, Population)
+exportClass(Population)
+
+export(GrowthModel, BrownianGrowth, SpurtGrowth, Actvities)
+exportClass(Activities)
+
+export(TransitionModel, UpDownGrowth, ActvitiesD)
+export(expLambdaT)
+
+export(EvidenceModel, GradedResponse, NormalScore, Evidence)
+exportClass(Evidence)
+export(logit, invlogit, cuts2probs)
+
+export(HMM)
+exportClass(HMM)
+export(drawInit, drawObs, drawNext, llike)
+export(longform)
+    
+export(simulate.HMM,particleFilter.HMM,bwfilter.HMM,qFilter.HMM)
 
 
 export(squareWindow,linearWindow,exponentialWindow,gaussianWindow,
@@ -33,3 +64,11 @@ export(HannConstants,HammingConstants,BlackmanConsts,
        BlackmanExact,NuttallConstants,
        BlackmanNuttallConstants,
        BlackmanHarrisConstants,FlattopConstants)
+
+
+export(summaryq, summaryqq, summarylowess)
+
+export(bySubjPlot, byTimePlot, methodTimeGadget, biasDisplayGadget)
+
+
+

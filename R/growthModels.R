@@ -151,23 +151,6 @@ Activities <- R6Class(
   )
 )
 
-Activities <- R6Class(
-  "Activities",
-  inherit=Activities,
-  public=list(
-    mstep = function(data,its=3,control=list(),workers=Workers$new()) {
-      data <- dplyr::arrange(data,subj,occ) |> dplyr::group_by(subj)
-      sapply(self$tnames, \(th) {
-        th1 <- paste0(th,"_1")
-        data <- dplyr::mutate(data,"{th1}":=lag(.data[[th]]))
-        th1
-      })
-      super$mstep(data,its,control,workers)
-    }
-  )
-)
-
-
 setOldClass("Activities")
 
 setMethod("as_longform","Activities",

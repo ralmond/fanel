@@ -1,8 +1,14 @@
-bySubjPlot <- function(results,theta0=NULL,
+bySubjPlot <- function(results,theta="theta",weight="w",
+                       error_bars=TRUE,
+                       theta0=NULL,
                        lowcol="gray90",highcol="gray10",
                        aveshape=4,avecol="red",avesize=2,
                        trueshape=8,truecol="blue",truesize=2) {
-  summar <- avePart(results)
+  summar <- summaryq(results,
+                     theta_bar=wtd.mean({{theta}},{{wname}}),
+                     theta_w=2*sqrt(wtd.var({{theta}},{{wname}},
+                                            normwt=TRUE)))
+  
   if (!missing(theta0)) summar$theta0 <- theta0
   plot <-
     ggplot2::ggplot(results,
@@ -16,21 +22,37 @@ bySubjPlot <- function(results,theta0=NULL,
                                              y=summar$theta_bar,
                                              frame=summar$occ),
                         shape=aveshape,col=avecol,size=avesize)
-  if (!missing(theta0))
+  if (error_bars) {
+    plot <- plot +
+      geom_linerange(data=summar,
+                     mapping=ggplot2::aes(x=summar$subj,
+                                          ymin=summar$theta_bar-summar$theta_w,
+                                          ymax=summar$theta_bar+summar$theta_w,
+                                          frame=summar$occ),
+                     col=avecol,size=avesize)
+  }
+  if (!missing(theta0)) {
     plot <- plot +
       ggplot2::geom_point(data=summar,
                           mapping=ggplot2::aes(x=summar$subj,
                                                y=summar$theta0,
                                                frame=summar$occ),
                           shape=trueshape,col=truecol,size=truesize)
+  }
   plot
 }
 
-byTimePlot <- function(results,theta0=NULL,
+byTimePlot <- function(results,theta="theta",weight="w",
+                       error_bars=TRUE,theta0=NULL,
                        lowcol="gray90",highcol="gray10",
                        avetype=2,avecol="red",linewidth=1,
                        truetype=1,truecol="blue") {
-  summar <- avePart(results)
+
+  summar <- summaryq(results,
+                     time=first(time),
+                     theta_bar=wtd.mean({{theta}},{{wname}}),
+                     theta_w=2*sqrt(wtd.var({{theta}},{{wname}},
+                                            normwt=TRUE)))
   if (!missing(theta0)) summar$theta0 <- theta0
   plot <-
     ggplot2::ggplot(results,
@@ -40,16 +62,26 @@ byTimePlot <- function(results,theta0=NULL,
     ggplot2::geom_point() +
     ggplot2::scale_colour_gradient(low=lowcol,high=highcol) +
     ggplot2::geom_line(data=summar,
-                        mapping=ggplot2::aes(x=summar$time,
-                                             y=summar$theta_bar,
-                                             frame=summar$subj),
-                        linetype=avetype,col=avecol,linewidth=linewidth)
-  if (!missing(theta0))
+                       mapping=ggplot2::aes(x=summar$time,
+                                            y=summar$theta_bar,
+                                            frame=summar$subj),
+                       linetype=avetype,col=avecol,linewidth=linewidth)
+  if (error_bars) {
+    plot <- plot +
+      geom_linerange(data=summar,
+                     mapping=ggplot2::aes(x=summar$time,
+                                          ymin=summar$theta_bar-summar$theta_w,
+                                          ymax=summar$theta_bar+summar$theta_w,
+                                          frame=summar$subj),
+                     col=avecol,size=avesize)
+  }
+  if (!missing(theta0)) {
     plot <- plot +
       ggplot2::geom_line(data=summar,
-                          mapping=ggplot2::aes(x=summar$time,y=summar$theta0,
-                                               frame=summar$subj),
-                          linetype=truetype,col=truecol,linewidth=linewidth)
+                         mapping=ggplot2::aes(x=summar$time,y=summar$theta0,
+                                              frame=summar$subj),
+                         linetype=truetype,col=truecol,linewidth=linewidth)
+  }
   plot
 }
 

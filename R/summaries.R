@@ -8,7 +8,7 @@ summaryq <- function(quad,
                   wname=quad$wname[1]) {
   as_longform(quad) |>
     dplyr::group_by(subj,occ) |>
-    dplyr::summarize(dplyr::across(thetas,sumfuns))
+    dplyr::summarize(dplyr::across(thetas,sumfuns),time=first(time))
 }
 
 summaryqq <- function(quad,probs=c(.025,.5,.975),
@@ -19,7 +19,8 @@ summaryqq <- function(quad,probs=c(.025,.5,.975),
     dplyr::summarize(dplyr::across(thetas,
                             q=~wtd.quantiles(.data[[.x]],
                                            .data[[{{wname}}]],
-                                           probs={{probs}}, normwt=TRUE))))
+                                           probs={{probs}}, normwt=TRUE)),
+                     time=first(time))
 }
 
 summarylowess <- function(quad,probs=c(.025,.5,.975),

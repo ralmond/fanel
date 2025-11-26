@@ -162,7 +162,16 @@ ActivitiesD <- R6Class(
       workers$lapply(unique(data$action), \(act) {
         mod <- self$growthModels[[act]]
         mod$fillCache(pvec(mod),select(data,action==act))
-      }
+      })
+    },
+    mstep = function(data,its=3,control=list(),workers=Workers$new()) {
+      data <- dplyr::arrange(data,subj,occ) |> dplyr::group_by(subj)
+      sapply(self$tnames, \(th) {
+        th1 <- paste0(th,"_1")
+        data <- dplyr::mutate(data,"{th1}":=lag(.data[[th]]))
+        th1
+      })
+      super$mstep(data,its,control,workers)
     }
   ),
   active=list(
@@ -173,7 +182,7 @@ ActivitiesD <- R6Class(
       }
       if (missing(value)) return(self$models[[1]]$nmoments)
       lapply(self$models, \(m) m$nmoments <- value)
-    },
+    }
   )
 )
 
