@@ -209,5 +209,5 @@ setMethod("minocc<-","ModelSet", function(obj,value) {
 setMethod("mstep","ModelSet",
           function(obj, data, its=3,control=list(),
                    workers=Workers$new()) {
-            obj$mstep(data)
+            obj$mstep(data, its=its, control=control, workers=workers)
           })

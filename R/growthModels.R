@@ -116,19 +116,26 @@ Activities <- R6Class(
   inherit=ModelSet,
   public=list(
     name="ActitivitySet",
+    dosname="dose",
+    dosages=panmat(NA,1L,1L),
     initialize=function(name,actions=1L,
-                        growthModels=list(),
-                        tname="theta",wname="w") {
+                        growthModels=list(), dosage=NA,
+                        tname="theta",wname="w",dosname="dose") {
       self$name <- name
       self$index <- as.Panmat(actions)
       self$models <- growthModels
       self$tnames <- tname
       self$wname <- wname
+      self$dosage <- as.Panmat(dosage)
+      self$dosname <- dosname
     },
-    drawNext = function(subj,it,theta,deltaT,covar=NULL) {
+    drawNext = function(subj, it, theta,deltaT,covar=NULL) {
       if (deltaT==0) {
         return(theta)
       } else {
+        if (!is.na(self$dose(subj,it))) {
+          deltaT=c(deltaT,self$dose(subj,it))
+        }
         self$models[[self$action(subj,it)]]$
           drawNext(theta,deltaT,covar)
       }
@@ -141,12 +148,18 @@ Activities <- R6Class(
       })
     },
     toString=function(...) {
-      paste0("<Actions: ",self$name,": ",
+      paste0("<Activities: ",self$name,": ",
              self$nsubjects, " x ",
              self$macocc, " >")
     },
     action = function(subj,it) {
       self$index[subj,it]
+    }
+  ),
+  active=list(
+    dose = function(subj,it,value) {
+      if (missing(value)) return(self$dosage[subj,it])
+      self$dosage[self,it] <- value
     }
   )
 )

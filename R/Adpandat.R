@@ -50,6 +50,11 @@ Panel_Data <- R6Class(
         stop("No variant data available.")
       }
       private$variant[subj,occ,self$datacols] <- value
+    },
+    pullPanmat = function(vname) {
+      panmat(private$variant[,,vname],nsubj=nsubj(self),
+             nocc=nocc(self),minocc=minocc(self),
+             isubj=isubj(self))
     }
   ),
   private=list(
@@ -204,8 +209,8 @@ setMethod("get_subj<-","Panel_Data", function(x,subj,value) {
   x
 })
 
-setMethod("isubj","Panmat", function(obj) obj$isubj)
-setMethod("isubj<-","Panmat", function(obj,value) {
+setMethod("isubj","Panel_Data", function(obj) obj$isubj)
+setMethod("isubj<-","Panel_Data", function(obj,value) {
   obj$isubj<-as.integer(value)
   obj
 })

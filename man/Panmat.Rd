@@ -44,7 +44,8 @@
 \section{Objects from the Class}{
 
   Objects can be created by calls to \code{panmat(mat, nsubj=nrow(mat),
-    nocc=ncol(mat),isubj=NA_integer_}.  Note that if the actual number
+    nocc=ncol(mat),minocc=1L,isubj=NA_integer_}.
+  Note that if the actual number
   of rows or columns is zero, then \code{nsubj} or \code{nocc} can be
   set to reference the effective number of subjects or occasions
   respectively.

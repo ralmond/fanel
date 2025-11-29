@@ -73,49 +73,49 @@
 \section{Public Methods}{
 
   \describe{
-    \item{initialize}{\code{signature(time = "Panmat", dt = "Panmat",
+    \item{\code{$initialize}}{\code{(time = "Panmat", dt = "Panmat",
 	vari = "Panel_Frame", invar = "data.frame",
 	datacols=character())}:  Generator.
       Exactly one of \code{time} and \code{dt} should be supplied.  The
       other arguments are optional}
-    \item{print}{\code{signature(x, ...)}:  Prints the object}
-    \item{getVar}{\code{signature(subj = "integer", occ = "integer")}:
+    \item{\code{$print}}{\code{(x, ...)}:  Prints the object}
+    \item{\code{$getVar}}{\code{(subj = "integer", occ = "integer")}:
       Returns a data frame containing relevant variant and invariate
       variables.}
-    \item{getData}{\code{signature(subj = "integer", occ = "integer")}:
+    \item{\code{$getData}}{\code{(subj = "integer", occ = "integer")}:
       gets the data variables for the indexed subject and occasion.}
-    \item{setData}{\code{signature(subj = "integer", occ = "integer",
+    \item{\code{$setData}}{\code{(subj = "integer", occ = "integer",
 	value)}: sets the data variables for the indexed subject and
       occasion.}
+    \item{\code{$pullPanmat}}{\code{(vname="character")}, pulls the
+	named field as a \code{\linkS4class{Panmat}} object.}
   }
 }
-
 \section{S4 Methods}{
   \describe{
-    \item{as_longform}{\code{signature(x = "Panel_Data")}: Converts to a
+    \item{\code{as_longform}}{\code{signature(x = "Panel_Data")}: Converts to a
       longform tibble.}
-    \item{nocc}{\code{signature(obj = "Panel_Data")}: returns the number
-      of occasions.)}
-    \item{minocc}{\code{signature(obj = "Panel_Data")}: returns the index of the
+    \item{\code{nocc},\code{nocc<-}}{\code{signature(obj =
+	"Panel_Data")}: gets/sets the number of occasions.)}
+    \item{\code{minocc},\code{minocc<-}}{\code{signature(obj =
+	"Panel_Data")}: gets/sets the index of the 
       minimum occasion, usually 0 or 1.)}
-    \item{maxocc}{\code{signature(obj = "Panel_Data")}: returns the index of th
-      maximum occasions.)}
-    \item{nsubj}{\code{signature(obj = "Panel_Data")}: returns the
-      number of subjects. }
-    \item{nsubj<-}{\code{signature(obj = "Panel_Data")}: sets the number
-      of subjects (for one subject data.)}
-    \item{isubj}{\code{signature(obj = "Panel_Data")}: Returns the
+    \item{\code{maxocc},\code{maxocc<-}}{\code{signature(obj =
+	"Panel_Data")}: gets/sets the index of the
+      maximum occasions.}
+    \item{\code{nsubj}\code{nsubj<-}}{\code{signature(obj =
+	"Panel_Data")}: gets/sets the number of subjects. }
+    \item{\code{isubj},\code{isubj<-}}{\code{signature(obj =
+	"Panel_Data")}: Gets/sets the 
       index of the focus subject, or \code{NA} if focused on multiple
       objects.}
-    \item{isubj<-}{\code{signature(obj = "Panel_Data",value = "integer")}:
-      Sets the index of the focus subject. }
-    \item{get_subj}{\code{signature(x = "Panel_Data", subj="integer")}:
+    \item{\code{get_subj}}{\code{signature(x = "Panel_Data", subj="integer")}:
       fetches a smaller Panmat focused on subject.  See
       \code{\link{split_subj}}.}
-    \item{get_subj<-}{\code{signature(x = "Panel_Data", subj="integer",
+    \item{\code{get_subj<-}}{\code{signature(x = "Panel_Data", subj="integer",
       value="Panmat")}: replaces or inserts smaller Panmat focused
       on subject.}
-    \item{as_longform}{\code{signature(x = "Quadrature")}: Converts the
+    \item{\code{as_longform}}{\code{signature(x = "Quadrature")}: Converts the
       quadrature into long form (with indexes subj and occ). }
   }
 }
