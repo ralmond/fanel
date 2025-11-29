@@ -11,37 +11,37 @@ export(wtd.Ecdf,wtd.loess.noiter,
        wtd.var,wtd.mean)
 
 
-export(Workers)
+export(Workers,memoTree)
 
 export(FModel,ModelSet)
-exportClass(FMolde)
+exportClass(FModel,ModelSet)
 export(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
        split_subj, add_subj, bind_subj, pvec, "pvec<-", lprob, mstep)
 exportMethods(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
-       add_subj, pvec, "pvec<-", lprob, mstep
+       pvec, "pvec<-", lprob, mstep
 
 )
 exportClass(Panmat, Panel_Frame, Panel_Data)
-export(Panel_Data)
-export(panmat, mat, "mat<-", as.Panmat, 
+export(Panel_Data, Panel_Frame, Panmat)
+export(panmat, mat, "mat<-", as.Panmat,
        panel_frame, as_longform,
        time2occ, panel_data, long2panel)
-exportMethods(as.Panmat, 
+exportMethods(as.Panmat,
               "[", "[<-",as_longform, diff, cumsum, names)
 
-export(Quadrature, FixedQuad, PartilceQuad, BWQuad)
+export(Quadrature, FixedQuad, ParticleQuad, BWQuad)
 exportClass(Quadrature)
-export(vnames, fixedQuad, particleQuad, BWQuad)
+export(fixedQuad, particleQuad, BWQuad)
 
 export(PopulationModel, NormalPop, CategoricalPop, Population)
 exportClass(Population)
 
-export(GrowthModel, BrownianGrowth, SpurtGrowth, Actvities)
+export(GrowthModel, BrownianGrowth, SpurtGrowth, Activities)
 exportClass(Activities)
 
-export(TransitionModel, UpDownGrowth, ActvitiesD)
+export(TransitionModel, UpDownGrowth, ActivitiesD)
 export(expLambdaT)
 
 export(EvidenceModel, GradedResponse, NormalScore, Evidence)
@@ -52,9 +52,9 @@ export(HMM)
 exportClass(HMM)
 export(drawInit, drawObs, drawNext, llike)
 export(longform)
-    
-export(simulate.HMM,particleFilter.HMM,bwfilter.HMM,qFilter.HMM)
 
+export(simulate.HMM,particleFilter.HMM,bwFilter.HMM,qFilter.HMM)
+S3method(simulate,HMM)
 
 export(squareWindow,linearWindow,exponentialWindow,gaussianWindow,
        parzenWindow,welchWindow,sineWindow,cosineSumWindow,

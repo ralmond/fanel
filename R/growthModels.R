@@ -3,7 +3,7 @@ GrowthModel <- R6Class(
   inherit=FModel,
   public = list(
     name="GrowthModel",
-    continuous=TRUE,  
+    continuous=TRUE,
     drawNext = function(theta,deltaT,covars=list()) {
       stop("DrawNext not implemented for ", class(self))
     }
@@ -136,7 +136,7 @@ Activities <- R6Class(
     mstep = function(data,its=3,control=list(),workers=Workers$new()) {
       workers$start()
       workers$lapply(unique(data$action), \(act) {
-        mstep(self$growthModels[[act]], select(data,action==act),
+        mstep(self$growthModels[[act]], dplyr::filter(data,action==act),
               its=its,control=control,workers=NULL)
       })
     },

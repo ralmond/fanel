@@ -1,6 +1,7 @@
 \name{Panmat-class}
 \docType{class}
 \alias{Panmat-class}
+\alias{Panmat}
 \alias{[,Panmat-method}
 \alias{[<-,Panmat-method}
 \alias{as.Panmat}
@@ -8,6 +9,7 @@
 \alias{as.Panmat,matrix-method}
 \alias{as.Panmat,character-method}
 \alias{as.Panmat,numeric-method}
+\alias{as_longform,Panmat-method}
 \alias{nocc,Panmat-method}
 \alias{nocc<-,Panmat-method}
 \alias{maxocc,Panmat-method}
@@ -16,11 +18,16 @@
 \alias{minocc<-,Panmat-method}
 \alias{nsubj,Panmat-method}
 \alias{nsubj<-,Panmat-method}
+\alias{isubj,Panmat-method}
+\alias{isubj<-,Panmat-method}
 \alias{panmat}
 \alias{mat}
 \alias{mat<-}
 \alias{diff,Panmat-method}
 \alias{cumsum,Panmat-method}
+\alias{get_subj,Panmat-method}
+\alias{get_subj<-,Panmat-method}
+
 
 \title{Class \code{"Panmat"} -- A matrix with index replication}
 \description{
@@ -35,10 +42,12 @@
 
 }
 \section{Objects from the Class}{
+
   Objects can be created by calls to \code{panmat(mat, nsubj=nrow(mat),
-    nocc=ncol(mat)}.  Note that if the actual number of rows or columns
-  is zero, then \code{nsubj} or \code{nocc} can be set to reference the
-  effective number of subjects or occasions respectively.
+    nocc=ncol(mat),isubj=NA_integer_}.  Note that if the actual number
+  of rows or columns is zero, then \code{nsubj} or \code{nocc} can be
+  set to reference the effective number of subjects or occasions
+  respectively.
 
 }
 \section{Slots}{
@@ -53,6 +62,10 @@
     \item{\code{nsubj}:}{Object of class \code{"integer"} which contains
       the logical number of subjects (which may be different from the
       number of rows, if the number of rows is 1). }
+    \item{\code{isubj}:}{Object of class \code{"integer"} which contains
+      the subject on which this object is focused (used when object is
+      split using \code{\link{split_subj}}).  Its value is \code{NA} if
+      the object covers more than one subject.}
   }
 }
 \section{Methods}{
@@ -79,9 +92,21 @@
       subjects.}
     \item{nsubj<-}{\code{signature(obj = "Panmat",value = "integer")}:
       Sets the number of subjects. }
+    \item{isubj}{\code{signature(obj = "Panmat")}: Returns the index of the
+      focus subject, or \code{NA} if focused on multiple objects.}
+    \item{isubj<-}{\code{signature(obj = "Panmat",value = "integer")}:
+      Sets the index of the focus subject. }
     \item{mat}{\code{signature(obj = "Panmat")}:  returns the underlying matrix.}
     \item{mat<-}{\code{signature(obj = "Panmat",value="matrix")}:  sets the underlying
       matrix.}
+    \item{get_subj}{\code{signature(x = "Panmat", subj="integer")}:
+      fetches a smaller Panmat focused on subject.  See
+      \code{\link{split_subj}}.}
+    \item{get_subj<-}{\code{signature(x = "Panmat", subj="integer",
+      value="Panmat")}: replaces or inserts smaller Panmat focused
+      on subject.}
+    \item{as_longform}{\code{signature(x = "Quadrature")}: Converts the
+      quadrature into long form (with indexes subj and occ). }
   }
 }
 \details{
@@ -145,4 +170,5 @@
 }
 \keyword{classes}
 \keyword{array}
+\keyword{chron}
 \concept{panel_data}

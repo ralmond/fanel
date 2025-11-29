@@ -12,7 +12,7 @@ A Capitalized Title (ideally limited to 65 characters)
 \description{
 
   These are inherited from \code{Hmisc::\link[Hmisc]{wtd.stats}}.  Note that for
-  particle filter or irtf output, \code{normwt=TRUE} produces the correct result.
+  particle filter or q filter output, \code{normwt=TRUE} produces the correct result.
 
 }
 \usage{
@@ -40,6 +40,7 @@ wtd.var(x, weights = NULL, normwt = FALSE, na.rm = TRUE, method = c("unbiased",
   \item{normwt}{Use \code{normwt=TRUE} with the filter weights.}
   \item{na.rm}{Logical value, should \code{NA}s be removed.}
   \item{span}{Parameter of loess.}
+  \item{cell}{Parameter of loess.}
   \item{degree}{Parameter of loess.}
   \item{evaluation}{Parameter of loess.}
   \item{method}{Algorithm for calculating variances.}
@@ -55,7 +56,7 @@ This docfile written by Russell Almond.
 }
 \seealso{
   See \code{Hmisc::\link[Hmisc]{wtd.stats}}
-  \code{\link{avePart}}
+  \code{\link{summaryq}}
 }
 \examples{
 make_pops <- function() {
@@ -92,12 +93,7 @@ longResults(hmm) |>
 
 
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.
+\keyword{ univar }
+\keyword{ ts }
+\concept{ panel_data }
+\concept{ weights }

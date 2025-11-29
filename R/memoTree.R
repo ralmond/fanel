@@ -1,6 +1,6 @@
 memoTree <- R6Class(
   "memoTree",
-  public(
+  public=list(
     depth=1L,
     initialize=function(depth=1L) {
       self$depth <- depth

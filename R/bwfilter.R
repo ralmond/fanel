@@ -27,7 +27,7 @@ bwFilter.HMM <- function(object,covars,quad,...,workers=Workers$new()) {
                                      cov$getVar(isubj,iocc)))
       qua$lweights[1L,iocc+1L,] <- lweights
     }
-    
+
     ## Reverse
     iocc <- maxocc(cov)
     rweights <- rep(1,nquad(qua))
@@ -35,7 +35,6 @@ bwFilter.HMM <- function(object,covars,quad,...,workers=Workers$new()) {
                              llike(isubj,iocc,cov$getData(isubj,iocc),
                                    thetas,
                                    cov$getVar(isubj,iocc)))
-    }
     qua$rweights[1L,iocc+1L,] <- rweights
 
     for (iocc in maxocc(cov):1L) {

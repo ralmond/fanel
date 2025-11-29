@@ -1,6 +1,8 @@
 \name{nsubj}
 \alias{nsubj}
 \alias{nsubj<-}
+\alias{isubj}
+\alias{isubj<-}
 \alias{nocc}
 \alias{nocc<-}
 \alias{maxocc}
@@ -19,6 +21,8 @@
 \usage{
 nsubj(obj)
 nsubj(obj) <- value
+isubj(obj)
+isubj(obj) <- value
 nocc(obj)
 nocc(obj) <- value
 maxocc(obj)
@@ -32,7 +36,8 @@ minocc(obj) <- value
   \item{value}{An integer giving the new value for the statistic.}
 }
 \value{
-  An integer giving the number of subjects or occasions, or the minimum and/or maximum index.
+  An integer giving the number of subjects, index of focus subject,
+  number of occasions, or the minimum/maximum occasion index.
 }
 \author{Russell Almond}
 \seealso{
@@ -41,6 +46,6 @@ minocc(obj) <- value
 }
 \examples{
 }
-\keyword{ classes }
+\keyword{ attribute }
 \concept{ panel_data }
 

@@ -19,12 +19,12 @@ Quadrature <- R6Class(
     lweights=array(NA_real_,c(1,1,1)),
     isubj=NA_integer_,
     initialize = function(times, qpoints, tnames=vnames(qpoints),
-                          static=TRUE, bysubj=TRUE,
+                          static=TRUE, bysubj=FALSE,
                           nsubjects=nsubj(times),
-                          isubj<-NA_integer_) {
+                          isubj=NA_integer_) {
       self$static <- static
       self$bysubj <- bysubj
-      private$Times <- as.Panmat(times,mimocc=1L)
+      private$Times <- as.Panmat(times,minocc=1L)
       self$thetas <- qpoints
       self$nsubj <- nsubjects
       self$isubj <- isubj
@@ -36,7 +36,7 @@ Quadrature <- R6Class(
     resetWeights = function() {
       self$lweights <- array(NA_real_,
                              c(self$nsubj,self$nocc,self$nquad))
-    },
+    }
   ),
   private=list(
     Theta = array(NA_real_,c(1,1,1,1)),
@@ -46,13 +46,16 @@ Quadrature <- R6Class(
   active=list(
     thetas = function(value) {
       if (missing(value)) return(private$Theta)
+      if (is.null(dim(value))) {
+        value <- data.frame(theta=value)
+      }
       vnames <- vnames(value)
       if (is.data.frame(value)) {
         value <- as.matrix(value)
       }
       vdims <- dim(value)
       if (length(vdims) != 4L) {
-        if (length(vdims)+self$fixed+self$uniform != 4L) {
+        if (length(vdims)+self$fixed+!self$bysubj != 4L) {
           stop("Expected a 4 dimensional array.")
         }
         if (self$fixed) {
@@ -130,6 +133,12 @@ setMethod("nsubj<-","Quadrature", function(obj,value) {
   obj
 })
 
+setMethod("isubj","Quadrature", function(obj) obj$isubj)
+setMethod("isubj<-","Quadrature", function(obj,value) {
+  obj$isubj <-as.integer(value)
+  obj
+})
+
 setMethod("nocc","Quadrature", function(obj) nocc(obj))
 setMethod("nocc<-","Quadrature", function(obj,value) {
   obj$nocc <- as.integer(value)
@@ -143,13 +152,13 @@ setMethod("minocc<-","Quadrature", function(obj,value) {
 })
 setMethod("maxocc","Quadrature", function(obj) maxocc(obj))
 setMethod("maxocc<-","Quadrature", function(obj,value) {
-  maxocc(obj) <- as.integer(value) 
+  maxocc(obj) <- as.integer(value)
   obj
 })
 
 setMethod("nquad","Quadrature", function(obj) obj$nquad)
 setMethod("nquad<-","Quadrature", function(obj,value) {
-  obj$nquad <- as.integer(value) 
+  obj$nquad <- as.integer(value)
   obj
 })
 
@@ -160,46 +169,46 @@ setMethod("as_longform","Quadrature",
           function(x,n=nsubj(x),maxocc=nocc(x),
                    minocc=1L,weightType="all",
                    name=deparse(substitute(x))) {
-  result <- data.frame(subj=1L:nsubj(obj),each=nocc(obj)*nquad(obj),
-                       occ=rep(rep(minocc(obj):maxocc(obj),each=nquad(obj)),
-                               nsubj(obj)),
-                       quad=rep(1L:nquad(obj),nsubj(obj)*nocc(obj)),
-                       w=obj$weights(weightType))
-  thetas <- as.data.frame(matrix(obj$thetas,ncol=obj$dtheta,
+  result <- data.frame(subj=1L:nsubj(x),each=nocc(x)*nquad(x),
+                       occ=rep(rep(minocc(x):maxocc(x),each=nquad(x)),
+                               nsubj(x)),
+                       quad=rep(1L:nquad(x),nsubj(x)*nocc(x)),
+                       w=x$weights(weightType))
+  thetas <- as.data.frame(matrix(x$thetas,ncol=x$dtheta,
                                  byrow=TRUE))
-  names(thetas) <- obj$tnames
-  if (obj$static) {
-    if (obj$bysubj) {
-      thetas <- data.frame(subj=rep(1L:nsubj(obj),each=nquad(obj)),
-                           quad=rep(1L:nquad(obj),nsubj(obj)),
+  names(thetas) <- x$tnames
+  if (x$static) {
+    if (x$bysubj) {
+      thetas <- data.frame(subj=rep(1L:nsubj(x),each=nquad(x)),
+                           quad=rep(1L:nquad(x),nsubj(x)),
                            thetas)
       by <- dplyr::join_by(subj,quad)
     } else {
-      thetas <- data.frame(quad=1L:nquad(obj),
+      thetas <- data.frame(quad=1L:nquad(x),
                            thetas)
       by <- dplyr::join_by(quad)
     }
   } else {
-    if (obj$bysubj) {
-      thetas <- data.frame(subj=rep(1L:nsubj(obj),each=nquad(obj)*nocc(obj)),
-                           occ=rep(rep(minocc(obj):maxocc(obj),
-                                       each=nquad(obj)),
-                                   nsubj(obj)),
-                           quad=rep(1L:nquad(obj),nsubj(obj)*nocc(obj)),
+    if (x$bysubj) {
+      thetas <- data.frame(subj=rep(1L:nsubj(x),each=nquad(x)*nocc(x)),
+                           occ=rep(rep(minocc(x):maxocc(x),
+                                       each=nquad(x)),
+                                   nsubj(x)),
+                           quad=rep(1L:nquad(x),nsubj(x)*nocc(x)),
                            thetas)
       by <- dplyr::join_by(subj, occ, quad)
     } else {
-      thetas <- data.frame(occ=rep(minocc(obj):maxocc(obj)),
-                           quad=rep(1L:nquad(obj),nocc(obj)),
+      thetas <- data.frame(occ=rep(minocc(x):maxocc(x)),
+                           quad=rep(1L:nquad(x),nocc(x)),
                            thetas)
       by <- dplyr::join_by(occ, quad)
     }
   }
   result |>
-    dplyr::left_join(as_longform(obj$times,n,maxocc,minocc,name),
+    dplyr::left_join(as_longform(x$times,n,maxocc,minocc,name),
                      dplyr::join_by(subj,occ)) |>
     dplyr::left_join(as_longform(thetas),by)
-  
+
 })
 
 
@@ -208,16 +217,15 @@ setMethod("get_subj","Quadrature", function(x,subj) {
       minocc=minocc(x),nocc1=nocc(x)-1L,isubj=subj)
 })
 
-setMethod("get_subj<-","Panel_Frame", function(x,subj,value) {
-  x[subj,,] <- value@dat
+setMethod("get_subj<-","Quadrature", function(x,subj,value) {
+  if (x$bySubj) {
+    x$times[subj,] <-value$times[1L,]
+    x$thetas[subj,,,] <- value$thetas[1L,,,]
+  }
+  x$lweights[subj,,] <- value$lweights
   x
 })
 
-setMethod("add_subj","Panel_Frame", function(x,xnew) {
-  isubj <- xnew$isubj
-  if (is.na(isubj)) isubj <- nsubj(s) +1L
-  get_subj(x,isubj) <- xnew
-})
 
 
 
@@ -242,7 +250,7 @@ ParticleQuad <- R6Class(
   inherit =  Quadrature,
   public = list(
     initialize = function(times, nquadrature, tnames="theta",
-                          static=TRUE, bysubj=FALSE,
+                          static=FALSE, bysubj=TRUE,
                           nsubjects=nsubj(times),
                           isubj=NA_integer_) {
       qpoints <- array(NA_real_,c(nsubjects,nocc(times),nquadrature,
@@ -286,10 +294,10 @@ ParticleQuad <- R6Class(
 )
 
 particleQuad <- function(times,nquadrature,tnames,
-                      static=TRUE, bysubj=(nsubj(times)>1L),
+                      static=FALSE, bysubj=(nsubj(times)>1L),
                       nsubjects=nsubj(times),
                       isubj=NA_integer_) {
-  ParticleQuad$new(times=times, nquadrature=nqudrature, tnames=tnames,
+  ParticleQuad$new(times=times, nquadrature=nquadrature, tnames=tnames,
                    static=static, bysubj=bysubj, nsubjects=nsubjects,
                    isubj=isubj)
 }

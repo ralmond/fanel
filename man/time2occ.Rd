@@ -1,90 +1,49 @@
 \name{time2occ}
 \alias{time2occ}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A Capitalized Title (ideally limited to 65 characters)
-}
+\title{Converts time data to occasions}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+
+  A \dQuote{time} column contains real numbers containing the length of
+  time between the beginning of the experiment and the collection of the
+  data in this row.  An \dQuote{occ} (occasion) is an integer index of
+  the the measurement occasions.  It can either start at 1 (first
+  observation) or 0 (a starting time before the first observation).  The
+  function \code{time2occ} adds an \dQuote{occ} column to a data frame
+  based on the value of the \dQuote{time} column.
+
 }
 \usage{
 time2occ(data, idcol = "subj", timecol = "time", occcol = "occ", zerobase = FALSE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{data}{
-%%     ~~Describe \code{data} here~~
-}
-  \item{idcol}{
-%%     ~~Describe \code{idcol} here~~
-}
-  \item{timecol}{
-%%     ~~Describe \code{timecol} here~~
-}
-  \item{occcol}{
-%%     ~~Describe \code{occcol} here~~
-}
-  \item{zerobase}{
-%%     ~~Describe \code{zerobase} here~~
-}
+  \item{data}{The data frame to which the occasion column should be added.}
+  \item{idcol}{The name of the column containing the subject identifier.}
+  \item{timecol}{The name of the column contaiing the time data.}
+  \item{occcol}{The name of the column to be added containing the occasions.}
+  \item{zerobase}{A logical value, if true the first occasion is 0; if
+    false, 1.}
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+
+  This function first splits the data frame by subjects.  Then it orders
+  the time values from lowest to highest.  Finally, if
+  \code{zerobase==TRUE} it adjusts the first occasions to be zero.
+
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  The \code{data} argumnet with an extra column for \dQuote{occ}
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
+\author{Russell Almond}
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{long2panel}} which is where it is used.
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or standard data sets, see data().
 
-## The function is currently defined as
-function (data, idcol = "subj", timecol = "time", occcol = "occ", 
-    zerobase = FALSE) 
-{
-    data <- as.data.frame(data)
-    data[[occcol]] <- NA_integer_
-    subj <- data[[idcol]]
-    if (is.null(subj)) {
-        occ <- seq_len(data) - as.integer(zerobase)
-        data[[occcol]] <- occ[order(data[[timecol]])]
-    }
-    else {
-        for (isubj in unique(subj)) {
-            xsubj <- isubj == subj
-            occ <- 1L:sum(xsubj) - as.integer(zerobase)
-            data[xsubj, occcol] <- occ[order(data[[xsubj, timecol]])]
-        }
-    }
-    data
-  }
+longdat <- data.frame(subj=c(rep(1,5),rep(2,3)),time=c(1:5,8:10)*10)
+time2occ(longdat)
+
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.
+\keyword{ manip }
+\keyword{ chron }
+\concept{ panel_data }
+

@@ -1,11 +1,17 @@
 \name{Panel_Data-class}
 \docType{class}
 \alias{Panel_Data-class}
+\alias{Panel_Data}
 \alias{nocc,Panel_Data-method}
 \alias{minocc,Panel_Data-method}
 \alias{maxocc,Panel_Data-method}
 \alias{nsubj,Panel_Data-method}
 \alias{nsubj<-,Panel_Data-method}
+\alias{isubj,Panel_Data-method}
+\alias{isubj<-,Panel_Data-method}
+\alias{get_subj,Panel_Data-method}
+\alias{get_subj<-,Panel_Data-method}
+\alias{as_longform,Panel_Data-method}
 \alias{panel_data}
 \title{Class \code{"Panel_Data"} --  Time and DeltaT}
 \description{
@@ -32,6 +38,8 @@
       data.}
     \item{datacols}{A character vector giving the names of the
       \code{$vari} object which are considered data.}
+    \item{isubj}{For Panel_Data objects which are split,
+      the focus subject for this Panel_Data object.}
   }
 }
 \details{
@@ -96,6 +104,19 @@
       number of subjects. }
     \item{nsubj<-}{\code{signature(obj = "Panel_Data")}: sets the number
       of subjects (for one subject data.)}
+    \item{isubj}{\code{signature(obj = "Panel_Data")}: Returns the
+      index of the focus subject, or \code{NA} if focused on multiple
+      objects.}
+    \item{isubj<-}{\code{signature(obj = "Panel_Data",value = "integer")}:
+      Sets the index of the focus subject. }
+    \item{get_subj}{\code{signature(x = "Panel_Data", subj="integer")}:
+      fetches a smaller Panmat focused on subject.  See
+      \code{\link{split_subj}}.}
+    \item{get_subj<-}{\code{signature(x = "Panel_Data", subj="integer",
+      value="Panmat")}: replaces or inserts smaller Panmat focused
+      on subject.}
+    \item{as_longform}{\code{signature(x = "Quadrature")}: Converts the
+      quadrature into long form (with indexes subj and occ). }
   }
 }
 \section{Constructor}{
@@ -134,4 +155,5 @@ showClass("Panel_Data")
 }
 \keyword{classes}
 \keyword{array}
+\keyword{chron}
 \concept{panel_data}

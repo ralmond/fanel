@@ -130,7 +130,7 @@ NormalScore <- R6Class(
 
 Evidence <- R6Class(
   "Evidence",
-  inherit=ModelSet,  
+  inherit=ModelSet,
   public=list(
     name="Evidence Set",
     initialize=function(name,evidenceModels,
@@ -171,7 +171,7 @@ Evidence <- R6Class(
     mstep = function(data,its=3,control=list(),workers=Workers$new()) {
       workers$start()
       workers$lapply(unique(data$task),\(tt) {
-        mstep(self$models[[tt]],select(data,task==tt),
+        mstep(self$models[[tt]],dplyr::filter(data,task==tt),
               its=its,control=control,workers=workers)
       })
     }

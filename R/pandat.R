@@ -1,5 +1,6 @@
-
 ### Panel_Data
+
+### This file needs to be loaded after panAmat and before panframe
 
 Panel_Data <- R6Class(
   "Panel_Data",
@@ -104,7 +105,7 @@ Panel_Data <- R6Class(
 setOldClass("Panel_Data")
 
 panel_data <- function(time, dt, vari = NULL, invar= NULL,
-                       datacols=character()) {
+                       datacols=character(),isubj=NA_integer_) {
   if (missing(time) && missing(dt)) {
     stop("Need at least one of time and dt.")
   }
@@ -119,11 +120,11 @@ panel_data <- function(time, dt, vari = NULL, invar= NULL,
   }
   if (missing(time)) {
     result <- Panel_Data$new(dt=dt,vari=vari,invar=invar,
-        datacols=datacols)
+        datacols=datacols,isubj=isubj)
   }
   if (missing(dt)) {
     result <- Panel_Data$new(time=time,vari=vari,invar=invar,
-        datacols=datacols)
+        datacols=datacols,isubj=isubj)
   }
   result
 }
@@ -203,8 +204,9 @@ setMethod("get_subj<-","Panel_Data", function(x,subj,value) {
   x
 })
 
-setMethod("add_subj","Panel_Data", function(x,xnew) {
-  isubj <- xnew$isubj
-  if (is.na(isubj)) isubj <- nsubj(x)+1L
-  get_subj(x,isubj) <- xnew
+setMethod("isubj","Panmat", function(obj) obj$isubj)
+setMethod("isubj<-","Panmat", function(obj,value) {
+  obj$isubj<-as.integer(value)
+  obj
 })
+

@@ -12,28 +12,28 @@ HMM <- function(name,population,activities,evidence,
   result
 }
 
-setOldClass(HMM)
+setOldClass("HMM")
 
 setMethod("nsubj","HMM", function(obj) {
   nsubj(obj$population)
-}
+})
 
 setMethod("nocc","HMM", function(obj) {
   nocc(obj$evidence)
-}
+})
 
 setMethod("maxocc","HMM", function(obj) {
   maxocc(obj$evidence)
-}
+})
 
 setMethod("minocc","HMM", function(obj) {
   maxocc(obj$evidence)
-}
+})
 
 drawInit <- function(hmm, data, quad, subj, npart=nquad(quad)) {
   hmm$population$drawInit(npart,data$getVar(subj,0))
 }
-             
+
 drawObs <- function(hmm,data,quad,subj,occ) {
   hmm$population$drawInit(quad$theta(subj,occ),data$getVar(subj,occ))
 }
@@ -52,13 +52,12 @@ llike <- function(hmm, data, quad, subj, occ) {
 setMethod("mstep","HMM",
            function(obj, data, its=3,control=list(),
                     workers=Workers$new()) {
-             mstep(hmm$population,data,its=its,control=control,
+             mstep(obj$population,data,its=its,control=control,
                    workers=workers)
-             mstep(hmm$activities,data,its=its,control=control,
+             mstep(obj$activities,data,its=its,control=control,
                    workers=workers)
-             mstep(hmm$evidence,data,its=its,control=control,
+             mstep(obj$evidence,data,its=its,control=control,
                    workers=workers)
-             
            })
 
 
@@ -67,10 +66,10 @@ setMethod("as_longform","HMM",
           function(x,n=nsubj(x),maxocc=maxocc(x),
                    minocc=minocc(x),weightType="all",
                    name=deparse(substitute(x))) {
-            as_longform(hmm$evidence) |>
-              dplyr::left_join(as_longform(hmm$activities),
+            as_longform(x$evidence) |>
+              dplyr::left_join(as_longform(x$activities),
                                dplyr::join_by(subj,occ)) |>
-              dplyr::left_join(as_longform(hmm$populuation),
+              dplyr::left_join(as_longform(x$populuation),
                                dplyr::join_by(subj))
           })
 

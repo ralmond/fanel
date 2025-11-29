@@ -76,7 +76,8 @@ Panel_Frame <- setClass(
       dat="data.frame",
       nsubj="integer",
       nocc1="integer",
-      minocc="integer"
+      minocc="integer",
+      isubj="integer"
   )
 )
 
@@ -84,12 +85,13 @@ setMethod("print","Panel_Frame",function(x, ...) print(x@dat,...))
 setMethod("names","Panel_Frame", function(x) names(x@dat))
 
 panel_frame <- function(data,idcol="subj",occcol="occ",
-                        zerostart=TRUE) {
+                        zerostart=TRUE,isubj=NA_integer_) {
   normed <- normalForm(data,idcol,occcol,zerostart)
   new("Panel_Frame",dat=normed$normdat,
       nsubj=normed$nsubj,
       minocc=normed$minocc,
-      nocc1=normed$maxocc-normed$minocc)
+      nocc1=normed$maxocc-normed$minocc,
+      isubj=isubj)
 }
 
 mt_frame <- function(nsubj,maxocc) {
@@ -183,15 +185,20 @@ setMethod("as_longform","Panel_Frame",
 
 setMethod("get_subj","Panel_Frame", function(x,subj) {
   new("Panel_Frame",dat=x[subj,,],nsubj=1L,
-      minocc=minocc(x),nocc1=nocc(x)-1L)
+      minocc=minocc(x),nocc1=nocc(x)-1L,isubj=subj)
 
 })
 
 setMethod("get_subj<-","Panel_Frame", function(x,subj,value) {
   x[subj,,] <- value@dat
+  isubj(x) <- NA_integer_
   x
 })
 
-setMethod("add_subj","Panel_Frame", function(x,xnew) {
-  get_subj(x,nsubj(x)+1L) <- xnew
+
+setMethod("isubj","Panmat", function(obj) obj@isubj)
+setMethod("isubj<-","Panmat", function(obj,value) {
+  obj@isubj<-as.integer(value)
+  obj
 })
+

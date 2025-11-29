@@ -4,6 +4,9 @@ setGeneric("as.Panmat",function(obj,minocc=1L) standardGeneric("as.Panmat"))
 setGeneric("nsubj",function(obj) standardGeneric("nsubj"))
 setGeneric("nsubj<-",function(obj,value) standardGeneric("nsubj<-"))
 
+setGeneric("isubj",function(obj) standardGeneric("isubj"))
+setGeneric("isubj<-",function(obj,value) standardGeneric("isubj<-"))
+
 setGeneric("nocc",function(obj) standardGeneric("nocc"))
 setGeneric("nocc<-",function(obj,value) standardGeneric("nocc<-"))
 
@@ -29,10 +32,15 @@ split_subj <- function(x) {
   lapply(1L:nsubj(x), \(isubj) get_subj(x,isubj))
 }
 
-setGeneric("add_subj",function(x,xnew) standardGeneric("add_subj"))
+add_subj <- function(x, xnew) {
+  isubj <- isubj(xnew)
+  if (is.na(isubj)) isubj <- nsubj(x)+1L
+  get_subj(x,isubj) <- xnew
+}
 
 bind_subj <- function(xlist) {
-  purr::reduce(xlist,add_subj)
+  xlist[order(purrr::map_int(xlist,"isubj"))] |>
+  purrr::reduce(add_subj)
 }
 
 
@@ -51,17 +59,17 @@ setGeneric("mstep",
              standardGeneric("mstep")
            })
 
-setMethod("mstep","default", function(obj, data, its=3, control=list(),
+setMethod("mstep","ANY", function(obj, data, its=3, control=list(),
                                       workers=Workers$new()) {
   control$maxits <- its
-  result <- optim(pvec(obj),\(pv) lprob(obj,pv,data))
+  result <- stats::optim(pvec(obj),\(pv) lprob(obj,pv,data))
   if (result$convergence > 1)
     warning("Convergence issues with ",
             toString(obj), "\n", result$message)
   obj$lp <- result$value
   obj$pvec <- result$par
   obj$convergence <- result$convergence
-  list(name=obj$name,results)
+  list(name=obj$name,result)
 })
 
 
@@ -100,10 +108,10 @@ FModel <- R6Class(
   )
 )
 
-setOldClass(FModel)
+setOldClass("FModel")
 
-setMethod("pvec","FModel",function(obj) obj$pvec))
-setMethod("pvec<-","FModel",function(obj,value) obj$pvec<- value))
+setMethod("pvec","FModel",function(obj) obj$pvec)
+setMethod("pvec<-","FModel",function(obj,value) obj$pvec<- value)
 setMethod("lprob","FModel",
            function(obj,data,par=pvec(obj)) {
              obj$lprob(par,data)

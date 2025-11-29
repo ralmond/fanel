@@ -4,11 +4,11 @@ bySubjPlot <- function(results,theta="theta",weight="w",
                        lowcol="gray90",highcol="gray10",
                        aveshape=4,avecol="red",avesize=2,
                        trueshape=8,truecol="blue",truesize=2) {
-  summar <- summaryq(results,
-                     theta_bar=wtd.mean({{theta}},{{wname}}),
+  summar <- dplyr::summary(results,
+                      theta_bar=wtd.mean({{theta}},{{wname}}),
                      theta_w=2*sqrt(wtd.var({{theta}},{{wname}},
                                             normwt=TRUE)))
-  
+
   if (!missing(theta0)) summar$theta0 <- theta0
   plot <-
     ggplot2::ggplot(results,
@@ -24,7 +24,7 @@ bySubjPlot <- function(results,theta="theta",weight="w",
                         shape=aveshape,col=avecol,size=avesize)
   if (error_bars) {
     plot <- plot +
-      geom_linerange(data=summar,
+      ggplot2::geom_linerange(data=summar,
                      mapping=ggplot2::aes(x=summar$subj,
                                           ymin=summar$theta_bar-summar$theta_w,
                                           ymax=summar$theta_bar+summar$theta_w,
@@ -48,11 +48,11 @@ byTimePlot <- function(results,theta="theta",weight="w",
                        avetype=2,avecol="red",linewidth=1,
                        truetype=1,truecol="blue") {
 
-  summar <- summaryq(results,
-                     time=first(time),
-                     theta_bar=wtd.mean({{theta}},{{wname}}),
-                     theta_w=2*sqrt(wtd.var({{theta}},{{wname}},
-                                            normwt=TRUE)))
+  summar <- dplyr::summary(results,
+                      time=dplyr::first(time),
+                      theta_bar=wtd.mean({{theta}},{{wname}}),
+                      theta_w=2*sqrt(wtd.var({{theta}},{{wname}},
+                                             normwt=TRUE)))
   if (!missing(theta0)) summar$theta0 <- theta0
   plot <-
     ggplot2::ggplot(results,
@@ -68,12 +68,12 @@ byTimePlot <- function(results,theta="theta",weight="w",
                        linetype=avetype,col=avecol,linewidth=linewidth)
   if (error_bars) {
     plot <- plot +
-      geom_linerange(data=summar,
+      ggplot2::geom_linerange(data=summar,
                      mapping=ggplot2::aes(x=summar$time,
                                           ymin=summar$theta_bar-summar$theta_w,
                                           ymax=summar$theta_bar+summar$theta_w,
                                           frame=summar$subj),
-                     col=avecol,size=avesize)
+                     col=avecol)
   }
   if (!missing(theta0)) {
     plot <- plot +

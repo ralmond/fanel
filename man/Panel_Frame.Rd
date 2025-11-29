@@ -1,13 +1,19 @@
 \name{Panel_Frame-class}
 \docType{class}
 \alias{Panel_Frame-class}
+\alias{Panel_Frame}
 \alias{[,Panel_Frame-method}
 \alias{[<-,Panel_Frame-method}
 \alias{nocc,Panel_Frame-method}
 \alias{minocc,Panel_Frame-method}
 \alias{maxocc,Panel_Frame-method}
 \alias{nsubj,Panel_Frame-method}
+\alias{isubj,Panel_Frame-method}
+\alias{isubj<-,Panel_Frame-method}
 \alias{names,Panel_Frame-method}
+\alias{get_subj,Panel_Frame-method}
+\alias{get_subj<-,Panel_Frame-method}
+\alias{as_longform,Panel_Frame-method}
 \alias{panel_frame}
 
 
@@ -25,16 +31,18 @@
 \section{Objects from the Class}{
 
   Objects can be created by calls to the function
-  \code{panel_frame(\var{data},\var{idcol},\var{occcol},\var{zerostart}=TRUE)}, where the
-  latter two arguments indicate the columns which indicate the subject
-  and occasion indexes.  The function \code{\link{time2occ}} can be used
-  to generate occasion indexes from times.
+  \code{panel_frame(\var{data},\var{idcol},\var{occcol},
+    \var{zerostart}=TRUE),isubj=NA_integer_},
+  where the latter two arguments indicate the columns which indicate the
+  subject and occasion indexes.  The function \code{\link{time2occ}} can
+  be used to generate occasion indexes from times.
 
-  This function forces the data into cannonical order, sorting by first subject
-  (\code{idcol}) and then occasion (\code{occcol}).  It also fills in missing
-  combinations of subject and occasion with \code{NA}s.  If \code{zerostart} is true,
-  then the occasions are numbered starting at 0; if false, the minimum occasion is the smallest
-  value in the \code{occcol} column.
+  This function forces the data into cannonical order, sorting by first
+  subject (\code{idcol}) and then occasion (\code{occcol}).  It also
+  fills in missing combinations of subject and occasion with \code{NA}s.
+  If \code{zerostart} is true, then the occasions are numbered starting
+  at 0; if false, the minimum occasion is the smallest value in the
+  \code{occcol} column.
 
 }
 \section{Slots}{
@@ -48,6 +56,10 @@
       time indexes starting at 0 and 1.}
     \item{\code{nocc1}:}{Object of class \code{"integer"} number of
       occasions minus 1.}
+    \item{\code{isubj}:}{Object of class \code{"integer"} which contains
+      the subject on which this object is focused (used when object is
+      split using \code{\link{split_subj}}).  Its value is \code{NA} if
+      the object covers more than one subject.}
   }
 }
 \section{Methods}{
@@ -69,8 +81,21 @@
       occaion index.}
     \item{nsubj}{\code{signature(obj = "Panel_Frame")}: Returns the
       number of subjects indexed. }
+    \item{isubj}{\code{signature(obj = "Panel_Frame")}: Returns the
+      index of the focus subject, or \code{NA} if focused on multiple
+      objects.}
+    \item{isubj<-}{\code{signature(obj = "Panel_Frame",value = "integer")}:
+      Sets the index of the focus subject. }
     \item{names}{\code{signature(x = "Panel_Frame")}:  Returns the names
       of the columns of the underlying data frame.}
+    \item{get_subj}{\code{signature(x = "Panel_Frame", subj="integer")}:
+      fetches a smaller Panmat focused on subject.  See
+      \code{\link{split_subj}}.}
+    \item{get_subj<-}{\code{signature(x = "Panel_Frame", subj="integer",
+      value="Panmat")}: replaces or inserts smaller Panmat focused
+      on subject.}
+    \item{as_longform}{\code{signature(x = "Quadrature")}: Converts the
+      quadrature into long form (with indexes subj and occ). }
   }
 }
 \details{
@@ -132,4 +157,5 @@
 }
 \keyword{classes}
 \keyword{array}
+\keyword{chron}
 \concept{panel_data}

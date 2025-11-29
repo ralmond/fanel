@@ -114,7 +114,7 @@ CategoricalPop <- R6Class(
 
 Population <- R6Class(
   "Population",
-  inherit=ModelSet,  
+  inherit=ModelSet,
   public=list(
     name="A Population",
     initialize=function(name,popModels,groups=1L,
@@ -138,7 +138,7 @@ Population <- R6Class(
       data <- filter(data,occ==0)
       workers$start()
       workers$lapply(unique(data$group),\(g) {
-        mstep(self$models[[g]],select(data,group==g),
+        mstep(self$models[[g]],dplyr::filter(data,group==g),
               its=its,control=control,workers=workers)
       })
     }

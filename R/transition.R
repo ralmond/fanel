@@ -1,6 +1,6 @@
 expLambdaT <- function(Lambda,nmoments=10) {
   result <- diag(nrow(Lambda)) + Lambda/(2^nmoments)
-  for (mm in 1L:moments)
+  for (mm in 1L:nmoments)
     result <- result %*% result
   result
 }
@@ -9,7 +9,7 @@ expLambdaT <- function(Lambda,nmoments=10) {
 
 TransitionModel <- R6Class(
   classname="TransitionModel",
-  inherit=FModel,  
+  inherit=FModel,
   public = list(
     name="TransitionModel",
     continuous=FALSE,
@@ -39,34 +39,34 @@ TransitionModel <- R6Class(
     drawNext = function(theta,deltaT,covars=list()) {
       split(data.frame(theta=theta,deltaT=deltaT,covars,order=1L:nrow(covars)),
             self$splitter) |>
-        purr::map(\(sdata) {
+        purrr::map(\(sdata) {
           G <- self$tmat(self$pvec,sdata[1,"deltaT"],sdata[1,])
-          probs <- t(apply(G[dsdata$theta,],1,cumsum))
-          data.frame(result=rowSums(sweep,1,runif(length(theta)),">"),
+          probs <- t(apply(G[sdata$theta,],1,cumsum))
+          data.frame(result=rowSums(outer(runif(length(theta)),">",probs)),
                      order=sdata$order)
-        }) |> purr::list_rbind() |>
-        arrange(order) |>
-        select(result)
+        }) |> purrr::list_rbind() |>
+        dplyr::arange(order) |>
+        dplyr::select(result)
     },
     lprob=function(par=pvec(self),data) {
       self$cache$clear()
       split(data,self$splitter) |>
-        purr::map_dbl(\(sdata) self$lpinner(par,sdata)) |>
-        purr::reduce("+")
+        purrr::map_dbl(\(sdata) self$lpinner(par,sdata)) |>
+        purrr::reduce("+")
     },
     lpinner = function(par=pvec(self),data) {
       G = self$tmat(par,data[1,"deltaT"],data[1,])
       split(data,~subj) |>
-        purr::map_dbl(\(sdata) {
+        purrr::map_dbl(\(sdata) {
           lweight=sdata[[self$wname[2]]]
           rweight=sdata[[self$wname[3]]]
           sum(lweight*log(rweight%*%G))
-        }) |> purr::reduce("+")
+        }) |> purrr::reduce("+")
     },
     fillCache = function(par=pvec(self),data) {
       self$cache$clear()
       split(data,self$splitter) |>
-        purr::walk(\(sdata) {
+        purrr::walk(\(sdata) {
           self$tmat(par,data[1,"deltaT"],data[1,])
         })
     }
@@ -86,7 +86,7 @@ TransitionModel <- R6Class(
 
 UpDownGrowth <- R6Class(
   classname="UpDownGrowth",
-  inherit=GrowthModelC,
+  inherit=TransitionModel,
   public=list(
     initialize = function(name,nStates,uprate,downrate,
                           tname="theta", wname="w",
@@ -101,7 +101,7 @@ UpDownGrowth <- R6Class(
     },
     uprate=0,
     downrate=0,
-    xtime=character()
+    xtime=character(),
     nStates=2,
     rmat = function(pvec=pvec(self),deltaT,covar) {
       if (length(self$xtime)==0L) {
@@ -161,7 +161,7 @@ ActivitiesD <- R6Class(
       workers$start()
       workers$lapply(unique(data$action), \(act) {
         mod <- self$growthModels[[act]]
-        mod$fillCache(pvec(mod),select(data,action==act))
+        mod$fillCache(pvec(mod),dplyr::filter(data,action==act))
       })
     },
     mstep = function(data,its=3,control=list(),workers=Workers$new()) {

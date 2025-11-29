@@ -1,15 +1,18 @@
+### Note:  This file needs to be loaded before Panel_Data and Panel_Frame
+
 Panmat <- setClass(
   "Panmat",
   slots=c(
     mat="matrix",
     nsubj="integer",
     nocc="integer",
-    minocc="integer"
+    minocc="integer",
+    isubj="integer"
   )
 )
 
 panmat <- function(mat,nsubj=nrow(mat),nocc=ncol(mat),
-                   minocc=1L) {
+                   minocc=1L,isubj=NA_integer_) {
   if (!is.matrix(mat)) {
     nsubj <- 1L
     nocc <- length(mat)
@@ -18,7 +21,8 @@ panmat <- function(mat,nsubj=nrow(mat),nocc=ncol(mat),
   new("Panmat",mat=mat,
       nsubj=as.integer(nsubj),
       nocc=as.integer(nocc),
-      minocc=as.integer(minocc))
+      minocc=as.integer(minocc),
+      isubj=isubj)
 }
 
 setMethod("print","Panmat",function(x, ...) print(x@mat,...))
@@ -52,6 +56,12 @@ setMethod("as.Panmat","character",function(obj,minocc=1L) {
 setMethod("nsubj","Panmat", function(obj) obj@nsubj)
 setMethod("nsubj<-","Panmat", function(obj,value) {
   obj@nsubj<-as.integer(value)
+  obj
+})
+
+setMethod("isubj","Panmat", function(obj) obj@isubj)
+setMethod("isubj<-","Panmat", function(obj,value) {
+  obj@isubj<-as.integer(value)
   obj
 })
 
@@ -165,7 +175,7 @@ setMethod("cumsum","Panmat", function(x) {
 })
 
 setMethod("get_subj","Panmat", function(x,subj) {
-  as.panmat(x[subj,])
+  as.Panmat(x[subj,])
 })
 
 setMethod("get_subj<-","Panmat", function(x,subj,value) {
@@ -173,6 +183,3 @@ setMethod("get_subj<-","Panmat", function(x,subj,value) {
   x
 })
 
-setMethod("add_subj","Panmat", function(x,xnew) {
-  get_subj(x,nsubj(x)+1L) <- xnew
-})
