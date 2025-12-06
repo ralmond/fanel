@@ -411,6 +411,7 @@ test_that("as_longform Panel_Data", {
   pd <- long2panel(long,datacols=c("dat1","dat2"),
                    invcols=c("inv1","inv2"))
   lf <- as_longform(pd)
+  expect_setequal(names(lf),names(long))
   expect_equal(lf,long[names(lf)])
 })
 

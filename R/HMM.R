@@ -68,13 +68,14 @@ setMethod("as_longform","HMM",
                    name=deparse(substitute(x))) {
             as_longform(x$evidence) |>
               dplyr::left_join(as_longform(x$activities),
-                               dplyr::join_by(subj,occ)) |>
+                               dplyr::join_by("subj","occ")) |>
               dplyr::left_join(as_longform(x$populuation),
-                               dplyr::join_by(subj))
+                               dplyr::join_by("subj"))
           })
 
 longform <- function(hmm,quad,data) {
+  by <- dplyr::join_by("subj","occ")
   as_longform(quad) |>
-    dplyr::left_join(as_longform(hmm), dplyr::join_by(subj,occ)) |>
-    dplyr::left_join(as_longform(data), dplyr::join_by(subj,occ))
+    dplyr::left_join(as_longform(hmm), by) |>
+    dplyr::left_join(as_longform(data), by)
 }

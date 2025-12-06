@@ -1,6 +1,6 @@
 PopulationModel <- R6Class(
   classname="PopulationModel",
-  inherit="FModel",
+  inherit=FModel,
   public = list(
     name="<PopulationModel>",
     drawInit = function(npart,covars=list()) {
@@ -38,8 +38,11 @@ NormalPop <- R6Class(
       theta <- data[[self$tnames]]
       sum(dnorm(theta,mu,sigma,log=TRUE)*weights)
     },
-    cdf = function(theta,covars=list()) {
-      pnorm(theta,self$mu,self$sigma)
+    initProbs = function(theta,covars=list()) {
+      ord <- order(theta,decreasing=FALSE)
+      ps <- pnorm(theta[ord],self$mu,self$sigma)
+      pcuts <- c(0,ps[-1]-diff(ps)/2,1) #Midpoints of p's.
+      diff(pcuts)[order(ord)] #order(ord) undoes the ordering.
     },
     toString=function(digits=2,...) {
       paste0("<NormalPopulation: ",
@@ -124,6 +127,7 @@ Population <- R6Class(
       self$groups <- groups
       self$tnames <- tname
       self$wname <- wname
+      self$iname <- "group"
     },
     group = function(subj) {
       self$index[subj,]

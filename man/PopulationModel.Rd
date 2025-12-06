@@ -11,48 +11,51 @@
 
 }
 \section{Public Fields}{
-
+  All fields are inhereted from \code{\linkS4class{FModel}}.
   \describe{
-    \item{name}{Identifier for the model.}
-    \item{convergence}{If the maximizer was run, did it converge.}
-    \item{lp}{If the maximizer was run, the log posterior.}
+    \item{\code{$name}:}{A name for the model, primarily used for printing.}
+    \item{\code{$convergence}:}{Logical variable indicating whether or
+      not the last \code{mstep} converged.}
+    \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
+    \item{\code{$wname}:}{The name of the weight column(s). }
+    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
   }
 }
 \section{Active Fields}{
+  All fields are inhereted from \code{\linkS4class{FModel}}.
   \describe{
-    \item{pvec}{Returns a vectorized version of the parameters.}
+    \item{\code{$pvec}}{Returns a vectorized version of the parameters.}
   }
 }
 
 \section{Methods}{
 
+  Local methods:
   \describe{
-    \item{$draw}{\code{signature(theta,invariants=list())}:
-      Draws a random starting position.}
-    \item{$cdf}{\code{signature(theta,invariants=list())}:
-      Calculates the cumulative distribution function.}
-    \item{$lprob}{\code{signature(par=self$pvec,theta,weights,
-	invariants=list())}: Calculated the log likelihood of the
-      estimated growth given argument parameters.}
-    \item{$mstep}{\code{signature(theta,weights,invariants=list(),
-	its=3,control=list())}:  Runs the optimizer for
-      \code{its} steps.}
-    \item{$print}{\code{signature(...)}: Prints the object.}
-    \item{$toString}{\code{signature(...)}: Creates a string
+    \item{$drawInit}{\code{signature(npart,covars=list())}:
+      Draws a random starting position. (Used with random quadratures,
+      i.e., particle filter, and simulations.)}
+    \item{$initProbs}{\code{signature(theta,covars=list())}:
+      Calculates the initial probabilities for fixed quadratures.}
+  }
+  Note these methods must be implemented for subclasses.
+
+  \describe{
+    \item{\code{$lprob}}{\code{signature(par=self$pvec,data)}:
+      Calculates the log probability of the the starting position.}
+    \item{\code{$print}}{\code{signature(...)}: Prints the object.}
+    \item{\code{$toString}}{\code{signature(...)}: Creates a string
       represenation of the object.}
   }
 
   The arguments to these functions are as follows:
   \describe{
-    \item{theta}{The value of the latent variable at the initial time,
-      vectorized over particles.}
-    \item{invariants}{A list of additional subject-specific time
-      invariant covariates.}
+    \item{npart}{The number of latent variables to draw.}
+    \item{theta}{The value of the latent variable at the initial time.}
+    \item{covars}{A data-frame containing covariates at occasion 0.}
     \item{par}{The vectorized parameter.}
-    \item{weights}{The weights for the particles.}
-    \item{its}{The number of iterations of the optimizer to run.}
-    \item{control}{Other control parameters passed to
-      \code{\link{optim}}.}
+    \item{data}{A combined data set which contains columns for thetas
+      and weights.}
   }
 }
 \section{Constructor}{
@@ -65,17 +68,20 @@
   This is an instance of \code{\link[R6]{R6Class}}.
 
   Generally, a subclass needs to implment the \code{$pvec} active field
-  and the \code{$draw}, \code{$lprob}, \code{$cdf}, \code{$toString} and
-  \code{$initialize} methods.
+  and the \code{$drawInit}, \code{$lprob}, \code{$initProbs},
+  \code{$toString} and \code{$initialize} methods.
 
-  Existing subclasses:  \code{\linkS4class{NormalPop}}.
+  Existing subclasses:  \code{\linkS4class{NormalPop}},
+  \code{\linkS4class{CategoricalPop}}
 
 }
 \author{Russell G. Almond}
 \seealso{
 
-  \code{\linkS4class{NormalPop}}.
-  \code{\linkS4class{HMM}}, \code{\linkS4class{IRTF}}
+  Currently implemented subclasses:
+  \code{\linkS4class{NormalPop}},  \code{\linkS4class{CategoricalPop}}.
+
+  Container class \code{\linkS4class{Population}}.
 
 }
 \examples{
@@ -91,14 +97,16 @@ MyNormalPop <- R6Class(
         },
         mu=0,
         sigma=1,
-        draw = function(npart,invariants=list()) {
+        drawInit = function(npart,covars=list()) {
           mu <- self$mu
           sigma <- self$sigma
           rnorm(npart,mu,sigma)
         },
-        lprob = function(par=self$pvec,theta,weights,invariants=list()) {
+        lprob = function(par=self$pvec,data) {
           mu <- par[1]
           sigma <- exp(par[2])
+          weights <- data[[self$wname]]
+          theta <- data[[self$tnames]]
           sum(dnorm(theta,mu,sigma,log=TRUE)*weights)
         },
         cdf = function(theta,invariants=list()) {

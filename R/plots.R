@@ -4,16 +4,16 @@ bySubjPlot <- function(results,theta="theta",weight="w",
                        lowcol="gray90",highcol="gray10",
                        aveshape=4,avecol="red",avesize=2,
                        trueshape=8,truecol="blue",truesize=2) {
-  summar <- dplyr::summary(results,
-                      theta_bar=wtd.mean({{theta}},{{wname}}),
-                     theta_w=2*sqrt(wtd.var({{theta}},{{wname}},
+  summar <- dplyr::summarize(results,
+                      theta_bar=wtd.mean({{theta}},{{weight}}),
+                     theta_w=2*sqrt(wtd.var({{theta}},{{weight}},
                                             normwt=TRUE)))
 
   if (!missing(theta0)) summar$theta0 <- theta0
   plot <-
     ggplot2::ggplot(results,
-                    ggplot2::aes(x=results$subj,y=results$theta,
-                                 colour=results$weights,
+                    ggplot2::aes(x=results$subj,y=results[[theta]],
+                                 colour=results[[weight]],
                                  frame=results$occ)) +
     ggplot2::geom_point() +
     ggplot2::scale_colour_gradient(low=lowcol,high=highcol) +
@@ -48,16 +48,16 @@ byTimePlot <- function(results,theta="theta",weight="w",
                        avetype=2,avecol="red",linewidth=1,
                        truetype=1,truecol="blue") {
 
-  summar <- dplyr::summary(results,
-                      time=dplyr::first(time),
-                      theta_bar=wtd.mean({{theta}},{{wname}}),
-                      theta_w=2*sqrt(wtd.var({{theta}},{{wname}},
+  summar <- dplyr::summarize(results,
+                      time=dplyr::first(.data$time),
+                      theta_bar=wtd.mean({{theta}},{{weight}}),
+                      theta_w=2*sqrt(wtd.var({{theta}},{{weight}},
                                              normwt=TRUE)))
   if (!missing(theta0)) summar$theta0 <- theta0
   plot <-
     ggplot2::ggplot(results,
-                    ggplot2::aes(x=results$time,y=results$theta,
-                                 colour=results$weights,
+                    ggplot2::aes(x=results$time,y=results[[theta]],
+                                 colour=results[[weight]],
                                  frame=results$subj)) +
     ggplot2::geom_point() +
     ggplot2::scale_colour_gradient(low=lowcol,high=highcol) +

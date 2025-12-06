@@ -323,6 +323,6 @@ BWquad(times,qpoints,tnames=vnames(qpoints),
 showClass("Quadrature")
 }
 \keyword{classes}
-\keyword{chron}
+\keyword{ ts }
 \concept{ panel_data }
 \concept{ quadrature }

@@ -2,36 +2,37 @@
 \alias{wtd.Ecdf}
 \alias{wtd.loess.noiter}
 \alias{wtd.mean}
+\alias{wtd.sd}
 \alias{wtd.quantile}
 \alias{wtd.rank}
 \alias{wtd.table}
 \alias{wtd.var}
-\title{
-A Capitalized Title (ideally limited to 65 characters)
-}
+\title{Weighted summary functions borrowed from Hmisc package.}
 \description{
 
-  These are inherited from \code{Hmisc::\link[Hmisc]{wtd.stats}}.  Note that for
-  particle filter or q filter output, \code{normwt=TRUE} produces the correct result.
+  These are inherited from \code{Hmisc::\link[Hmisc]{wtd.stats}}.  Note
+  that for particle filter or q filter output, \code{normwt=TRUE}
+  produces the correct result.
 
 }
 \usage{
 wtd.Ecdf(x, weights = NULL, type = c("i/n", "(i-1)/(n-1)", "i/(n+1)"),
-    normwt = FALSE, na.rm = TRUE)
-wtd.loess.noiter(x, y, weights = rep(1, n), span = 2/3, degree = 1,
+    normwt = TRUE, na.rm = TRUE)
+wtd.loess.noiter(x, y, weights = rep(1, length(x)), span = 2/3, degree = 1,
     cell = 0.13333, type = c("all", "ordered all", "evaluate"),
     evaluation = 100, na.rm = TRUE)
 wtd.mean(x, weights = NULL, normwt = "ignored", na.rm = TRUE)
 wtd.quantile(x, weights = NULL, probs = c(0, 0.25, 0.5, 0.75, 1),
        type = c("quantile", "(i-1)/(n-1)", "i/(n+1)", "i/n"),
-       normwt = FALSE, na.rm = TRUE)
-wtd.rank(x, weights = NULL, normwt = FALSE, na.rm = TRUE)
-wtd.table(x, weights = NULL, type = c("list", "table"), normwt = FALSE,
+       normwt = TRUE, na.rm = TRUE)
+wtd.rank(x, weights = NULL, normwt = TRUE, na.rm = TRUE)
+wtd.sd(x, weights = NULL, normwt = TRUE, na.rm = TRUE, method = c("unbiased",
+    "ML"))
+wtd.table(x, weights = NULL, type = c("list", "table"), normwt = TRUE,
     na.rm = TRUE)
-wtd.var(x, weights = NULL, normwt = FALSE, na.rm = TRUE, method = c("unbiased",
+wtd.var(x, weights = NULL, normwt = TRUE, na.rm = TRUE, method = c("unbiased",
     "ML"))
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x,y}{A data vector}
   \item{weights}{A vector of weights}
@@ -48,11 +49,22 @@ wtd.var(x, weights = NULL, normwt = FALSE, na.rm = TRUE, method = c("unbiased",
 }
 \value{
   Depends on the function, see \code{Hmisc::\link[Hmisc]{wtd.stats}}
+
+  Note that \code{wtd.quantile} returns a data frame with columns
+  \code{$q} and \code{$p} to facilitate use with
+  \code{\link[dplyr]{reframe}}.
 }
 \author{Imported from \code{Hmisc} package, authors:  Frank Harrell and
 Benjamin Tyner.
 
 This docfile written by Russell Almond.
+}
+\note{
+  The versions in this package change the default value of the
+  \code{normwt} argument to TRUE, while the original versions in the
+  \code{Hmisc} package the default value is FALSE.  Explicitly
+  specifying the value is probably best practice either version could be
+  masked depending on the package loading order.
 }
 \seealso{
   See \code{Hmisc::\link[Hmisc]{wtd.stats}}

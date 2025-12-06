@@ -1,0 +1,95 @@
+---
+title: "Partially Observed Markov Decision Processes and Panel Data"
+author: "Russell G. Almond"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Partially Observed Markov Decision Processes and Panel Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, notice=FALSE}
+library(fanel)
+library(tidyverse)
+```
+
+# POMDPs and Panel Data
+
+## POMDP Framework
+
+### Variables and Indexes
+
+## Models and Model Sets
+
+## Panel Data
+
+## Filters and Quadratures
+
+## Parameter Estimation
+
+## Planning
+
+# Long form data and Panel Data
+
+## Panmats, Panel\_Frames and Panel\_Data.
+
+## Model Sets
+
+## Quadratures
+
+# Model Specifications
+
+## Models and Model Sets
+
+## Population Models
+
+## Growth Models
+
+## Transition Models
+
+## Evidence (Emission) Models
+
+## POMDP container
+
+# Quadratures and Filters
+
+## Fixed Quadrature and qFilter
+
+## bwQuad and BWFilter
+
+## partileQuad and particleFilter
+
+## Summaries of Quadratures
+
+### Graphical Displays
+
+# Algorithms
+
+## Simulation
+
+## Q Filters
+
+### Supplied Filters
+
+## Particle filter
+
+## Baum-Welch Filter
+
+# Model Fitting with EM-algorithm
+
+## E-step
+
+## M-step
+
+### Data Splitting
+
+### Maximizing Log Posterior
+
+# Planning

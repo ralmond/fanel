@@ -8,6 +8,7 @@
 .Rapp.history
 .RData
 .RDataTmp
+.\#*
 # Example code in package build process
 *-Ex.R
 # Output files from R CMD build
@@ -41,4 +42,3 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
-

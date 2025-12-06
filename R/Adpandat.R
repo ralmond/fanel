@@ -154,12 +154,12 @@ setMethod("as_longform","Panel_Data",
                    name=deparse(substitute(x))) {
   if (missing(name)) name <- "time"
   if (missing(minocc)) minocc <- 0L
-  as_longform(x$time,n,maxocc,minocc,name) |>
+  as_longform(x$time,n,maxocc,minocc,name=name) |>
     dplyr::left_join(cbind(subj=1:n,x$invar),
-                     dplyr::join_by(subj)) |>
+                     dplyr::join_by("subj")) |>
     dplyr::left_join(as_longform(x$vari,n,maxocc,
                                         minocc),
-                     dplyr::join_by(subj,occ))
+                     dplyr::join_by("subj","occ"))
 })
 
 long2panel <- function(df, idcol="subj", timecol="time", occcol="occ",

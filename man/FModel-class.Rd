@@ -86,3 +86,5 @@ showClass("FModel")
 \keyword{classes}
 \keyword{models}
 \concept{ panel_data }
+\concept{ POMDP}
+\concept{ HMM}

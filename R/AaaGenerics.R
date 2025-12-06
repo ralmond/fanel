@@ -59,18 +59,6 @@ setGeneric("mstep",
              standardGeneric("mstep")
            })
 
-setMethod("mstep","ANY", function(obj, data, its=3, control=list(),
-                                      workers=Workers$new()) {
-  control$maxits <- its
-  result <- stats::optim(pvec(obj),\(pv) lprob(obj,pv,data))
-  if (result$convergence > 1)
-    warning("Convergence issues with ",
-            toString(obj), "\n", result$message)
-  obj$lp <- result$value
-  obj$pvec <- result$par
-  obj$convergence <- result$convergence
-  list(name=obj$name,result)
-})
 
 
 FModel <- R6Class(
@@ -82,6 +70,18 @@ FModel <- R6Class(
     wname="w",
     lprob = function(par=self$pvec,data) {
       stop("Lprob not implemented for ", class(self))
+    },
+    mstep=function(data, its=3,control=list(),
+                   workers=NULL) {
+      control$maxits <- its
+      result <- stats::optim(self$pvec,\(pv) obj$lprob(pv,data))
+      if (result$convergence > 1)
+        warning("Convergence issues with ",
+                self$toString(), "\n", result$message)
+      self$lp <- result$value
+      self$pvec <- result$par
+      self$convergence <- result$convergence
+      list(name=self$name,result)
     },
     print=function(...) {
       print(self$toString(...),...)
@@ -117,10 +117,17 @@ setMethod("lprob","FModel",
              obj$lprob(par,data)
            })
 
+setMethod("mstep","ModelSet",
+          function(obj, data, its=3,control=list(),
+                   workers=Workers$new()) {
+            obj$mstep(data)
+          })
+
 ModelSet <- R6Class(
   "ModelSet",
   public=list(
     name="Model Set",
+    iname=character(),
     models=list(),
     index=1L,
     initialize=function(name,models,index=1L,

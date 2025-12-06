@@ -1,21 +1,21 @@
-\name{NormalPop}
-\Rdversion{1.1}
+\name{CategoricalPop-class}
 \docType{class}
-\alias{NormalPop-class}
-\alias{NormalPop}
+\alias{CategoricalPop-class}
+\alias{CategoricalPop}
 
-\title{Class \code{"NormalPop"}}
+\title{Class \code{"CategoricalPop"}}
 \description{
 
-  A normal distribution for initial values.
+  This is a distribution over a fixed set of \dQuote{theta} values which
+  assigns a probability to each state.
 
 }
 \section{Public Fields}{
 
   Local to this class.
   \describe{
-    \item{\code{$mu}}{Population mean.}
-    \item{\code{$sigma}}{Population standard deviation.}
+    \item{\code{$states}}{The set of possible values.  This should have
+      the same length as \code{$probs}.}
   }
 
   Inherited fields:
@@ -31,20 +31,21 @@
 }
 \section{Active Fields}{
   \describe{
-    \item{\code{$pvec}}{The vector \code{c(mu,log(sigma))}.}
+    \item{\code{$pvec}}{The the log of the probabilities.}
+    \item{\code{$probs}}{The probabilities for each state.}
   }
 }
 \section{Methods}{
 
   \describe{
-    \item{\code{$initialize}}{\code{(name,mu,sigma,tname,wname)}:
+    \item{\code{$initialize}}{\code{(name,mu,states,probs,tnames,wname)}:
       Constructor, called by \code{$new}.}
     \item{\code{$drawInit}}{\code{(npart,covars=list())}:
       Draws a random starting position. (Used with random quadratures,
       i.e., particle filter, and simulations.)}
-    \item{\code{$initProbs}}{\code{(theta,covars=list())}:
+    \item{\code{$initProbs}}{\code{signature(theta,covars=list())}:
       Calculates the probability of the initial quadrature.}
-    \item{\code{$lprob}}{\code{(par=self$pvec,data)}:
+    \item{\code{$lprob}}{\code{signature(par=self$pvec,data)}:
       Calculates the log probability of the the starting position.}
     }
 
@@ -52,8 +53,9 @@
 \section{Constructor}{
 
 The usual expression for building this distribution is
-\code{NormalPop$new(\var{name},\var{mean},\var{sd},\var{tname}="theta",
-  \var{wname}="w")}.
+\code{CategoricalPop$new(\var{name},\var{states}=seq(0L,2L,1L),
+  \var{probs}=rep(1/length(states),length(states)), tname="theta",
+  wname="w")}.
 
 }
 \section{Superclasses and Subclasses}{
@@ -70,14 +72,12 @@ The usual expression for building this distribution is
   \code{\linkS4class{PopulationModel}}, \code{\linkS4class{Population}}
 
 }
-
 \examples{
-apop <- NormalPop$new("standard",0,1)
+apop <- CategoricalPop$new("standard",0:3,rep(1/4,4))
 apop$pvec
 apop$drawInit(3)
-apop$lprob(c(0,0),data.frame(theta=c(-1,0,1),w=c(1,2,1)/4))
-apop$initProbs(c(-1,0,1))
-
+apop$lprob(c(0,0),data.frame(theta=0:3,w=c(1,2,2,1)/6))
+apop$initProbs(c(0:3))
 }
 \keyword{classes}
 \keyword{models}

@@ -1,6 +1,6 @@
 EvidenceModel <- R6Class(
   classname="EvidenceModel",
-  inherit="FModel",
+  inherit=FModel,
   public = list(
     name="<EvidenceModel>",
     drawObs = function(theta,covars=list()) {

@@ -17,10 +17,10 @@ qFilter.HMM <- function(object,covars,quad,wfun,...,workers=Workers$new()) {
                                        cov$getInvar(isubj))
     qua$lweights[isubj,,] <- outer(log(iprobs),
                                      wf(cov$dt[isubj,0L],tstar),"*")
-    
+
     for (iocc in 0L:maxocc(cov)) {
     qua$lweights[isubj,,] <- qua$lweights[isubj,,] +
-      outer(hmm$evalEvidence(subj,iocc,cov$getData(subj,iocc),thetas,
+      outer(hmm$evalEvidence(isubj,iocc,cov$getData(isubj,iocc),thetas,
                              cov$getVar(isubj,iocc)),
             wf(cov$dt[isubj,iocc],tstar),"*")
     }

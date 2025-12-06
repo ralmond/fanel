@@ -46,13 +46,13 @@ normalForm <- function(data,idcol="subj",occcol="occ",
       names(data)[names(data)==occcol] <- "occ"
     }
     if (by1) {
-      by <- dplyr::join_by(subj,occ)
+      by <- dplyr::join_by("subj","occ")
     } else {
-      by <- dplyr::join_by(occ)
+      by <- dplyr::join_by("occ")
     }
   } else {
     if (by1) {
-      by <- dplyr::join_by(subj)
+      by <- dplyr::join_by("subj")
     } else {
       by <- NULL
     }

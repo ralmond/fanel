@@ -182,11 +182,11 @@ setMethod("as_longform","Quadrature",
       thetas <- data.frame(subj=rep(1L:nsubj(x),each=nquad(x)),
                            quad=rep(1L:nquad(x),nsubj(x)),
                            thetas)
-      by <- dplyr::join_by(subj,quad)
+      by <- dplyr::join_by("subj","quad")
     } else {
       thetas <- data.frame(quad=1L:nquad(x),
                            thetas)
-      by <- dplyr::join_by(quad)
+      by <- dplyr::join_by("quad")
     }
   } else {
     if (x$bysubj) {
@@ -196,17 +196,17 @@ setMethod("as_longform","Quadrature",
                                    nsubj(x)),
                            quad=rep(1L:nquad(x),nsubj(x)*nocc(x)),
                            thetas)
-      by <- dplyr::join_by(subj, occ, quad)
+      by <- dplyr::join_by("subj", "occ", "quad")
     } else {
       thetas <- data.frame(occ=rep(minocc(x):maxocc(x)),
                            quad=rep(1L:nquad(x),nocc(x)),
                            thetas)
-      by <- dplyr::join_by(occ, quad)
+      by <- dplyr::join_by("occ", "quad")
     }
   }
   result |>
-    dplyr::left_join(as_longform(x$times,n,maxocc,minocc,name),
-                     dplyr::join_by(subj,occ)) |>
+    dplyr::left_join(as_longform(x$times,n,maxocc,minocc,name=name),
+                     dplyr::join_by("subj","occ")) |>
     dplyr::left_join(as_longform(thetas),by)
 
 })

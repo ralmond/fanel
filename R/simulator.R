@@ -1,6 +1,13 @@
-simulate.HMM <- function(object,covars, nsim=nsubj(object),...,
+simulate.HMM <- function(object, nsim, seed, ...,
+                         covars=NULL,
                          workers=Workers$new()) {
-
+  if (missing(covars)) {
+    stop("Covariates must be supplied.")
+  }
+  if (missing(nsim)) nsim=nsubj(object)
+  if (!missing(seed)) {
+    workers$seed <- seed
+  }
   workers$start()
 
   ldata <- as_longform(covars)
@@ -16,20 +23,20 @@ simulate.HMM <- function(object,covars, nsim=nsubj(object),...,
     data <- as.data.frame(lapply(dnames,\(n) rep(NA,nocc(cov))))
     names(data) <- dnames
 
-    theta[1L,] <- hmm$population$drawInit(subj,1L,cov[1L,])
+    theta[1L,] <- hmm$population$drawInit(isubj,1L,cov[1L,])
 
     for (iocc in 1L:maxocc(cov)) {
-      theta[iocc+1L,] <- hmm$activities$drawNext(subj,iocc,
+      theta[iocc+1L,] <- hmm$activities$drawNext(isubj,iocc,
                                                  theta[iocc,],
                                                  cov[iocc+1L,"deltaT"],
                                                  cov[iocc+1L,])
-      data[iocc,] <- hmm$evidence$drawObs(subj,iocc,
+      data[iocc,] <- hmm$evidence$drawObs(isubj,iocc,
                                           theta[iocc,],
                                           cov[iocc+1L,])
     }
     names(theta) <- paste0(tnames,"_sim")
     cbind(cov,theta,data)
-  }, object) |> purr::list_rbind() -> result
+  }, object) |> purrr::list_rbind() -> result
 
   workers$stopFlag()
   long2panel(result,datacols=object$evidence$dnames,

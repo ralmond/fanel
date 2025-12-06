@@ -20,7 +20,7 @@ BrownianGrowth <- R6Class(
       self$gain <- gain
       self$inovSD <- inovSD
       self$tnames <- tname
-      self$wnames <- wname
+      self$wname <- wname
     },
     gain=0,
     inovSD=.1,
