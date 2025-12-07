@@ -6,7 +6,7 @@
 
   Quadrature data has indexes:  \dQuote{subj}, \dQuote{occ} and
   \dQuote{quad}. The \code{\linkS4class{Panel_Data}} and
-  \code{\linkS4class{HMM}} classes only have the first two indexes.  To
+  \code{\linkS4class{ModelSet}} classes only have the first two indexes.  To
   join them together, there is a need summarize across the quadrature
   points.  The \code{summaryq} function provides the mean and standard
   deviation (error) as summaries.  The \code{summaryqq} function
@@ -47,7 +47,7 @@ summaryqq(quad, probs = c(.025, 0.5, 0.975), thetas=quad$tnames,
   \code{summaryqq} and \code{summarylowess} is what goes in the dots.
 
   The next catch is that there may be more than one latent variable, so
-  \code{\link[dplyr]{across(thetas,sumfuns}} is used to generate the
+  \code{\link[dplyr]{across}(thetas,sumfuns)} is used to generate the
   summaries.  This should be a named list of unevaluated expressions,
   the names are uses as suffixes for the final colums, which have the
   format \code{\var{theta}_\var{fun}}.  In the lambda expression use

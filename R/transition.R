@@ -14,33 +14,35 @@ TransitionModel <- R6Class(
     name="TransitionModel",
     continuous=FALSE,
     nmoments = 10,
-    splitter = ~deltaT,
+    splitter = ~deltaT+dose,
     xtime=character(),
-    rmat = function(pvec=pvec(self),deltaT,covars=list()) {
+    rmat = function(pvec=pvec(self),deltaT,dose=deltaT,covars=list()) {
       stop("No matrix definition provided for ", class(self))
     },
-    tmat = function(pvec=pvec(self),deltaT,covars=list()) {
+    tmat = function(pvec=pvec(self),deltaT,dose=deltaT,covars=list()) {
       key <- c(deltaT,as.numeric(covars[1L,self$xtime]))
       cached <- self$cache(key)$get(key)
       if (is.null(cached)) {
-        cached <- expLambdaT(rmat(pvec,deltaT,covars),self$nmoments)
+        cached <- expLambdaT(rmat(pvec,deltaT,dose,covars),self$nmoments)
         self$cache(key)$assign(key,cached)
       }
       cached
     },
-    advance = function(lweights,deltaT,covars=list()) {
+    advance = function(lweights,deltaT,dose=deltaT,covars=list()) {
       if (abs(deltaT) < .0001) return(lweights)
-      tmat(self(pvec),deltaT,covars) %*% lweights
+      tmat(self(pvec),deltaT,dose,covars) %*% lweights
     },
-    retreat = function(rweights,deltaT,covars=list()) {
+    retreat = function(rweights,deltaT,dose=deltaT,covars=list()) {
       if (abs(deltaT) < .0001) return(rweights)
-      tmat(self(pvec),deltaT,covars) %*% rweights
+      tmat(self(pvec),deltaT,dose,covars) %*% rweights
     },
-    drawNext = function(theta,deltaT,covars=list()) {
-      split(data.frame(theta=theta,deltaT=deltaT,covars,order=1L:nrow(covars)),
+    drawNext = function(theta,deltaT,dose=deltaT,covars=list()) {
+      split(data.frame(theta=theta,deltaT=deltaT,
+                       dose=dose,covars,order=1L:nrow(covars)),
             self$splitter) |>
         purrr::map(\(sdata) {
-          G <- self$tmat(self$pvec,sdata[1,"deltaT"],sdata[1,])
+          G <- self$tmat(self$pvec,sdata[1,"deltaT"],sdata[1,"dose"],
+                         sdata[1,])
           probs <- t(apply(G[sdata$theta,],1,cumsum))
           data.frame(result=rowSums(outer(runif(length(theta)),">",probs)),
                      order=sdata$order)
@@ -89,30 +91,22 @@ UpDownGrowth <- R6Class(
   inherit=TransitionModel,
   public=list(
     initialize = function(name,nStates,uprate,downrate,
-                          tname="theta", wname="w",
-                          xTime="xTime") {
+                          tname="theta", wname="w") {
       self$name <- name
       self$nStates <- nStates
       self$uprate <- uprate
       self$downrate <- downrate
       self$tnames <- tname
       self$wname <- wname
-      self$xtime <- xTime
     },
     uprate=0,
     downrate=0,
-    xtime=character(),
     nStates=2,
-    rmat = function(pvec=pvec(self),deltaT,covar) {
-      if (length(self$xtime)==0L) {
-        xTime <- deltaT
-      } else {
-        xTime <- covar[1L,self$xtime]
-      }
+    rmat = function(pvec=pvec(self),deltaT,dose=deltaT,covar) {
       up <- exp(pvec[1:(self$nStates-1)])
       down <- exp(pvec[self$nStates:length(pvec)])
       matR <- matrix(0,self$nStates,self$nStates)
-      mgcv::sdiag(matR,1) <- up*xTime
+      mgcv::sdiag(matR,1) <- up*dose
       mgcv::sdiag(matR,-1) <- down*deltaT
       diag(matR) <- -rowSums(matR)
       matR
@@ -145,17 +139,17 @@ ActivitiesD <- R6Class(
   "ActivitiesD",
   inherit=Activities,
   public=list(
-    advance = function(subj,it,lweights,deltaT,covar=NULL) {
-      self$models[[self$action(subj,it)]]$
-        advance(lweights,deltaT,covar)
+    advance = function(subj,iocc,lweights,covar=NULL) {
+      self$models[[self$action(subj,iocc)]]$
+        advance(lweights,self$deltaT(subj,iocc),self$dose(subj,iocc),covar)
     },
-    retreat = function(subj,it,rweights,deltaT,covar=NULL) {
-      self$models[[self$action(subj,it)]]$
-        retreat(rweights,deltaT,covar)
+    retreat = function(subj,iocc,rweights,covar=NULL) {
+      self$models[[self$action(subj,iocc)]]$
+        retreat(rweights,self$deltaT(subj,iocc),self$dose(subj,iocc),covar)
     },
-    tmat = function(subj,it,deltaT,covar) {
-      mod <- self$models[[self$action(subj,it)]]
-      mod$tmat(pvec(mod),deltaT,covar)
+    tmat = function(subj,iocc,covar) {
+      mod <- self$models[[self$action(subj,iocc)]]
+      mod$tmat(pvec(mod),self$deltaT(subj,iocc),self$dose(subj,iocc),covar)
     },
     fillCache = function(data,workers=Workers$new()) {
       workers$start()
@@ -185,4 +179,17 @@ ActivitiesD <- R6Class(
     }
   )
 )
+
+setOldClass("ActivitiesD")
+
+setMethod("advanceWeights", "ActivitiesD",
+          function(model, isubj, iocc, lweights, covar=NULL) {
+  model$advance(isubj,iocc,lweights,covar)
+})
+
+setMethod("retreatWeights", "ActivitiesD",
+          function(model, isubj, iocc, rweights, covar=NULL) {
+  model$retreat(isubj,iocc,rweights,covar)
+})
+
 

@@ -74,9 +74,10 @@ The recommended way to build this model is
 gr <- GradedResponse$new("agr",1,c(-1,1))
 gr
 gr$pvec
-gr$draw(c(-1,0,1))
+gr$drawObs(c(-1,0,1))
 gr$llike(c(0,1,0),c(-1,0,1))
-gr$lprob(gr$pvec,c(0,1,0),c(-1,0,1),c(.4,.3,.3))
+dat <- data.frame(Y=c(0,1,0),theta=c(-1,0,1),w=c(.4,.3,.3))
+gr$lprob(gr$pvec,dat)
 
 
 

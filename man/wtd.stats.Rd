@@ -1,4 +1,5 @@
 \name{wtd.stats}
+\alias{wtd.stats}
 \alias{wtd.Ecdf}
 \alias{wtd.loess.noiter}
 \alias{wtd.mean}
@@ -86,22 +87,22 @@ make_ems <- function() {
        NormalScore$new("I2",.25,.25))
 }
 
-hmm<-HMM$new("stimulator",
-             list(NormalPop$new("P1",-1/2,1),
-                  NormalPop$new("P2",1/2,1)),
-             list(BrownianGrowth$new("G1",1,1/100)),
-             list(NormalScore$new("N0",0,1)))
-hmm$clspec <- 1
-hmm$groups <- 1:2
-hmm$deltaT<-rep(1,3)
-hmm$data <- outer(c(-1,1)/2,1:3,"+")
-particleFilter(hmm,5)
-longResults(hmm) |>
-  dplyr::group_by(occ,subj) |>
-  dplyr::summarize(theta_bar=wtd.mean(theta,weights),
-                   theta_sd=sqrt(wtd.var(theta,weights,normwt=TRUE)),
-                   theta_lb=wts.quantile(theta,weights,probs=.025),
-                   theta_ub=wts.quantile(theta,weights,probs=.925))
+#hmm<-POMDP$new("stimulator",
+#             list(NormalPop$new("P1",-1/2,1),
+#                  NormalPop$new("P2",1/2,1)),
+#             list(BrownianGrowth$new("G1",1,1/100)),
+#             list(NormalScore$new("N0",0,1)))
+#hmm$clspec <- 1
+#hmm$groups <- 1:2
+#hmm$deltaT<-rep(1,3)
+#hmm$data <- outer(c(-1,1)/2,1:3,"+")
+#particleFilter(hmm,5)
+#longResults(hmm) |>
+#  dplyr::group_by(occ,subj) |>
+#  dplyr::summarize(theta_bar=wtd.mean(theta,weights),
+#                   theta_sd=sqrt(wtd.var(theta,weights,normwt=TRUE)),
+#                   theta_lb=wts.quantile(theta,weights,probs=.025),
+#                   theta_ub=wts.quantile(theta,weights,probs=.925))
 
 
 }

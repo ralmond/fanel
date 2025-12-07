@@ -38,7 +38,7 @@ long2panel(df, idcol = "subj", timecol = "time", occcol = "occ",
   data are stored in a separate data frame and sometimes as data values at time point zero.
 
   The most convenient way to store data for such models is long form data
-  (see \code{dplyr::\link[dplyr]{pivot_longer}}).  There are two index columns,
+  (see \code{dplyr::\link[tidyr]{pivot_longer}}).  There are two index columns,
   nominally, \dQuote{subj} (subject index) and \dQuote{occ} (occasion index),
   although the \code{idcol} and \code{occcol} fields can be used to indicate a
   different name.  If there is no occasion column, but there is a time column, then the
@@ -51,7 +51,7 @@ long2panel(df, idcol = "subj", timecol = "time", occcol = "occ",
   The other are covariates; both data and covariates are returned by the
   \code{\linkS4class{Panel_Data}$getVar()} method.  The \code{datacols} argument gives
   the names of the data data columns.  Note that if these columns do not exist, they are
-  created and filled with \code{NA}s, which is useful for use with \code{\link{simulate.HMM}}.
+  created and filled with \code{NA}s, which is useful for use with \code{\link{simulate.POMDP}}.
 
   Time invariant data can be entered in two ways:  first it can be placed in occasion zero,
   and marked with the \code{invcols} argument.  Second, it can be placed in a separate data

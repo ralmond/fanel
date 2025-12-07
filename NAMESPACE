@@ -14,12 +14,16 @@ export(FModel,ModelSet)
 exportClass(FModel,ModelSet)
 export(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
-       split_subj, add_subj, bind_subj, pvec, "pvec<-", lprob, mstep)
+       split_subj, add_subj, bind_subj, pvec, "pvec<-", lprob, mstep,
+       drawInitial, ProbInit, drawData, evalEvidence, drawGrowth,
+       advanceWeights, retreatWeights
+       )
 exportMethods(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
-       pvec, "pvec<-", lprob, mstep
-
-)
+       pvec, "pvec<-", lprob, mstep,
+       drawInitial, ProbInit, drawData, evalEvidence, drawGrowth,
+       advanceWeights, retreatWeights
+       )
 exportClass(Panmat, Panel_Frame, Panel_Data)
 export(Panel_Data, Panel_Frame, Panmat)
 export(panmat, mat, "mat<-", as.Panmat,
@@ -35,23 +39,23 @@ export(fixedQuad, particleQuad, BWQuad)
 export(PopulationModel, NormalPop, CategoricalPop, Population)
 exportClass(Population)
 
-export(GrowthModel, BrownianGrowth, SpurtGrowth, Activities)
+export(GrowthModel, BrownianGrowth, Activities)
 exportClass(Activities)
 
 export(TransitionModel, UpDownGrowth, ActivitiesD)
+exportClass(ActivitiesD)
 export(expLambdaT)
 
 export(EvidenceModel, GradedResponse, NormalScore, Evidence)
 exportClass(Evidence)
 export(logit, invlogit, cuts2probs)
 
-export(HMM)
-exportClass(HMM)
-export(drawInit, drawObs, drawNext, llike)
+export(POMDP)
+exportClass(POMDP)
 export(longform)
 
-export(simulate.HMM,particleFilter.HMM,bwFilter.HMM,qFilter.HMM)
-S3method(simulate,HMM)
+export(simulate.POMDP,particleFilter,bwFilter,qFilter)
+S3method(simulate,POMDP)
 
 export(squareWindow,linearWindow,exponentialWindow,gaussianWindow,
        parzenWindow,welchWindow,sineWindow,cosineSumWindow,

@@ -1,4 +1,4 @@
-bwFilter.HMM <- function(object,covars,quad,...,workers=Workers$new()) {
+bwFilter <- function(object,covars,quad,...,workers=Workers$new()) {
 
   workers$start()
 
@@ -11,40 +11,36 @@ bwFilter.HMM <- function(object,covars,quad,...,workers=Workers$new()) {
     thetas <- qua$theta(1L,1L)
 
     ## Forwards
-    lweights <- hmm$population$initProbs(isubj,thetas,cov$getInvar(isubj))
-    lweights <- lweights*exp(hmm$evidence$
-                             llike(isubj,0L,cov$getData(isubj,0L),
-                                   thetas,cov$getVar(isubj,0L)))
+    lweights <- ProbInit(hmm,isubj,thetas,cov$getInvar(isubj))
+    lweights <- lweights*exp(evalEvidence(hmm,isubj,0L,
+                                          cov$getData(isubj,0L),
+                                          thetas,cov$getVar(isubj,0L)))
     qua$lweights[1L,1L,] <- lweights
 
     for (iocc in 1L:maxocc(cov)) {
-      lweights <- hmm$activities$advance(isubj,iocc,
-                                         lweights,cov$dt[isubj,iocc],
-                                         cov$getVar(isubj,iocc))
-      lweights <- lweights*exp(hmm$evidence$
-                               llike(isubj,iocc,cov$getData(isubj,iocc),
-                                     thetas,
-                                     cov$getVar(isubj,iocc)))
+      lweights <- advanceWeights(hmm,isubj,iocc,lweights,
+                                 cov$getVar(isubj,iocc))
+      lweights <- lweights*exp(evalEvidence(hmm,isubj,iocc,
+                                            cov$getData(isubj,iocc),
+                                            thetas,cov$getVar(isubj,iocc)))
       qua$lweights[1L,iocc+1L,] <- lweights
     }
 
     ## Reverse
     iocc <- maxocc(cov)
     rweights <- rep(1,nquad(qua))
-    rweights <- rweights*exp(hmm$evidence$
-                             llike(isubj,iocc,cov$getData(isubj,iocc),
-                                   thetas,
-                                   cov$getVar(isubj,iocc)))
+    rweights <- rweights*exp(evalEvidence(hmm,isubj,iocc,
+                                          cov$getData(isubj,iocc),
+                                          thetas, cov$getVar(isubj,iocc)))
     qua$rweights[1L,iocc+1L,] <- rweights
 
     for (iocc in maxocc(cov):1L) {
-      rweights <- hmm$activities$retreat(isubj,iocc,
-                                         rweights,cov$dt[isubj,iocc],
-                                         cov$getVar(isubj,iocc))
-      rweights <- rweights*exp(hmm$evidence$
-                               llike(isubj,iocc-1L,cov$getData(isubj,iocc-1L),
-                                     thetas,
-                                     cov$getVar(isubj,iocc-1L)))
+      rweights <- retreatWeights(hmm,isubj,iocc, rweights,
+                                 cov$getVar(isubj,iocc))
+      rweights <- rweights*exp(evalEvidence(hmm,isubj,iocc-1L,
+                                            cov$getData(isubj,iocc-1L),
+                                            thetas,
+                                            cov$getVar(isubj,iocc-1L)))
       qua$rweights[1L,iocc,] <- rweights
     }
     qua

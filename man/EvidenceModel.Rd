@@ -75,7 +75,7 @@
 \seealso{
 
   \code{\linkS4class{GradedResponse}}, \code{\linkS4class{NormalScore}},
-  \code{\linkS4class{HMM}}, \code{\linkS4class{IRTF}}
+  \code{\linkS4class{Evidence}}
 
 }
 \examples{

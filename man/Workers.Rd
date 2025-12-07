@@ -118,7 +118,7 @@
 
   \code{\link[parallel]{makeCluster}},
   \code{\link[parallel]{parLapply}}, \code{\link[base]{lapply}},
-  \code{\link{particleFilter}}, \code{\link{simulate.HMM}},
+  \code{\link{particleFilter}}, \code{\link{simulate.POMDP}},
 
 }
 

@@ -19,7 +19,7 @@ NormalPop <- R6Class(
   public=list(
     initialize = function(name,mu,sigma,tname="theta",wname="w") {
       self$name <- name
-       self$mu <- mu
+      self$mu <- mu
       self$sigma <- sigma
       self$tnames <- tname
       self$wname <- wname
@@ -48,6 +48,15 @@ NormalPop <- R6Class(
       paste0("<NormalPopulation: ",
              self$name, " ( ",round(self$mu,digits=digits),
              ", ",round(self$sigma,digits=digits)," )>")
+    },
+    mstep=function(data,its=3,control=list(),workers=NULL) {
+      weights <- data[[self$wname]]
+      theta <- data[[self$tnames]]
+      self$mu <- wtd.mean(theta,weights)
+      self$sigma <- wtd.sd(theta,weights)
+      self$lp <- sum(dnorm(theta,self$mu,self$sigma,log=TRUE)*weights)
+      self$convergence <- TRUE
+      list(name=self$name,list(mu=self$mu,sigma=self$sigma))
     }
   ),
   active=list(
@@ -86,7 +95,17 @@ CategoricalPop <- R6Class(
       lprobs <- log(softmax(par))
       weights <- data[[self$wname]]
       theta <- data[[self$tnames]]
-      sum(lprobs[theta]*weights)
+      sum(lprobs[match(theta,self$states)]*weights)
+    },
+    mstep=function(data,its=3,control=list(),workers=NULL) {
+      ## Force dummy entries into list so no cells are dropped
+      weights <- c(rep(0,length(self$states)),data[[self$wname]])
+      theta <- c(self$states,data[[self$tnames]])
+      post <- wtd.table(theta,weights,normwt=FALSE)
+      self$probs <- post/sum(post)
+      self$lp <- sum(log(self$probs)[match(theta,self$states)]*weights)
+      self$convergence <- TRUE
+      list(name=self$name,probs=self$probs)
     },
     initProbs = function(theta,covars=list()) {
        self$probs[theta]
@@ -101,9 +120,9 @@ CategoricalPop <- R6Class(
     probs = function(value) {
       if (missing(value)) return(private$ppp)
       if (length(value) != length(self$states) ||
-          any(value) < 0 || abs(sum(value)-1) < .0001) {
-        stop("Value must be non-negative vector of length",
-             length(self$states),"which sums to one.")
+          any(value < 0) || abs(sum(value)-1) > .0001) {
+        stop("Value must be non-negative vector of length ",
+             length(self$states),", which sums to one.")
       }
       private$ppp <- value
     },
@@ -119,7 +138,8 @@ Population <- R6Class(
   "Population",
   inherit=ModelSet,
   public=list(
-    name="A Population",
+      name="A Population",
+      iname="group",
     initialize=function(name,popModels,groups=1L,
                         tname="theta",wname="w") {
       self$name <- name
@@ -127,7 +147,6 @@ Population <- R6Class(
       self$groups <- groups
       self$tnames <- tname
       self$wname <- wname
-      self$iname <- "group"
     },
     group = function(subj) {
       self$index[subj,]
@@ -151,11 +170,15 @@ Population <- R6Class(
 
 setOldClass("Population")
 
-setMethod("as_longform","Population",
-          function(x,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L,weightType="all",
-                   name=deparse(substitute(x))) {
-  as_longform(x$index,n=n,maxocc=maxocc,minocc=minocc,
-              weightType=weightType,name="group")
-          })
+setMethod("drawInitial", "Population",
+          function(model, isubj, npart, covar=NULL) {
+            model$drawInit(isubj,npart,covar)
+})
+
+setMethod("ProbInit", "Population",
+          function(model, isubj, thetas, covar=NULL) {
+            model$initProbs(isubj,thetas,covar)
+})
+
+
 

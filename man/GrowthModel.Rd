@@ -63,14 +63,16 @@
 }
 \section{Superclasses and Subclasses}{
 
-  Its superclass is \code{\link[R6]{R6Class}}.
+  Its superclass is \code{\linkS4class{FModel}}.
 
   Generally, a subclass needs to implment the \code{$pvec} active field
   and the \code{$draw}, \code{$lprob}, \code{$toString} and
   \code{$initialize} methods.
 
+  Noted subclass is \code{\linkS4class{TransitionModel}}.
+
   Existing implementations are:
-  \code{\linkS4class{BrownianGrowth}}, \code{\linkS4class{SpurtGrowth}}
+  \code{\linkS4class{BrownianGrowth}},
 
 }
 \author{Russell G. Almond}

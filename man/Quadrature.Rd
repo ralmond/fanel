@@ -50,7 +50,7 @@
     nsubjects=nsubj(times),isubj=NA_integer_)}.
   This variant has a fixed quadrature which is the same for all
   occasions. This is designed to be
-  used with the \code{\link{qFilter.HMM}} function.
+  used with the \code{\link{qFilter}} function.
 
   \code{BWQuad} which has constructor:
   \code{BWquad(times,qpoints,tnames=vnames(qpoints),
@@ -58,7 +58,7 @@
     nsubjects=nsubj(times),isubj=NA_integer_)}.  This also has a fixed
   quadrature, but it has but both forward and backwards weights.  This
   is designed to be used with the Baum-Welch filter
-  \code{\link{bwFilter.HMM}}  function.
+  \code{\link{bwFilter}}  function.
 
 
   \code{ParticleQuad} which has constructor:
@@ -66,7 +66,7 @@
   bysubj=(nsubj(times)>1L), nsubjects=nsubj(times),isubj=NA_integer_)}.
   This is a random quadrature whose points (particles) move between each
   occaions.  This is designed to be used with the
-  \code{\link{particleFilter.HMM}} function.
+  \code{\link{particleFilter}} function.
 
 }
 \section{Slots and Active Fields}{
@@ -182,11 +182,11 @@ Class \code{"\link[R6]{R6Class}"}, directly.
   The \code{$lweight(subj,occ,quad,value)} function gets or sets a
   subset of that array.
 
-  Both the \code{\link{qFilter.HMM}} and
-  \code{\link{particleFilter.HMM}} use log weights as they can be
+  Both the \code{\link{qFilter}} and
+  \code{\link{particleFilter}} use log weights as they can be
   calculated with addition and are less susceptible to numerical
   underflow.  The \code{$weights("default")} function takes care of
-  this.  The \code{\link{bwFilter.HMM}} uses a slightly different scheme
+  this.  The \code{\link{bwFilter}} uses a slightly different scheme
   (see below).  The \code{$wname} gives the name of the weight column.
 
 }
@@ -195,7 +195,7 @@ Class \code{"\link[R6]{R6Class}"}, directly.
   A fixed quadrature uses the same collection of quadrature time points
   for subject and occasion (the code actually allows differences, but
   not sure if this is useful).  Currently, this filter is designed to
-  work with the \code{\link{qFilter.HMM}}.  This filter is different
+  work with the \code{\link{qFilter}}.  This filter is different
   from the others in that the times for the quadrature does not need to
   be the same as the times for the data.
 
@@ -206,7 +206,7 @@ Class \code{"\link[R6]{R6Class}"}, directly.
 \section{Baum-Welch Quadrature}{
 
   This is similar to the fixed quadrature, the difference is in the
-  weights.  The Baum-Welch algorithm (\code{\link{bwFilter.HMM}})
+  weights.  The Baum-Welch algorithm (\code{\link{bwFilter}})
   requires both weights on the natural scale (as matrix multiplication
   is used in the calculation) and both forwards (\code{$lweights}) and
   backwards (\code{$rweights}) weights.  The \code{$weights()} takes
@@ -224,7 +224,7 @@ Class \code{"\link[R6]{R6Class}"}, directly.
 }
 \section{Particle Quadrature}{
 
-  When using the \code{\link{particleFilter.HMM}}, both the values of
+  When using the \code{\link{particleFilter}}, both the values of
   the quadrature points and the weights are set by the filter.  Thus the
   quadrature points vary by both subject and occasion, but do not need
   to be pre-specified.  Instead, only the number of quadrature points,
@@ -305,14 +305,14 @@ BWquad(times,qpoints,tnames=vnames(qpoints),
 \seealso{
 
   \code{\linkS4class{Panmat}} for the time argument.
-  \code{\linkS4class{Panel_Data}} and \code{\linkS4class{HMM}} as other
+  \code{\linkS4class{Panel_Data}} and \code{\linkS4class{POMDP}} as other
   objects which need to conform.
 
   \code{\link{split_subj}} and \code{\link{bind_subj}} for splitting and
   recombining the quadrature by subject.
 
-  \code{\link{qFilter.HMM}}, \code{\link{particleFilter.HMM}} and
-  \code{\link{bwFilter.HMM}} for the filtering algorithms which set the
+  \code{\link{qFilter}}, \code{\link{particleFilter}} and
+  \code{\link{bwFilter}} for the filtering algorithms which set the
   weights.
 
   \code{\link{as_longform}}, \code{\link{summaryq}} and

@@ -220,7 +220,6 @@ curve(tukeyWindow(alpha=.5,symmetric=FALSE)(x,0),xlim=c(-1.25,.25))
 curve(plankWindow()(x,0),xlim=c(-1.5,1.5))
 curve(plankWindow(alpha=.5,symmetric=FALSE)(x,0),xlim=c(-1.25,.25))
 
-par(opar)
 }
 \keyword{ts}
 \concept{filter}

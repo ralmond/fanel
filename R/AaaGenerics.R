@@ -117,7 +117,7 @@ setMethod("lprob","FModel",
              obj$lprob(par,data)
            })
 
-setMethod("mstep","ModelSet",
+setMethod("mstep","FModel",
           function(obj, data, its=3,control=list(),
                    workers=Workers$new()) {
             obj$mstep(data)
@@ -218,3 +218,48 @@ setMethod("mstep","ModelSet",
                    workers=Workers$new()) {
             obj$mstep(data, its=its, control=control, workers=workers)
           })
+
+setMethod("as_longform","ModelSet",
+          function(x,n=nsubj(x),maxocc=nocc(x),
+                   minocc=1L,weightType="all",
+                   name=deparse(substitute(x))) {
+  as_longform(x$index,n=n,maxocc=maxocc,minocc=minocc,
+              weightType=weightType,name=x$iname)
+          })
+
+
+### Generic Model Set Functions
+
+setGeneric("drawInitial", function(model, isubj, npart, covar=NULL) {
+  standardGeneric("drawInitial")
+})
+
+setGeneric("ProbInit", function(model, isubj, thetas, covar=NULL) {
+  standardGeneric("ProbInit")
+})
+
+
+setGeneric("drawData", function(model,isubj,iocc,theta,covar=NULL) {
+  standardGeneric("drawData")
+})
+
+setGeneric("evalEvidence", function(model, isubj, iocc, theta, data,
+                                    covar=NULL) {
+  standardGeneric("evalEvidence")
+})
+
+
+setGeneric("drawGrowth", function(model, isubj, iocc, theta, covar=NULL) {
+  standardGeneric("drawGrowth")
+})
+
+setGeneric("advanceWeights", function(model, isubj, iocc, lweights,
+                                      covar=NULL) {
+  standardGeneric("advanceWeights")
+})
+
+setGeneric("retreatWeights", function(model, isubj, iocc, rweights,
+                                      covar=NULL) {
+  standardGeneric("retreatWeights")
+})
+

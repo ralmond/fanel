@@ -1,4 +1,4 @@
-particleFilter.HMM <- function (object, covars, quad=NULL, nquad=nquad(quad),
+particleFilter <- function (object, covars, quad=NULL, nquad=nquad(quad),
                                 ..., workers=Workers$new()) {
 
   if (missing(quad)) {
@@ -17,15 +17,16 @@ particleFilter.HMM <- function (object, covars, quad=NULL, nquad=nquad(quad),
     qua$isubj <- isubj
     qua$resetWeights()
     lweights <- rep(0.0,nq)
-    thetas <- hmm$population$drawInit(isubj,nq,cov$getInvar(isubj))
-    lweights <- hmm$evidence$evalEvidence(isubj,0L,thetas,cov$getVar(isubj,0L))
+    thetas <- drawInitial(hmm,isubj,nq,cov$getInvar(isubj))
+    lweights <- evalEvidence(hmm,isubj,0L,thetas,cov$getVar(isubj,0L))
 
     qua$theta(1L,0L,,thetas)
     qua$lweight(1L,0L,,lweights)
     for (iocc in 1L:hmm$maxocc) {
-      thetas <- hmm$activities(isubj,iocc,thetas,cov$dt[isubj,iocc],cov$getVar(isubj,iocc))
-      lweights <- lweights + hmm$evidence$llike(isubj,iocc,cov$getData(isubj,iocc),thetas,
-                                                cov$getVar(isubj,iocc))
+      thetas <- drawGrowth(hmm,isubj,iocc,thetas,cov$getVar(isubj,iocc))
+      lweights <- lweights + evalEvidence(hmm,isubj,iocc,
+                                         cov$getData(isubj,iocc),thetas,
+                                         cov$getVar(isubj,iocc))
       qua$theta(1L,iocc,,thetas)
       qua$lweights(1L,iocc,,lweights)
     }

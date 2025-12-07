@@ -144,24 +144,24 @@ Evidence <- R6Class(
       self$wname <- wname
       self$dnames <- dname
     },
-    task = function(subj,it) {
-      self$index[subj,it]
+    task = function(isubj,iocc) {
+      self$index[isubj,iocc]
     },
     toString=function(...) {
       paste0("<Evidence: ",self$name,": ",
              self$nsubjects, " x ",
              self$macocc, " >")
     },
-    evalEvidence = function(subj,it,theta,Y,cov=NULL) {
-      task <- self$task(subj,it)
+    evalEvidence = function(isubj,iocc,theta,Y,cov=NULL) {
+      task <- self$task(isubj,iocc)
       if (all(is.na(Y)) || is.na(task)) {
         return(rep(0,dim(self$theta)[1]))
       } else {
         self$models[[task]]$llike(Y,theta,cov)
       }
     },
-    drawObs = function(subj,it,theta,cov=NULL) {
-      task <- self$task(subj,it)
+    drawObs = function(isubj,iocc,theta,cov=NULL) {
+      task <- self$task(isubj,iocc)
       if (is.na(task)) {
         return(rep(NA,dim(self$theta)[1]))
       } else {
@@ -180,6 +180,18 @@ Evidence <- R6Class(
 
 
 setOldClass("Evidence")
+
+
+setMethod("drawData", "Evidence",
+          function(model,isubj,iocc,theta,covar=NULL) {
+            model$drawObs(isubj,iocc,theta,covar)
+})
+
+setMethod("evalEvidence", "Evidence",
+           function(model, isubj, iocc, theta, data, covar=NULL) {
+             model$evalEvidence(isubj,iocc,theta,data,covar)
+})
+
 
 setMethod("as_longform","Evidence",
           function(x,n=nsubj(x),maxocc=nocc(x),

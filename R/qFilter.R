@@ -1,4 +1,4 @@
-qFilter.HMM <- function(object,covars,quad,wfun,...,workers=Workers$new()) {
+qFilter <- function(object,covars,quad,wfun,...,workers=Workers$new()) {
 
   workers$start()
 
@@ -13,14 +13,13 @@ qFilter.HMM <- function(object,covars,quad,wfun,...,workers=Workers$new()) {
     nt <- length(tstar)
     nq <- nquad(qua)
 
-    iprobs <- hmm$population$initProbs(isubj,thetas,
-                                       cov$getInvar(isubj))
+    iprobs <- ProbInit(hmm,isubj,thetas, cov$getInvar(isubj))
     qua$lweights[isubj,,] <- outer(log(iprobs),
                                      wf(cov$dt[isubj,0L],tstar),"*")
 
     for (iocc in 0L:maxocc(cov)) {
     qua$lweights[isubj,,] <- qua$lweights[isubj,,] +
-      outer(hmm$evalEvidence(isubj,iocc,cov$getData(isubj,iocc),thetas,
+      outer(evalEvidence(hmm,isubj,iocc,cov$getData(isubj,iocc),thetas,
                              cov$getVar(isubj,iocc)),
             wf(cov$dt[isubj,iocc],tstar),"*")
     }

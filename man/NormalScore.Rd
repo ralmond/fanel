@@ -54,8 +54,8 @@ Generally built by calling
 \examples{
 em <- NormalScore$new("ns",1,1/25)
 theta <- -2:2
-em$draw(theta)
+em$drawObs(theta)
 em$llike(-1:1,theta)
-em$lprob(c(0,0),0, theta,(1:5)/15)
+em$lprob(c(0,0),data.frame(Y=0, theta=theta,w=(1:5)/15))
 }
 \keyword{classes}
