@@ -68,13 +68,13 @@ FModel <- R6Class(
     lp=NA,
     name="FModel",
     wname="w",
-    lprob = function(par=self$pvec,data) {
+    lprob = function(data,par=self$pvec) {
       stop("Lprob not implemented for ", class(self))
     },
     mstep=function(data, its=3,control=list(),
                    workers=NULL) {
       control$maxits <- its
-      result <- stats::optim(self$pvec,\(pv) obj$lprob(pv,data))
+      result <- stats::optim(self$pvec,\(pv) obj$lprob(data,pv))
       if (result$convergence > 1)
         warning("Convergence issues with ",
                 self$toString(), "\n", result$message)
@@ -114,7 +114,7 @@ setMethod("pvec","FModel",function(obj) obj$pvec)
 setMethod("pvec<-","FModel",function(obj,value) obj$pvec<- value)
 setMethod("lprob","FModel",
            function(obj,data,par=pvec(obj)) {
-             obj$lprob(par,data)
+             obj$lprob(data,par)
            })
 
 setMethod("mstep","FModel",

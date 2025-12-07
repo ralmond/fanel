@@ -58,8 +58,9 @@ bgm <- BrownianGrowth$new("amodel",.1,.05)
 bgm
 bgm$pvec
 bgm$drawNext(c(-1,0,1),1)
-bgm$lprob(bgm$pvec,data.frame(theta=c(-1,0,1),theta_1=c(-.9,.05,.9),
-                              w=c(.4,.3,.3),deltaT=1,dose=1))
+bdat <- data.frame(theta=c(-1,0,1),theta_1=c(-.9,.05,.9),
+                    w=c(.4,.3,.3),deltaT=1,dose=1)
+bgm$lprob(bdat,bgm$pvec)
 
 
 }

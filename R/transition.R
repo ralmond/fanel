@@ -50,7 +50,7 @@ TransitionModel <- R6Class(
         dplyr::arange(order) |>
         dplyr::select(result)
     },
-    lprob=function(par=pvec(self),data) {
+    lprob=function(data,par=pvec(self)) {
       self$cache$clear()
       split(data,self$splitter) |>
         purrr::map_dbl(\(sdata) self$lpinner(par,sdata)) |>

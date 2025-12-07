@@ -77,7 +77,7 @@ gr$pvec
 gr$drawObs(c(-1,0,1))
 gr$llike(c(0,1,0),c(-1,0,1))
 dat <- data.frame(Y=c(0,1,0),theta=c(-1,0,1),w=c(.4,.3,.3))
-gr$lprob(gr$pvec,dat)
+gr$lprob(dat,gr$pvec)
 
 
 

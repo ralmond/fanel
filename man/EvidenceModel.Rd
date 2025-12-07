@@ -33,10 +33,9 @@
     \item{$llike}{\code{signature(Y,theta,context=list())}: Calculates the log
       likelihood of the observations given the latent variable and
       current parameters.}
-    \item{$lprob}{\code{signature(par=self$pvec,Y,theta, weights,
-	context=list())}: Calculated the log likelihood of the
+    \item{$lprob}{\code{signature(data,par=self$pvec)}: Calculated the log likelihood of the
       observations given estimated theta and argument parameters.}
-    \item{$mstep}{\code{signature(Y,theta,weights,context=list(),
+    \item{$mstep}{\code{signature(data,
 	its=3,control=list())}:  Runs the optimizer for \code{its} steps.}
     \item{$print}{\code{signature(...)}: Prints the object.}
     \item{$toString}{\code{signature(...)}: Creates a string
@@ -96,7 +95,10 @@ MyNormalScore <- R6Class(
         llike = function(Y,theta,context=list()) {
           dnorm(Y,theta+self$bias,self$se,log=TRUE)
         },
-        lprob = function(par=self$pvec,Y,theta,weights,context=list()) {
+        lprob = function(data,par=self$pvec) {
+          Y <- data[[self$dnames]]
+          theta <- data[[self$tnames]]
+          weights <- data[[self$wnames]]
           sum(dnorm(Y,theta+par[1],exp(par[2]),log=TRUE)*weights)
         },
         toString=function(digits=2,...){

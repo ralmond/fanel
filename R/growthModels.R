@@ -30,7 +30,7 @@ BrownianGrowth <- R6Class(
       rnorm(length(theta),theta+self$gain*dose,
             self$inovSD*sqrt(deltaT))
     },
-    lprob = function(par=self$pvec,data) {
+    lprob = function(data,par=self$pvec) {
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
       if (is.null(dose)) dose <- deltaT

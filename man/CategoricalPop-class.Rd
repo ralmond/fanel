@@ -45,7 +45,7 @@
       i.e., particle filter, and simulations.)}
     \item{\code{$initProbs}}{\code{signature(theta,covars=list())}:
       Calculates the probability of the initial quadrature.}
-    \item{\code{$lprob}}{\code{signature(par=self$pvec,data)}:
+    \item{\code{$lprob}}{\code{signature(data,par=self$pvec)}:
       Calculates the log probability of the the starting position.}
     }
 
@@ -76,7 +76,7 @@ The usual expression for building this distribution is
 apop <- CategoricalPop$new("standard",0:3,rep(1/4,4))
 apop$pvec
 apop$drawInit(3)
-apop$lprob(c(0,0),data.frame(theta=0:3,w=c(1,2,2,1)/6))
+apop$lprob(data.frame(theta=0:3,w=c(1,2,2,1)/6),c(0,0))
 apop$initProbs(c(0:3))
 }
 \keyword{classes}

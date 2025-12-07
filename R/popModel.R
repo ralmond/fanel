@@ -31,7 +31,7 @@ NormalPop <- R6Class(
       sigma <- self$sigma
       rnorm(npart,mu,sigma)
     },
-    lprob = function(par=self$pvec,data) {
+    lprob = function(data,par=self$pvec) {
       mu <- par[1]
       sigma <- exp(par[2])
       weights <- data[[self$wname]]
@@ -91,7 +91,7 @@ CategoricalPop <- R6Class(
     drawInit = function(npart,covars=list()) {
       self$states[rowSums(outer(runif(npart),cumsum(self$probs),"<"))]
     },
-    lprob = function(par=self$pvec,data) {
+    lprob = function(data,par=self$pvec) {
       lprobs <- log(softmax(par))
       weights <- data[[self$wname]]
       theta <- data[[self$tnames]]

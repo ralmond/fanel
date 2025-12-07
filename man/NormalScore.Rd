@@ -56,6 +56,6 @@ em <- NormalScore$new("ns",1,1/25)
 theta <- -2:2
 em$drawObs(theta)
 em$llike(-1:1,theta)
-em$lprob(c(0,0),data.frame(Y=0, theta=theta,w=(1:5)/15))
+em$lprob(data.frame(Y=0, theta=theta,w=(1:5)/15),c(0,0))
 }
 \keyword{classes}

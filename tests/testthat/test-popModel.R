@@ -26,9 +26,9 @@ test_that("NormalPop lprob", {
    theta <- 1:3
    weights <- 1:3
    data <- data.frame(theta=theta,w=weights)
-   expect_equal(apop$lprob(c(0,0),data),
+   expect_equal(apop$lprob(data,c(0,0)),
                 sum(dnorm(theta,log=TRUE)*weights))
-   expect_equal(apop$lprob(c(1,log(2)),data),
+   expect_equal(apop$lprob(data,c(1,log(2))),
                 sum(dnorm(theta,1,2,log=TRUE)*weights))
 })
 

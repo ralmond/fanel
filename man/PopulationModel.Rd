@@ -41,7 +41,7 @@
   Note these methods must be implemented for subclasses.
 
   \describe{
-    \item{\code{$lprob}}{\code{signature(par=self$pvec,data)}:
+    \item{\code{$lprob}}{\code{signature(data,par=self$pvec)}:
       Calculates the log probability of the the starting position.}
     \item{\code{$print}}{\code{signature(...)}: Prints the object.}
     \item{\code{$toString}}{\code{signature(...)}: Creates a string
@@ -102,7 +102,7 @@ MyNormalPop <- R6Class(
           sigma <- self$sigma
           rnorm(npart,mu,sigma)
         },
-        lprob = function(par=self$pvec,data) {
+        lprob = function(data,par=self$pvec) {
           mu <- par[1]
           sigma <- exp(par[2])
           weights <- data[[self$wname]]

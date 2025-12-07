@@ -59,7 +59,7 @@ GradedResponse <- R6Class(
       probs <- cuts2probs(self$cuts(theta))
       log(probs[,Y+1L])
     },
-    lprob = function(par=self$pvec,data) {
+    lprob = function(data,par=self$pvec) {
       weights <- data[[self$wname]]
       theta <- data[[self$tnames]]
       Y <- data[[self$dnames]]
@@ -105,7 +105,7 @@ NormalScore <- R6Class(
     llike = function(Y,theta,covars=list()) {
       dnorm(Y,theta+self$bias,self$se,log=TRUE)
     },
-    lprob = function(par=self$pvec,data) {
+    lprob = function(data,par=self$pvec) {
       weights <- data[[self$wname]]
       theta <- data[[self$tnames]]
       Y <- data[[self$dnames]]

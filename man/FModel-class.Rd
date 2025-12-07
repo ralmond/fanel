@@ -37,15 +37,25 @@ reference object protocols.
 }
 \section{Methods}{
   \describe{
-    \item{lprob}{\code{signature(obj = "FModel", pvec = "numeric",
-	data= "data.frame")}:
+    \item{mstep}{\code{(obj = "FModel", data= "data.frame", its="integer",
+	control="list", workers = "Workers")}:  Runs the m-step to
+      optimize parameters (see section below).}
+    \item{\code{$mstep}}{\code{(data, its=3,control=list(),
+	workers = NULL)}:  This method does the optimization (see
+      section below).} 
+    \item{lprob}{\code{(obj = "FModel", data= "data.frame",
+	pvec = "numeric",)}: 
       Calculates the log probability of the data (which includes imputed
       values for the latent variables and weights).}
-    \item{pvec}{\code{signature(obj = "FModel")}: Returns the
+    \item{\code{$lprob}}{\code{(data,pvec=pvec(self))}:  The R6 method
+      which implement this.}
+    \item{pvec}{\code{(obj = "FModel")}: Returns the
       parameters as a vector.  The actual value depends on the
       particular model class. }
-    \item{pvec<-}{\code{signature(obj = "FModel")}: Sets the parameter
+    \item{pvec<-}{\code{(obj = "FModel", value)}: Sets the parameter
       vector. }
+    \item{\code{$pvec}}{The active property which corresponds to the
+      \code{pvec} accessor.}
   }
   Note that all of these delegate to member functions of the objects.
   The default methods generate errors, so these need to be implemented
@@ -68,6 +78,11 @@ reference object protocols.
 
   The \code{pvec} function and its corresponding getters need to get/set
   the parameters on a natural scale.  These are passed to \code{optim}.
+
+}
+\section{M-step protocol}{
+
+  
 
 }
 \seealso{
