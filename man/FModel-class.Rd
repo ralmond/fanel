@@ -40,7 +40,7 @@ reference object protocols.
     \item{mstep}{\code{(obj = "FModel", data= "data.frame", its="integer",
 	control="list", workers = "Workers")}:  Runs the m-step to
       optimize parameters (see section below).}
-    \item{\code{$mstep}}{\code{(data, its=3,control=list(),
+    \item{\code{$mstep}}{\code{(data, ..., its=3,control=list(),
 	workers = NULL)}:  This method does the optimization (see
       section below).} 
     \item{lprob}{\code{(obj = "FModel", data= "data.frame",
@@ -77,12 +77,44 @@ reference object protocols.
   column).
 
   The \code{pvec} function and its corresponding getters need to get/set
-  the parameters on a natural scale.  These are passed to \code{optim}.
+  the parameters on an unbounded domain.  These are passed to
+  \code{optim}.  
 
 }
 \section{M-step protocol}{
 
+  To support the EM algorithm, subclasses of \code{FModel} need to
+  implement the \code{$lprob} and \code{$pvec} methods and possible an
+  \code{$mstep} method.  The default method for \code{$mstep} calls
+  \code{\link[stats]{optim}} to maximize \code{$lprop(data,par)} as a
+  function of \code{par} which has the format of \code{$pvec}.
+
+  The \code{$pvec} method returns the parameters as a vector to be
+  passed to used by \code{\link[stats]{optim}}.  This means that
+  separate parameters need to be bound into a vector.  They may also
+  need to be transformed so that the domain is the whole real line so
+  that the optimization is unconstrained.  For example, the parameters
+  of the \code{\linkS4class{NormalPop}} are \code{$mu} and
+  \code{$sigma}.  The \code{$pvec} method returns \code{c(self$mu,
+    log(self$sigma))}.  The setter method for \code{$pvec} must undo
+  this transformation.
   
+  The \code{$lprobs} method takes two arguments, the \code{data} and
+  the parameter (\code{par}).  The latter is in the format determined by
+  \code{$pvec}.  The \code{$lprobs} method must decode this to get the
+  raw parameters.  It also must extract the columns it needs from the
+  \code{data} object (see \code{\link{mstep}()}). It returns a real
+  number giving the log of the probability of the data given the
+  parameters. 
+
+  The default \code{$mstep} method just runs \code{\link[stats]{optim}}
+  to find the maximum log probability.  It returns a list with the name
+  of the model and the result from \code{optim}.  It may be the case
+  that a faster method is available.  Consider the
+  \code{\linkS4class{NormalPop}$mstep} method.  The maximum log probability is
+  just the mean and standard devation of the latent variable.  So the
+  \code{\linkS4class{NormalPop}$mstep} method overrides the default and
+  returns a list containing the name of the model and the parameter values.
 
 }
 \seealso{
@@ -92,7 +124,7 @@ reference object protocols.
   \code{\linkS4class{EvidenceModel}} are the principle subclasses.
   \code{\linkS4class{ModelSet}} is a set of \code{FModel} objects.
 
-  \code{\link{mstep}} describes the generic
+  \code{\link{mstep}} describes the generic mstep algorithm.
 
 }
 \examples{

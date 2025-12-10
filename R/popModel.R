@@ -49,7 +49,7 @@ NormalPop <- R6Class(
              self$name, " ( ",round(self$mu,digits=digits),
              ", ",round(self$sigma,digits=digits)," )>")
     },
-    mstep=function(data,its=3,control=list(),workers=NULL) {
+    mstep=function(data,...) {
       weights <- data[[self$wname]]
       theta <- data[[self$tnames]]
       self$mu <- wtd.mean(theta,weights)
@@ -97,7 +97,7 @@ CategoricalPop <- R6Class(
       theta <- data[[self$tnames]]
       sum(lprobs[match(theta,self$states)]*weights)
     },
-    mstep=function(data,its=3,control=list(),workers=NULL) {
+    mstep=function(data,...) {
       ## Force dummy entries into list so no cells are dropped
       weights <- c(rep(0,length(self$states)),data[[self$wname]])
       theta <- c(self$states,data[[self$tnames]])
@@ -138,8 +138,8 @@ Population <- R6Class(
   "Population",
   inherit=ModelSet,
   public=list(
-      name="A Population",
-      iname="group",
+    name="A Population",
+    iname="group",
     initialize=function(name,popModels,groups=1L,
                         tname="theta",wname="w") {
       self$name <- name
@@ -157,13 +157,8 @@ Population <- R6Class(
     initProbs = function(subj,theta,covars=list()) {
        self$models[[self$group(subj)]]$initProbs(theta,covars)
     },
-    mstep = function(data,its=3,control=list(),workers=Workers$new()) {
-      data <- filter(data,occ==0)
-      workers$start()
-      workers$lapply(unique(data$group),\(g) {
-        mstep(self$models[[g]],dplyr::filter(data,group==g),
-              its=its,control=control,workers=workers)
-      })
+    prepData = function(data) {
+      dplyr::filter(data,occ==0)
     }
   )
 )

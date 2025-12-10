@@ -129,3 +129,5 @@ MyNormalPop <- R6Class(
 
 }
 \keyword{classes}
+\keyword{models}
+\concept{ panel_data }

@@ -28,6 +28,8 @@
     \item{\code{index}:}{Object of class \code{"Panmat"} giving the
       indexes of which model is used by which (subject, occasion)
       combination.}
+    \item{\code{iname}:}{String giving the name of the index (e.g.,
+      \dQuote{group}, \dQuote{task}, or \dQuote{action}).}
     \item{\code{tnames}:}{A \code{"character"} vector giving the names
       of the latent variables. }
     \item{\code{wname}:}{A \code{"character"} vector giving the name(s) of
@@ -61,6 +63,9 @@
     \item{\code{$toString}}{Generates a charcter representation.}
     \item{\code{$print}}{Prints the object; default method uses
       \code{$toString} so only that needs to be modified.}
+    \item{\code{$prepData}}{Prepares data for the mstep calculations.}
+    \item{\code{$split_m}}{Assigns data to models and builds a list of
+      (model, data) pairs.}
     \item{\code{$mstep}}{\code{signature(data = "Panel_Data",
 	its = "integer", control = "list", workers = "Workers")}:
       This is the implementation of the m-step.  This method must be
@@ -77,6 +82,36 @@
   to models being used, and then delegates to the models to do the
   calculation. 
 
+}
+\section{M-step}{
+
+  The data set passed into the \code{ModelSet$mstep(data)} method is the
+  complete data set over all subjects and occasions (see
+  \code{\link{mstep}()} for the complete list of columns).  The primary
+  job of the model set methods is to assign the data rows to the models
+  which are appropriate.  The \code{$split_m} method does this work.
+
+  First, \code{$split_m} call the \code{$prepData(data)} method which
+  does any preparation necessary.  The default is the identity function.
+  The \code{\linkS4class{Population}} class filters the data to include
+  just Occasion 0.  The \code{\linkS4class{Activities}} class adds the
+  \dQuote{theta_1} columns.  This may need to be overridden for
+  new subclasses of \code{ModelSet}.  
+
+  Next, \code{$split_m} splits the data according to the \code{$iname}
+  column (by default \dQuote{group}, \dQuote{task}, or \dQuote{action}).
+  It returns a list of \code{(model,data)} pairs where \code{model} is
+  one of the models, and \code{data} are the rows of the data argument
+  which are associated with that model.
+
+  The \code{$mstep} method takes the \code{(model, data)} pairs and
+  apply \code{model$mstep(data)} method.  It uses the \code{workers}
+  argument to divide the work among threads on the computer.  In order
+  to allow the workers to be shared among the three model sets, the
+  \code{mstep(\linkS4class{POMDP})} method calls \code{$split_m} on the
+  models and builds a master list of \code{model, data)} pairs and then
+  assigns them to the workers.
+  
 }
 \author{Russell Almond}
 \seealso{

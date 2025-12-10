@@ -10,7 +10,7 @@
 }
 \usage{
 long2panel(df, idcol = "subj", timecol = "time", occcol = "occ",
-           datacols = character(), invcols = character(), invar = NULL)
+           dnames = character(), invcols = character(), invar = NULL)
 }
 \arguments{
   \item{df}{A data frame with columns identifying subject (\code{idcol}), time (\code{timecol})
@@ -20,7 +20,7 @@ long2panel(df, idcol = "subj", timecol = "time", occcol = "occ",
   \item{timecol}{The name of the column giving the observation times, default \dQuote{time}.}
   \item{occcol}{The name of the column giving occasion identifiers, default \dQuote{occ}.
     If this column is not present, it is built from the time column.}
-  \item{datacols}{The names of the columns which contain the data (whose distribution
+  \item{dnames}{The names of the columns which contain the data (whose distribution
     is modeled by the evidence models).  If these columns are not present, then new columns
     are created and filled with \code{NA}s.}
   \item{invcols}{The names of columns which contain time invariant data.
@@ -49,7 +49,7 @@ long2panel(df, idcol = "subj", timecol = "time", occcol = "occ",
   whose probability distributions are given by the \code{\linkS4class{Evidence}}.  These
   are the ones returned by the \code{\linkS4class{Panel_Data}$getData()} function.
   The other are covariates; both data and covariates are returned by the
-  \code{\linkS4class{Panel_Data}$getVar()} method.  The \code{datacols} argument gives
+  \code{\linkS4class{Panel_Data}$getVar()} method.  The \code{dnames} argument gives
   the names of the data data columns.  Note that if these columns do not exist, they are
   created and filled with \code{NA}s, which is useful for use with \code{\link{simulate.POMDP}}.
 

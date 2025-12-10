@@ -5,9 +5,21 @@
 
 \title{Class \code{"Population"}}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the class is. ~~
+
+  A class that contains a collection of
+  \code{\linkS4class{PopulationModel}} object.
+
 }
-\section{Objects from the Class}{A virtual Class: No objects may be created from it.}
+\section{Constructor}{
+
+  The constructor is \code{Population$new(name, popModels, groups=1L,
+    tname="theta", wname="w")}.
+
+  
+  
+
+
+}
 \section{Slots}{
   \describe{
     \item{\code{.S3Class}:}{Object of class \code{"character"} ~~ }

@@ -36,7 +36,7 @@
       dependent data.}
     \item{invar}{A \code{\link{data.frame}} giving time invariant
       data.}
-    \item{datacols}{A character vector giving the names of the
+    \item{dnames}{A character vector giving the names of the
       \code{$vari} object which are considered data.}
     \item{isubj}{For Panel_Data objects which are split,
       the focus subject for this Panel_Data object.}
@@ -66,7 +66,7 @@
   The response data (i.e., the data which the
   \code{\link{EvidenceModel}} provides a likelihood for) is variables (the
   \code{v} index) of the \code{$vari} data.  The value of the
-  \code{$datacols} field is the names of those variables.  If they are
+  \code{$dnames} field is the names of those variables.  If they are
   not in variant data, new variables are created and set to \code{NA}
 
 }
@@ -75,7 +75,7 @@
   \describe{
     \item{\code{$initialize}}{\code{(time = "Panmat", dt = "Panmat",
 	vari = "Panel_Frame", invar = "data.frame",
-	datacols=character())}:  Generator.
+	dnames=character())}:  Generator.
       Exactly one of \code{time} and \code{dt} should be supplied.  The
       other arguments are optional}
     \item{\code{$print}}{\code{(x, ...)}:  Prints the object}
@@ -98,7 +98,7 @@
     \item{\code{nocc},\code{nocc<-}}{\code{signature(obj =
 	"Panel_Data")}: gets/sets the number of occasions.)}
     \item{\code{minocc},\code{minocc<-}}{\code{signature(obj =
-	"Panel_Data")}: gets/sets the index of the 
+	"Panel_Data")}: gets/sets the index of the
       minimum occasion, usually 0 or 1.)}
     \item{\code{maxocc},\code{maxocc<-}}{\code{signature(obj =
 	"Panel_Data")}: gets/sets the index of the
@@ -106,7 +106,7 @@
     \item{\code{nsubj}\code{nsubj<-}}{\code{signature(obj =
 	"Panel_Data")}: gets/sets the number of subjects. }
     \item{\code{isubj},\code{isubj<-}}{\code{signature(obj =
-	"Panel_Data")}: Gets/sets the 
+	"Panel_Data")}: Gets/sets the
       index of the focus subject, or \code{NA} if focused on multiple
       objects.}
     \item{\code{get_subj}}{\code{signature(x = "Panel_Data", subj="integer")}:
@@ -123,14 +123,14 @@
 
   There are two constructors (in addition to the \code{new} method).
   The first is the \code{panel_data(\var{time},\var{dt},\var{vari},
-    \var{invar}, \var{datacols})} method.
+    \var{invar}, \var{dnames})} method.
   Only one of \code{time} \code{dt} should be
   supplied and it should be a matrix giving the times or time
   differences.  If \code{vari} is supplied, it should be an
   \code{\linkS4class{Panel_Frame}} or a data frame with \dQuote{subj}
   and \dQuote{occ} columns.  If \code{invar} if supplied should be a
   data frame with as many rows as there are subjects.  The
-  \code{datacols} should be the names of
+  \code{dnames} should be the names of
 
   Alternatively, the function \code{\link{long2panel}} will convert a
   data frame in long form (with occasion and subject indexes) as well as

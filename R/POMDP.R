@@ -6,79 +6,103 @@ POMDP <- function(name,population,activities,evidence,
   activities$tnames <- tname
   evidence$tnames <- tname
   evidence$dnames <- dname
-  result <- list(name=name,population=population,
-                 activities=activities,evidence=evidence)
+  components=list(population=population,activities=activities,
+                  evidence=evidence)
+  result <- list(name=name,components)
   class(result) <- "POMDP"
   result
+}
+
+population <- function(model) {model$components$population}
+activities <- function(model) {model$components$activities}
+evidence <- function(model) {model$components$evidence}
+"population<-" <- function(model,value) {
+  model$components$population <- value
+  model
+}
+"activities<-" <- function(model,value) {
+  model$components$activities <- value
+  model
+}
+"evidence<-" <- function(model,value) {
+  model$components$evidence <- value
+  model
 }
 
 setOldClass("POMDP")
 
 setMethod("nsubj","POMDP", function(obj) {
-  nsubj(obj$population)
+  nsubj(population(obj))
 })
 
 setMethod("nocc","POMDP", function(obj) {
-  nocc(obj$evidence)
+  nocc(evidence(obj))
 })
 
 setMethod("maxocc","POMDP", function(obj) {
-  maxocc(obj$evidence)
+  maxocc(evidence(obj))
 })
 
 setMethod("minocc","POMDP", function(obj) {
-  maxocc(obj$evidence)
+  maxocc(evidence(obj))
 })
 
+setMethod("nmodels","POMDP",function(x) {
+  nmodels(population(x)) +
+  nmodels(evidence(x)) +
+  nmodels(activities(x))
+})
 
 setMethod("drawInitial", "POMDP",
           function(model, isubj, npart, covar=NULL) {
-            drawInitial(model$population,isubj,npart,covar)
+            drawInitial(population(model),isubj,npart,covar)
 })
 
 setMethod("ProbInit", "POMDP",
           function(model, isubj, thetas, covar=NULL) {
-            ProbInit(model$population,isubj,thetas,covar)
+            ProbInit(population(model),isubj,thetas,covar)
           })
 
 setMethod("drawGrowth", "POMDP",
            function(model, isubj, iocc, theta, covar=NULL) {
-             drawGrowth(model$actvities, isubj, iocc, theta, covar=NULL)
+             drawGrowth(activities(model), isubj, iocc, theta, covar=NULL)
            })
 
 
 setMethod("advanceWeights", "POMDP",
           function(model, isubj, iocc, lweights, covar=NULL) {
-  advanceWeights(model$activities,isubj,iocc,lweights,covar)
+  advanceWeights(activities(model),isubj,iocc,lweights,covar)
 })
 
 setMethod("retreatWeights", "POMDP",
           function(model, isubj, iocc, rweights, covar=NULL) {
-  retreatWeights(model$actvities,isubj,iocc,rweights,covar)
+  retreatWeights(activities(model),isubj,iocc,rweights,covar)
 })
 
 setMethod("drawData", "POMDP",
           function(model,isubj,iocc,theta,covar=NULL) {
-            drawData(model$evidence,isubj,iocc,theta,covar)
+            drawData(evidence(evidence),isubj,iocc,theta,covar)
 })
+
 
 setMethod("evalEvidence", "POMDP",
            function(model, isubj, iocc, theta, data, covar=NULL) {
-             evalEvidence(model$evidence, isubj,iocc,theta,data,covar)
+             evalEvidence(evidence(model), isubj,iocc,theta,data,covar)
 })
 
 
 
 
 setMethod("mstep","POMDP",
-           function(obj, data, its=3,control=list(),
-                    workers=Workers$new()) {
-             mstep(obj$population,data,its=its,control=control,
-                   workers=workers)
-             mstep(obj$activities,data,its=its,control=control,
-                   workers=workers)
-             mstep(obj$evidence,data,its=its,control=control,
-                   workers=workers)
+           function(obj, data, ..., its=3,control=list(),
+                    workers=Workers$new(nmodels(obj))) {
+             pairlist <- c(population(obj)$split_m(data),
+                           evidence(obj)$split_m(data),
+                           activities(obj)$split_m(data))
+             workers$start()
+             result <- workers$lapply(pairlist,\(pair) {
+               pair[[1]]$mstep(pair[[2]])
+             })
            })
 
 
@@ -87,16 +111,16 @@ setMethod("as_longform","POMDP",
           function(x,n=nsubj(x),maxocc=maxocc(x),
                    minocc=minocc(x),weightType="all",
                    name=deparse(substitute(x))) {
-            as_longform(x$evidence) |>
-              dplyr::left_join(as_longform(x$activities),
+            as_longform(evidence(x)) |>
+              dplyr::left_join(as_longform(activities(x)),
                                dplyr::join_by("subj","occ")) |>
-              dplyr::left_join(as_longform(x$populuation),
+              dplyr::left_join(as_longform(population(x)),
                                dplyr::join_by("subj"))
           })
 
-longform <- function(hmm,quad,data) {
+longform <- function(quad,model,data) {
   by <- dplyr::join_by("subj","occ")
   as_longform(quad) |>
-    dplyr::left_join(as_longform(hmm), by) |>
+    dplyr::left_join(as_longform(model), by) |>
     dplyr::left_join(as_longform(data), by)
 }

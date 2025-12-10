@@ -7,7 +7,7 @@ Panel_Data <- R6Class(
   public=list(
     isubj=NA_integer_,
     initialize=function(time,dt,vari=NULL,invar=NULL,
-                        datacols=character(),
+                        dnames=character(),
                         isubj=NA_integer_) {
       if (missing(time)) {
         self$dt <- dt
@@ -27,7 +27,7 @@ Panel_Data <- R6Class(
       } else {
         self$invar <- invar
       }
-      self$datacols <- datacols
+      self$dnames <- dnames
       self$isubj <- isubj
     },
     toString = function(...) {
@@ -43,13 +43,13 @@ Panel_Data <- R6Class(
     },
     getData = function(subj, occ) {
       if (is.null(private$variant)) return (NA)
-      private$variant[subj,occ,self$datacols]
+      private$variant[subj,occ,self$dnames]
     },
     setData = function(subj, occ, value) {
       if (is.null(private$variant)) {
         stop("No variant data available.")
       }
-      private$variant[subj,occ,self$datacols] <- value
+      private$variant[subj,occ,self$dnames] <- value
     },
     pullPanmat = function(vname) {
       panmat(private$variant[,,vname],nsubj=nsubj(self),
@@ -95,7 +95,7 @@ Panel_Data <- R6Class(
       if (is.null(private$invariant)) return(character())
       names(private$invariant)
     },
-    datacols=function(value) {
+    dnames=function(value) {
       if (missing(value)) return(private$dcols)
       private$dcols <- value
       for (v in value) {
@@ -110,26 +110,26 @@ Panel_Data <- R6Class(
 setOldClass("Panel_Data")
 
 panel_data <- function(time, dt, vari = NULL, invar= NULL,
-                       datacols=character(),isubj=NA_integer_) {
+                       dnames=character(),isubj=NA_integer_) {
   if (missing(time) && missing(dt)) {
     stop("Need at least one of time and dt.")
   }
   if (!missing(time) && !missing(dt)) {
     stop("I'm confused, should I use time or dt?")
   }
-  if (!missing(datacols) && !missing(vari)) {
-    miscol <- setdiff(datacols,names(vari))
+  if (!missing(dnames) && !missing(vari)) {
+    miscol <- setdiff(dnames,names(vari))
     if (length(miscol) > 0L) {
       warning("Columns ",paste(miscol,sep=", "), " are not in data.  Will be set to NA.")
     }
   }
   if (missing(time)) {
     result <- Panel_Data$new(dt=dt,vari=vari,invar=invar,
-        datacols=datacols,isubj=isubj)
+        dnames=dnames,isubj=isubj)
   }
   if (missing(dt)) {
     result <- Panel_Data$new(time=time,vari=vari,invar=invar,
-        datacols=datacols,isubj=isubj)
+        dnames=dnames,isubj=isubj)
   }
   result
 }
@@ -163,7 +163,7 @@ setMethod("as_longform","Panel_Data",
 })
 
 long2panel <- function(df, idcol="subj", timecol="time", occcol="occ",
-                       datacols=character(),
+                       dnames=character(),
                        invcols=character(), invar=NULL) {
   ## Create occ from time if needed.
   if (!(occcol %in% names(df))) {
@@ -191,7 +191,7 @@ long2panel <- function(df, idcol="subj", timecol="time", occcol="occ",
   panel_data(time=as.Panmat(time),
              vari = new("Panel_Frame", dat=dat, nsubj=nf$nsubj,
                         minocc=nf$minocc, nocc1=nocc-1L),
-             invar = invar, datacols=datacols)
+             invar = invar, dnames=dnames)
 
 }
 
@@ -199,7 +199,7 @@ setMethod("get_subj","Panel_Data", function(x,subj) {
   invar <- x$invar
   if (!is.null(invar)) invar <- invar[subj,]
   panel_data(time=get_subj(x$time,subj),vari=get_subj(x$vari,subj),
-             invar=invar,datacols=x$datacols,isubj=subj)
+             invar=invar,dnames=x$dnames,isubj=subj)
 })
 
 setMethod("get_subj<-","Panel_Data", function(x,subj,value) {

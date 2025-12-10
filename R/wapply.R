@@ -12,6 +12,7 @@ Workers <- R6Class(
                           seed=NULL,
                           stopClusterOnError=TRUE,
                           debug=FALSE,type=NULL) {
+      clspec <- min(clspec,getOption("mc.cores",Inf))
       if (missing(type)) {
         self$cltype <- ifelse(.Platform$OS.type=="windows","PSOCK","FORK")
       } else {
@@ -83,3 +84,4 @@ Workers <- R6Class(
 isNodeAlive.SOCK0node <- function (x, ...) {
   parallelly::isConnectionValid(x$con)
 }
+

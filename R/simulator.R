@@ -15,15 +15,15 @@ simulate.POMDP <- function(object, nsim, seed, ...,
   workers$lapply(split(ldata,~subj),\(cov,hmm){
     isubj <- cov$subj[1]
 
-    tnames <- hmm$population$tnames
+    tnames <- tnames(hmm)
     theta <- as.data.frame(lapply(tnames,\(n) rep(NA,nocc(cov))))
     names(theta) <- tnames
 
-    dnames <- hmm$evidence$dnames
+    dnames <- dnames(hmm)
     data <- as.data.frame(lapply(dnames,\(n) rep(NA,nocc(cov))))
     names(data) <- dnames
 
-    theta[1L,] <- drawInitial(isubj,1L,cov[1L,])
+    theta[1L,] <- drawInitial(hmm,isubj,1L,cov[1L,])
 
     for (iocc in 1L:maxocc(cov)) {
       theta[iocc+1L,] <- drawGrowth(hmm,isubj,iocc, theta[iocc,],
@@ -36,7 +36,7 @@ simulate.POMDP <- function(object, nsim, seed, ...,
   }, object) |> purrr::list_rbind() -> result
 
   workers$stopFlag()
-  long2panel(result,datacols=object$evidence$dnames,
+  long2panel(result,dnames=evidence(object)$dnames,
              invcols=covars$invarnames)
 }
 

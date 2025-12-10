@@ -167,13 +167,6 @@ Evidence <- R6Class(
       } else {
         self$models[[task]]$drawObs(theta,cov)
       }
-    },
-    mstep = function(data,its=3,control=list(),workers=Workers$new()) {
-      workers$start()
-      workers$lapply(unique(data$task),\(tt) {
-        mstep(self$models[[tt]],dplyr::filter(data,task==tt),
-              its=its,control=control,workers=workers)
-      })
     }
   )
 )

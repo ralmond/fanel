@@ -41,7 +41,7 @@ BrownianGrowth <- R6Class(
       sig <- exp(par[2])*sqrt(deltaT)
       sum(dnorm(theta1,mu,sig,log=TRUE)*weights)
     },
-    mstep = function(data) {
+    mstep = function(data,...) {
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
       if (is.null(dose)) dose <- deltaT
@@ -51,7 +51,7 @@ BrownianGrowth <- R6Class(
       self$gain <- wtd.mean((theta1-theta0)/dose,weights)
       self$inovSD <- wtd.sd((theta1-theta0-self$gain)/sqrt(deltaT),
                              weights)
-      lprob(data=data)
+      list(name=self$name,lprob(data=data))
     },
     toString=function(digits=2,...) {
       paste0("<BrownianGrowth: ", self$name, " ( ",
@@ -101,12 +101,14 @@ Activities <- R6Class(
       self$models[[self$action(isubj,iocc)]]$
         drawNext(theta,deltaT,dose,covar)
     },
-    mstep = function(data,its=3,control=list(),workers=Workers$new()) {
-      workers$start()
-      workers$lapply(unique(data$action), \(act) {
-        mstep(self$growthModels[[act]], dplyr::filter(data,action==act),
-              its=its,control=control,workers=NULL)
+    prepData = function(data) {
+      data <- dplyr::arrange(data,subj,occ) |> dplyr::group_by(subj)
+      sapply(self$tnames, \(th) {
+        th1 <- paste0(th,"_1")
+        data <- dplyr::mutate(data,"{th1}":=lag(.data[[th]]))
+        th1
       })
+      data
     },
     toString=function(...) {
       paste0("<Activities: ",self$name,": ",

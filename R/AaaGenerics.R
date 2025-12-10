@@ -54,7 +54,7 @@ setGeneric("lprob",
            })
 
 setGeneric("mstep",
-           function(obj, data, its=3,control=list(),
+           function(obj, data, ..., its=3,control=list(),
                     workers=Workers$new()) {
              standardGeneric("mstep")
            })
@@ -71,8 +71,7 @@ FModel <- R6Class(
     lprob = function(data,par=self$pvec) {
       stop("Lprob not implemented for ", class(self))
     },
-    mstep=function(data, its=3,control=list(),
-                   workers=NULL) {
+    mstep=function(data, ..., its=3,control=list()) {
       control$maxits <- its
       result <- stats::optim(self$pvec,\(pv) obj$lprob(data,pv))
       if (result$convergence > 1)
@@ -118,9 +117,8 @@ setMethod("lprob","FModel",
            })
 
 setMethod("mstep","FModel",
-          function(obj, data, its=3,control=list(),
-                   workers=Workers$new()) {
-            obj$mstep(data)
+          function(obj, data, ..., its=3,control=list()) {
+            obj$mstep(data,...,its=its,control=list())
           })
 
 ModelSet <- R6Class(
@@ -145,8 +143,21 @@ ModelSet <- R6Class(
     print=function(...) {
       print(self$toString(...),...)
     },
-    mstep = function(data, its=3, control=list(), workers=Workers$new()) {
-      stop("No mstep function implemented for collection ",nameOfClass(self))
+    mstep = function(data, ..., its=3, control=list(),
+                     workers=Workers$new(nmodels(self))) {
+      workers.start()
+      result <- workers.lapply(self$split_m(data), \(pair) {
+        pair[[1]]$mstep(pair[[2]])
+      })
+      workers$stopFlag()
+      result
+    },
+    prepData = identity,
+    split_m = function(data) {
+      data <- self$prepData(data)
+      lapply(unique(data[[self$iname]]),\(im) {
+        list(self$models[[im]],dplyr::filter(data,.data[[self$iname]]==im))
+      })
     }
   ),
   active=list(
@@ -182,9 +193,10 @@ ModelSet <- R6Class(
 setOldClass("ModelSet")
 
 setMethod("mstep","ModelSet",
-          function(obj, data, its=3,control=list(),
+          function(obj, data, ..., its=3,control=list(),
                    workers=Workers$new()) {
-            obj$mstep(data)
+            obj$mstep(data,...,its=its,control=control,
+                      workers=workers)
           })
 
 setMethod("nsubj","ModelSet", function(obj) nsubj(obj$index))
@@ -214,9 +226,9 @@ setMethod("minocc<-","ModelSet", function(obj,value) {
 })
 
 setMethod("mstep","ModelSet",
-          function(obj, data, its=3,control=list(),
+          function(obj, data, ..., its=3,control=list(),
                    workers=Workers$new()) {
-            obj$mstep(data, its=its, control=control, workers=workers)
+            obj$mstep(data, ..., its=its, control=control, workers=workers)
           })
 
 setMethod("as_longform","ModelSet",
@@ -226,6 +238,16 @@ setMethod("as_longform","ModelSet",
   as_longform(x$index,n=n,maxocc=maxocc,minocc=minocc,
               weightType=weightType,name=x$iname)
           })
+
+setGeneric("nmodels",function(x) {
+  standardGeneric("nmodels")
+})
+
+setMethod("nmodels","ModelSet", function(x) {
+  length(x$models)
+})
+
+
 
 
 ### Generic Model Set Functions

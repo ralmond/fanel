@@ -158,15 +158,7 @@ ActivitiesD <- R6Class(
         mod$fillCache(pvec(mod),dplyr::filter(data,action==act))
       })
     },
-    mstep = function(data,its=3,control=list(),workers=Workers$new()) {
-      data <- dplyr::arrange(data,subj,occ) |> dplyr::group_by(subj)
-      sapply(self$tnames, \(th) {
-        th1 <- paste0(th,"_1")
-        data <- dplyr::mutate(data,"{th1}":=lag(.data[[th]]))
-        th1
-      })
-      super$mstep(data,its,control,workers)
-    }
+    prepData = identity
   ),
   active=list(
     nmoments = function(value) {

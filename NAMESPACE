@@ -13,14 +13,15 @@ export(Workers,memoTree)
 export(FModel,ModelSet)
 exportClass(FModel,ModelSet)
 export(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
-       minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
-       split_subj, add_subj, bind_subj, pvec, "pvec<-", lprob, mstep,
+       minocc, "minocc<-", nquad, "nquad<-", nmodels,
+       get_subj, "get_subj<-", split_subj, add_subj, bind_subj,
+       pvec, "pvec<-", lprob, mstep,
        drawInitial, ProbInit, drawData, evalEvidence, drawGrowth,
        advanceWeights, retreatWeights
        )
 exportMethods(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
-       pvec, "pvec<-", lprob, mstep,
+       pvec, "pvec<-", lprob, mstep, nmodels,
        drawInitial, ProbInit, drawData, evalEvidence, drawGrowth,
        advanceWeights, retreatWeights
        )

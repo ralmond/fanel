@@ -264,8 +264,8 @@ test_that("Panel Frame complete", {
   short <- data.frame(inv1=c("M","F"),inv2=c(300,500))
   time=matrix(c(0:5,2*(0:5)),2,6,byrow=TRUE)
   pd <- panel_data(time=time,vari=long,invar=short,
-                   datacols=c("dat1","dat2"))
-  expect_equal(pd$datacols,c("dat1","dat2"))
+                   dnames=c("dat1","dat2"))
+  expect_equal(pd$dnames,c("dat1","dat2"))
   expect_equal(dim(mat(pd$time)),c(2,6))
   expect_equal(dim(mat(pd$dt)),c(2,5))
   expect_equal(dim(pd$invar),c(2,2))
@@ -300,9 +300,9 @@ test_that("long2panel invar0", {
                      cov2=c(NA,201:205,NA,NA,212:215),
                      inv1=c("M",rep(NA,5),"F",rep(NA,5)),
                      inv2=c(300,rep(NA,5),500,rep(NA,5)))
-  pd <- long2panel(long,datacols=c("dat1","dat2"),
+  pd <- long2panel(long,dnames=c("dat1","dat2"),
                    invcols=c("inv1","inv2"))
-  expect_equal(pd$datacols,c("dat1","dat2"))
+  expect_equal(pd$dnames,c("dat1","dat2"))
   expect_equal(dim(mat(pd$time)),c(2,6))
   expect_equal(dim(mat(pd$dt)),c(2,5))
   expect_equal(dim(pd$invar),c(2,2))
@@ -332,9 +332,9 @@ test_that("long2panel invar df", {
                      cov1=c(NA,101:105,NA,111:115),
                      cov2=c(NA,201:205,NA,NA,212:215))
   short <- data.frame(inv1=c("M","F"),inv2=c(300,500))
-  pd <- long2panel(long,datacols=c("dat1","dat2"),invar=short)
+  pd <- long2panel(long,dnames=c("dat1","dat2"),invar=short)
 
-  expect_equal(pd$datacols,c("dat1","dat2"))
+  expect_equal(pd$dnames,c("dat1","dat2"))
   expect_equal(dim(mat(pd$time)),c(2,6))
   expect_equal(dim(mat(pd$dt)),c(2,5))
   expect_equal(dim(pd$invar),c(2,2))
@@ -364,7 +364,7 @@ test_that("long2panel no occ", {
                      cov1=c(NA,101:105,NA,111:115),
                      cov2=c(NA,201:205,NA,NA,212:215))
   short <- data.frame(inv1=c("M","F"),inv2=c(300,500))
-  pd <- long2panel(long,datacols=c("dat1","dat2"))
+  pd <- long2panel(long,dnames=c("dat1","dat2"))
 
   expect_equal(dim(mat(pd$time)),c(2,6))
   expect_equal(dim(mat(pd$dt)),c(2,5))
@@ -408,7 +408,7 @@ test_that("as_longform Panel_Data", {
                      cov2=c(NA,201:205,NA,NA,212:215),
                      inv1=c(rep("M",6),rep("F",6)),
                      inv2=c(rep(300,6),rep(500,6)))
-  pd <- long2panel(long,datacols=c("dat1","dat2"),
+  pd <- long2panel(long,dnames=c("dat1","dat2"),
                    invcols=c("inv1","inv2"))
   lf <- as_longform(pd)
   expect_setequal(names(lf),names(long))

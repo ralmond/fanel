@@ -70,6 +70,10 @@
   and one for your operating system).  If unspecified it defaults to
   \code{\link[base]{options}("mc.cores")} or 2 if that option is unspecified.
 
+  If \code{\link[base]{options}("mc.cores")} is set, then the effective
+  value of \code{$clspec} will be the smaller of that value and the
+  argument passed in by the user.
+
 }
 \section{Parallel Computations}{
 
@@ -116,9 +120,17 @@
 \author{Russell G. Almond}
 \seealso{
 
+  Related tools from other packages
   \code{\link[parallel]{makeCluster}},
   \code{\link[parallel]{parLapply}}, \code{\link[base]{lapply}},
-  \code{\link{particleFilter}}, \code{\link{simulate.POMDP}},
+
+  \code{\link{bWorkers}} code for generating lists of workers.
+
+  Code using Workers:
+  \code{\link{particleFilter}}, \code{\link{simulate.POMDP}}
+  \code{\link{BWFilter}}, \code{\link{qFilter}}
+  \code{\link{mstep}}
+
 
 }
 
