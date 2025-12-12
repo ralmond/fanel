@@ -12,6 +12,8 @@ PopulationModel <- R6Class(
   )
 )
 
+setOldClass(c("PopulationModel","FModel"))
+
 
 NormalPop <- R6Class(
   classname = "NormalPop",
@@ -67,6 +69,8 @@ NormalPop <- R6Class(
     }
   )
 )
+
+setOldClass(c("NormalPop","PopulationModel","FModel"))
 
 softmax <- function (vec) {
   evec <- exp(vec)
@@ -133,6 +137,7 @@ CategoricalPop <- R6Class(
   )
 )
 
+setOldClass(c("CategoricalPop","PopulationModel","FModel"))
 
 Population <- R6Class(
   "Population",
@@ -166,7 +171,7 @@ Population <- R6Class(
   )
 )
 
-setOldClass("Population")
+setOldClass(c("Population","ModelSet"))
 
 drawInitial.Population <- function(model, isubj, npart, covar=NULL) {
   model$drawInit(isubj,npart,covar)

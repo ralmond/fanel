@@ -86,6 +86,9 @@ TransitionModel <- R6Class(
   )
 )
 
+setOldClass(c("TransitionModel","FModel"))
+
+
 UpDownGrowth <- R6Class(
   classname="UpDownGrowth",
   inherit=TransitionModel,
@@ -135,6 +138,9 @@ UpDownGrowth <- R6Class(
   )
 )
 
+setOldClass(c("UpDownGrowth","TransitionModel","FModel"))
+
+
 ActivitiesD <- R6Class(
   "ActivitiesD",
   inherit=Activities,
@@ -172,7 +178,7 @@ ActivitiesD <- R6Class(
   )
 )
 
-setOldClass("ActivitiesD")
+setOldClass(c("ActivitiesD","Activities","ModelSet"))
 
 "advanceWeights.ActivitiesD" <-
           function(model, isubj, iocc, lweights, covar=NULL) {

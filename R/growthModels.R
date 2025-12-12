@@ -140,7 +140,7 @@ Activities <- R6Class(
   )
 )
 
-setOldClass("Activities")
+setOldClass(c("Activities","ModelSet"))
 
 "nsubj<-.Activities" <- function(obj,value) {
   nsubj(obj$index) <-as.integer(value)

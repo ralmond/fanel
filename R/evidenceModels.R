@@ -25,6 +25,9 @@ EvidenceModel <- R6Class(
   )
 )
 
+setOldClass(c("EvidenceModel","FModel"))
+
+
 
 logit <- function(p) log(p/(1-p))
 invlogit <- function(x) 1/(1+exp(-x))
@@ -84,6 +87,9 @@ GradedResponse <- R6Class(
   )
 )
 
+setOldClass(c("GradedResponse","EvidenceModel","FModel"))
+
+
 NormalScore <- R6Class(
   classname="NormalScore",
   inherit=EvidenceModel,
@@ -137,6 +143,7 @@ NormalScore <- R6Class(
   )
 )
 
+setOldClass(c("NormalScore","EvidenceModel","FModel"))
 
 Evidence <- R6Class(
   "Evidence",
@@ -182,7 +189,7 @@ Evidence <- R6Class(
 )
 
 
-setOldClass("Evidence")
+setOldClass(c("Evidence","ModelSet"))
 
 
 drawData.Evidence <- function(model,isubj,iocc,theta,covar=NULL) {
