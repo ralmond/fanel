@@ -174,14 +174,14 @@ ActivitiesD <- R6Class(
 
 setOldClass("ActivitiesD")
 
-setMethod("advanceWeights", "ActivitiesD",
+"advanceWeights.ActivitiesD" <-
           function(model, isubj, iocc, lweights, covar=NULL) {
   model$advance(isubj,iocc,lweights,covar)
-})
+}
 
-setMethod("retreatWeights", "ActivitiesD",
+"retreatWeights.ActivitiesD" <-
           function(model, isubj, iocc, rweights, covar=NULL) {
   model$retreat(isubj,iocc,rweights,covar)
-})
+}
 
 

@@ -11,21 +11,21 @@
 \alias{BWQuad-class}
 \alias{BWQuad}
 \alias{bwQuad}
-\alias{as_longform,Quadrature-method}
-\alias{get_subj,Quadrature-method}
-\alias{get_subj<-,Quadrature-method}
-\alias{maxocc,Quadrature-method}
-\alias{maxocc<-,Quadrature-method}
-\alias{minocc,Quadrature-method}
-\alias{minocc<-,Quadrature-method}
-\alias{nocc,Quadrature-method}
-\alias{nocc<-,Quadrature-method}
-\alias{nquad,Quadrature-method}
-\alias{nquad<-,Quadrature-method}
-\alias{nsubj,Quadrature-method}
-\alias{nsubj<-,Quadrature-method}
-\alias{isubj,Quadrature-method}
-\alias{isubj<-,Quadrature-method}
+\alias{as_longform.Quadrature}
+\alias{get_subj.Quadrature}
+\alias{get_subj<-.Quadrature}
+\alias{maxocc.Quadrature}
+\alias{maxocc<-.Quadrature}
+\alias{minocc.Quadrature}
+\alias{minocc<-.Quadrature}
+\alias{nocc.Quadrature}
+\alias{nocc<-.Quadrature}
+\alias{nquad,Quadrature}
+\alias{nquad<-.Quadrature}
+\alias{nsubj.Quadrature}
+\alias{nsubj<-.Quadrature}
+\alias{isubj.Quadrature}
+\alias{isubj<-.Quadrature}
 
 \title{Class \code{"Quadrature"}}
 \description{

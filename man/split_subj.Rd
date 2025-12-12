@@ -16,14 +16,14 @@
 }
 \usage{
 split_subj(x)
-get_subj(x,subj)
-get_subj(x,subj) <- value
+get_subj(x,isubj)
+get_subj(x,isubj) <- value
 add_subj(x,xnew)
 bind_subj(xlist)
 }
 \arguments{
   \item{x}{An object with one of the fanel data classes.}
-  \item{subj}{An (integer) index for a particular subject.}
+  \item{isubj}{An (integer) index for a particular subject.}
   \item{xnew, value}{A new object of the same type as \code{x}
     representing the data to be added.}
   \item{xlist}{A list of fanel data objects all of the same type.}
@@ -40,8 +40,8 @@ bind_subj(xlist)
   The functions \code{get_subj} and \code{get_subj<-} do much of the
   work.  These are in fact generic functions and must be specified for
   each class which supports this protocol.  The expression
-  \code{xnew <- get_subj(x,subj)} extracts a subject-focused object with
-  \code{\link{isubj}(xnew)==subj}.  The expression
+  \code{xnew <- get_subj(x,isubj)} extracts a subject-focused object with
+  \code{\link{isubj}(xnew)==isubj}.  The expression
   \code{get_subj(x,subj)<-xnew} adds or replaces the data for the
   subject.  The function \code{add_subj(x,xnew)} is a synonym
   for \code{get_subj<-} using either the the subject number in

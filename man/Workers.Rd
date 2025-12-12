@@ -124,8 +124,6 @@
   \code{\link[parallel]{makeCluster}},
   \code{\link[parallel]{parLapply}}, \code{\link[base]{lapply}},
 
-  \code{\link{bWorkers}} code for generating lists of workers.
-
   Code using Workers:
   \code{\link{particleFilter}}, \code{\link{simulate.POMDP}}
   \code{\link{BWFilter}}, \code{\link{qFilter}}

@@ -1,27 +1,28 @@
-\name{Population-class}
+\name{Evidence-class}
 \docType{class}
-\alias{Population-class}
-\alias{Population}
-\alias{as_longform,Population-method}
+\alias{Evidence-class}
+\alias{Evidence}
+\alias{as_longform.Evidence}
+\alias{drawData.Evidence}
+\alias{evalEvidence.Evidence}
 
-\title{Class \code{"Population"}}
+\title{Class \code{"Evidence"}}
 \description{
 
-  A class that contains a collection of
-  \code{\linkS4class{PopulationModel}} objects indexed by
-  \dQuote{group}.
-
+  A container class for \code{\linkS4class{EvidenceModel}}s, indexed by
+  \dQuote{task}.
 }
+\section{Objects from the Class}{A virtual Class: No objects may be created from it.}
 \section{Constructor}{
 
-  The constructor is \code{Population$new(name, popModels, groups=1L,
-    tname="theta", wname="w")}.
+  The constructor is \code{Evidence$new(name, evidenceModels,
+    tasks=matrix(1L,1L,1L), tname="theta", wname="w", dname="Y")}.
 
   The arguments for the constructor are:
   \describe{
     \item{\code{name}}{A character scalar identifying the model.}
-    \item{\code{popModels}}{A list of
-      \code{\linkS4class{PopulationModel}}s corresponding to groups.}
+    \item{\code{evidenceModels}}{A list of
+      \code{\linkS4class{EvidenceModel}}s corresponding to groups.}
     \item{\code{groups}}{A \code{\linkS4class{Panmat}} giving the
       indexes of the population model to use for each student.}
     \item{\code{tname}}{A character vector giving the names of the
@@ -29,9 +30,11 @@
     \item{\code{w}}{A character value giving the name of the weight
       column.  Only the first value is used.  Again, this needs to match
       what is in the quadrature.}
+    \item{\code{tname}}{A character vector giving the names of the
+      data variables.  Needs to match the data used.}
   }
 }
-\section{Slots and Active Fields}{
+\section{Slots and active fields.}{
   \describe{
     \item{\code{$name}:}{A \code{"character"} scalar giving the
       a name for the collection. }
@@ -48,7 +51,7 @@
     \item{\code{$wname}:}{A \code{"character"} vector giving the name(s) of
       the weight columnn. }
     \item{\code{$dnames}:}{A \code{"character"} vector giving the name(s)
-      of the data column.  Not used.}
+      of the data column.}
   }
 }
 \section{Extends}{
@@ -56,7 +59,7 @@
   Class \code{"\linkS4class{ModelSet}"}, directly.
 
 }
-\section{S4 Methods and class methods }{
+\section{S4 Methods and class methods}{
   \describe{
     \item{\code{maxocc},\code{maxocc<-}}{:  Gets/sets
       the maximum  occasion associated with the index data. }
@@ -69,15 +72,11 @@
     \item{\code{as_longform}}{\code{signature(x = "ModelSet")}: Returns
       longform (\code{link{as_longform}}) data consisting of the group
       variable. }
-    \item{\code{drawInitial},\code{$drawInit}}{\code{(model, isubj,
-	npart, covar=NULL)}, calls the
-      \code{\linkS4class{PopulationModel}$drawInit} method with the
-      model with referenced by \code{$group(isubj)}.}
-    \item{\code{ProbInit},\code{$initProbs}}{\code{(model, isubj,
-	theta, covar=NULL)}, calls the
-      \code{\linkS4class{PopulationModel}$initProbs} method with the
-      model with referenced by \code{$group(isubj)}.}
-
+    \item{\code{drawData}, \code{$drawObs}}{\code{(model,isubj,iocc,theta,
+        cov=NULL)}: Draws random values for data values.  Used in
+      \code{\link{simulate.POMDP}}. }
+    \item{evalEvidence}{\code{(model,isubj,iocc,theta,Y,covar=NULL)}:
+      Calculates the log-likehood of the data given the latent variable.}
   }
 
   Common arguments:
@@ -85,19 +84,20 @@
     \item{model}{The population model, omitted for the R6 (\sQuote{$})
       methods.}
     \item{isubj}{The index of the subject.}
-    \item{theta}{Latent variable values for the subject.}
-    \item{covar}{Covariates for the subject.}
+    \item{iocc}{The index of the occasion.}
+    \item{theta}{Latent variable values for the subject,occasion}
+    \item{Y}{Data variable values for the subject, occasion}
+    \item{covar}{Covariates for the subject, occasion.}
   }
 
-
-  Some additional object methods
+    Some additional object methods
 
   \describe{
     \item{\code{$toString}}{Generates a charcter representation.}
     \item{\code{$print}}{Prints the object; default method uses
       \code{$toString} so only that needs to be modified.}
-    \item{\code{$prepData}}{Prepares data for the mstep calculations,
-      filters to only include occasion 0.}
+    \item{\code{$prepData}}{Returns data, but could be overridden if
+      needed by a subclass.}
     \item{\code{$split_m}}{Assigns data to models and builds a list of
       (model, data) pairs.}
     \item{\code{$mstep}}{\code{signature(data = "Panel_Data",...,
@@ -116,36 +116,36 @@
     and "w.right")} (only the first is needed for population models)
   while the other quadratrues use just \code{"w"}.
 
+  The \code{$dname} field must be co-ordinated with the
+  \code{\linkS4class{Panel_Data}} object.
+
 }
 \seealso{
-
   \code{\linkS4class{POMDP}} is the class which holds the
   \code{PopulationClass}.
 
-  \code{\linkS4class{PopulationModel}} is the abstract class for
-  supported models.  \code{\linkS4class{NormalPop}} and
-  \code{\linkS4class{CategoricalPop}} are the current implementing
+  \code{\linkS4class{EvidenceModel}} is the abstract class for
+  supported models.  \code{\linkS4class{NormalScore}} and
+  \code{\linkS4class{GradedResponse}} are the current implementing
   classes.
-
 }
 \examples{
-apop <- Population$new("BigStudy",
-                       list(NormalPop$new("Reference",0,1),
-                            NormalPop$new("Focal",-.5,1.2)),
-                       groups=c(rep(1,7),rep(2,3)),
-                       tname="Ability",
-                       wname="w")
-nsubj(apop)
-nmodels(apop)
-drawInitial(apop,1,5)
-drawInitial(apop,9,5)
-ProbInit(apop,1,c(-1,0,1))
-
+ems <- Evidence$new("BigStudy",
+                    list(easy=NormalScore$new("ns",-1,1/25),
+                         hard=NormalScore$new("ns",1,1/25)),
+                    tasks=matrix(c(rep(1,3),rep(2,3)),1,6),
+                    tname="Ability",wname="w",dname="Score")
+nsubj(ems)
+nmodels(ems)
+theta <- -2:2
+drawData(ems,1,2,theta)
+drawData(ems,2,4,theta)
+evalEvidence(ems,1,2,theta,1)
+evalEvidence(ems,2,4,theta,1)
 }
 \keyword{classes}
 \keyword{models}
-\concept{panel_data}
-\concept{population_model}
+\concept{ panel_data }
 \concept{ POMDP}
 \concept{ HMM}
-
+\concept{evidence_model}

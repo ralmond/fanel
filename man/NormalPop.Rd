@@ -46,6 +46,10 @@
       Calculates the probability of the initial quadrature.}
     \item{\code{$lprob}}{\code{(data,par=self$pvec)}:
       Calculates the log probability of the the starting position.}
+    \item{\code{$toString}}{\code{signature(...)}: Creates a string
+      represenation of the object.}
+    \item{\code{$mstep}}{\code{(data, ...)}:
+	Does the optimization directly using mean and std of data.}
     }
 
 }
@@ -84,3 +88,4 @@ apop$initProbs(c(-1,0,1))
 \concept{ panel_data }
 \concept{ POMDP}
 \concept{ HMM}
+\concept{population_model}

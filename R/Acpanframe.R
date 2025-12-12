@@ -156,10 +156,8 @@ setMethod("[<-","Panel_Frame",function(x, i, j, v, ..., value) {
 
 setMethod("as_longform","Panel_Frame",
           function(x,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L,weightType="all",
-                   name=deparse(substitute(x))) {
+                   minocc=1L) {
   result <- x@dat
-  if (!missing(name)) names(result) <- name
   result <- data.frame(subj=rep(1L:nsubj(x),each=nocc(x)),
                        occ=rep(x@minocc+0L:x@nocc1,
                                rep=nsubj(x)),
@@ -183,14 +181,14 @@ setMethod("as_longform","Panel_Frame",
   result
 })
 
-setMethod("get_subj","Panel_Frame", function(x,subj) {
-  new("Panel_Frame",dat=x[subj,,],nsubj=1L,
-      minocc=minocc(x),nocc1=nocc(x)-1L,isubj=subj)
+setMethod("get_subj","Panel_Frame", function(x,isubj) {
+  new("Panel_Frame",dat=x[isubj,,],nsubj=1L,
+      minocc=minocc(x),nocc1=nocc(x)-1L,isubj=isubj)
 
 })
 
-setMethod("get_subj<-","Panel_Frame", function(x,subj,value) {
-  x[subj,,] <- value@dat
+setMethod("get_subj<-","Panel_Frame", function(x,isubj,value) {
+  x[isubj,,] <- value@dat
   isubj(x) <- NA_integer_
   x
 })

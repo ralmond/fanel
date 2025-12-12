@@ -15,7 +15,8 @@
   Local to this class.
   \describe{
     \item{\code{$states}}{The set of possible values.  This should have
-      the same length as \code{$probs}.}
+      the same length as \code{$probs}.  It should also be the values of
+      the \dQuote{theta} element in the \code{\link{Quadrature}}.}
   }
 
   Inherited fields:
@@ -31,14 +32,16 @@
 }
 \section{Active Fields}{
   \describe{
-    \item{\code{$pvec}}{The the log of the probabilities.}
-    \item{\code{$probs}}{The probabilities for each state.}
+    \item{\code{$pvec}}{The the log of the probabilities.  Setting this
+      field converts back using softmax to covert back to a simplex. }
+    \item{\code{$probs}}{The probabilities for each state.  Note that
+      the setter requires a normalized vector.}
   }
 }
 \section{Methods}{
 
   \describe{
-    \item{\code{$initialize}}{\code{(name,mu,states,probs,tnames,wname)}:
+    \item{\code{$initialize}}{\code{(name,states,probs,tnames,wname)}:
       Constructor, called by \code{$new}.}
     \item{\code{$drawInit}}{\code{(npart,covars=list())}:
       Draws a random starting position. (Used with random quadratures,
@@ -47,7 +50,10 @@
       Calculates the probability of the initial quadrature.}
     \item{\code{$lprob}}{\code{signature(data,par=self$pvec)}:
       Calculates the log probability of the the starting position.}
+    \item{\code{$mstep}}{\code{(data, ...)}:
+	Does the optimization directly using expected counts of states.}
     }
+
 
 }
 \section{Constructor}{
@@ -84,3 +90,4 @@ apop$initProbs(c(0:3))
 \concept{ panel_data }
 \concept{ POMDP}
 \concept{ HMM}
+\concept{population_model}

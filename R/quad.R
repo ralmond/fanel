@@ -127,48 +127,48 @@ Quadrature <- R6Class(
 setOldClass("Quadrature")
 
 
-setMethod("nsubj","Quadrature", function(obj) nsubj(obj))
-setMethod("nsubj<-","Quadrature", function(obj,value) {
+nsubj.Quadrature <- function(obj) {nsubj(obj)}
+"nsubj<-.Quadrature" <- function(obj,value) {
   nsubj(obj) <-as.integer(value)
   obj
-})
+}
 
-setMethod("isubj","Quadrature", function(obj) obj$isubj)
-setMethod("isubj<-","Quadrature", function(obj,value) {
+isubj.Quadrature <- function(obj) {obj$isubj}
+"isubj<-.Quadrature" <- function(obj,value) {
   obj$isubj <-as.integer(value)
   obj
-})
+}
 
-setMethod("nocc","Quadrature", function(obj) nocc(obj))
-setMethod("nocc<-","Quadrature", function(obj,value) {
+nocc.Quadrature <- function(obj) {nocc(obj)}
+"nocc<-.Quadrature" <- function(obj,value) {
   obj$nocc <- as.integer(value)
   obj
-})
+}
 
-setMethod("minocc","Quadrature", function(obj) minocc(obj))
-setMethod("minocc<-","Quadrature", function(obj,value) {
+minocc.Quadrature <- function(obj) {minocc(obj)}
+"minocc<-.Quadrature" <- function(obj,value) {
   minocc(obj) <- as.integer(value)
   obj
-})
-setMethod("maxocc","Quadrature", function(obj) maxocc(obj))
-setMethod("maxocc<-","Quadrature", function(obj,value) {
+}
+
+maxocc.Quadrature <- function (obj) {maxocc(obj)}
+"maxocc<-.Quadrature" <- function(obj,value) {
   maxocc(obj) <- as.integer(value)
   obj
-})
+}
 
-setMethod("nquad","Quadrature", function(obj) obj$nquad)
-setMethod("nquad<-","Quadrature", function(obj,value) {
+nquad.Quadrature <- function(obj) {obj$nquad}
+"nquad<-.Quadrature" <- function(obj,value) {
   obj$nquad <- as.integer(value)
   obj
-})
+}
 
 
 
 
-setMethod("as_longform","Quadrature",
-          function(x,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L,weightType="all",
-                   name=deparse(substitute(x))) {
+as_longform.Quadrature <- function(x,..., n=nsubj(x),maxocc=nocc(x),
+                                   minocc=1L,weightType="all",
+                                   name=deparse(substitute(x))) {
   result <- data.frame(subj=1L:nsubj(x),each=nocc(x)*nquad(x),
                        occ=rep(rep(minocc(x):maxocc(x),each=nquad(x)),
                                nsubj(x)),
@@ -205,27 +205,27 @@ setMethod("as_longform","Quadrature",
     }
   }
   result |>
-    dplyr::left_join(as_longform(x$times,n,maxocc,minocc,name=name),
+    dplyr::left_join(as_longform(x$times,n=n,maxocc=maxocc,
+                                 minocc=minocc,name=name),
                      dplyr::join_by("subj","occ")) |>
     dplyr::left_join(as_longform(thetas),by)
 
-})
+}
 
 
-setMethod("get_subj","Quadrature", function(x,subj) {
-  new("Quadrature",times=x$times[subj,,],nsubj=1L,
-      minocc=minocc(x),nocc1=nocc(x)-1L,isubj=subj)
-})
+get_subj.Quadrature <- function(x,isubj) {
+  new("Quadrature",times=x$times[isubj,,],nsubj=1L,
+      minocc=minocc(x),nocc1=nocc(x)-1L,isubj=isubj)
+}
 
-setMethod("get_subj<-","Quadrature", function(x,subj,value) {
+"get_subj<-.Quadrature" <-function(x,isubj,value) {
   if (x$bySubj) {
-    x$times[subj,] <-value$times[1L,]
-    x$thetas[subj,,,] <- value$thetas[1L,,,]
+    x$times[isubj,] <-value$times[1L,]
+    x$thetas[isubj,,,] <- value$thetas[1L,,,]
   }
-  x$lweights[subj,,] <- value$lweights
+  x$lweights[isubj,,] <- value$lweights
   x
-})
-
+}
 
 
 

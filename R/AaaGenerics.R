@@ -1,32 +1,48 @@
 
 setGeneric("as.Panmat",function(obj,minocc=1L) standardGeneric("as.Panmat"))
 
-setGeneric("nsubj",function(obj) standardGeneric("nsubj"))
-setGeneric("nsubj<-",function(obj,value) standardGeneric("nsubj<-"))
+nsubj <- function(obj) {UseMethod("nsubj")}
+setGeneric("nsubj")
+"nsubj<-" <- function(obj,value) {UseMethod("nsubj<-")}
+setGeneric("nsubj<-")
 
-setGeneric("isubj",function(obj) standardGeneric("isubj"))
-setGeneric("isubj<-",function(obj,value) standardGeneric("isubj<-"))
+isubj <- function(obj) {UseMethod("isubj")}
+setGeneric("isubj")
+"isubj<-" <- function(obj,value) {UseMethod("isubj<-")}
+setGeneric("isubj<-")
 
-setGeneric("nocc",function(obj) standardGeneric("nocc"))
-setGeneric("nocc<-",function(obj,value) standardGeneric("nocc<-"))
+nocc <- function(obj) {UseMethod("nocc")}
+setGeneric("nocc")
+"nocc<-" <- function(obj,value) {UseMethod("nocc<-")}
+setGeneric("nocc<-")
 
-setGeneric("maxocc",function(obj) standardGeneric("maxocc"))
-setGeneric("maxocc<-",function(obj,value) standardGeneric("maxocc<-"))
+maxocc <- function(obj) {UseMethod("maxocc")}
+setGeneric("maxocc")
+"maxocc<-" <- function(obj,value) {UseMethod("maxocc<-")}
+setGeneric("maxocc<-")
 
-setGeneric("minocc",function(obj) standardGeneric("minocc"))
-setGeneric("minocc<-",function(obj,value) standardGeneric("minocc<-"))
+minocc <- function(obj) {UseMethod("minocc")}
+setGeneric("minocc")
+"minocc<-" <- function(obj,value) {UseMethod("minocc<-")}
+setGeneric("minocc<-")
 
+nquad <- function(obj) {UseMethod("nquad")}
 setGeneric("nquad",function(obj) standardGeneric("nquad"))
-setGeneric("nquad<-",function(obj,value) standardGeneric("nquad<-"))
+"nquad<-" <- function(obj,value) {UseMethod("nquad<-")}
+setGeneric("nquad<-")
 
-setGeneric("as_longform",function(x,n=nsubj(x),maxocc=maxocc(x),
-                                  minocc=minocc(x),weightType="all",
-                                  name=deparse(substitute(x))) {
-  standardGeneric("as_longform")
-})
 
-setGeneric("get_subj",function(x,subj) standardGeneric("get_subj"))
-setGeneric("get_subj<-",function(x,subj,value) standardGeneric("get_subj<-"))
+as_longform <- function(x,...,n=nsubj(x),maxocc=maxocc(x),
+                        minocc=minocc(x),weightType="all",
+                        name=deparse(substitute(x))) {
+  UseMethod("as_longform")
+}
+setGeneric("as_longform")
+
+get_subj <- function(x,isubj) {UseMethod("get_Subj")}
+setGeneric("get_subj")
+"get_subj<-" <- function(x,isubj,value) {UseMethod("get_Subj<-")}
+setGeneric("get_subj<-")
 
 split_subj <- function(x) {
   lapply(1L:nsubj(x), \(isubj) get_subj(x,isubj))
@@ -44,21 +60,22 @@ bind_subj <- function(xlist) {
 }
 
 
-setGeneric("pvec",function(obj) standardGeneric("pvec"))
-setGeneric("pvec<-",function(obj,value) standardGeneric("pvec<-"))
+pvec <- function(obj) {UseMethod("pvec")}
+setGeneric("pvec")
+"pvec<-" <- function(obj,value) {UseMethod("pvec<-")}
+setGeneric("pvec<-")
 
 
-setGeneric("lprob",
-           function(obj,data,par=pvec(obj)) {
-             standardGeneric("lprob")
-           })
+lprob <- function(obj,data,par=pvec(obj)) {
+  UseMethod("lprob")
+}
+setGeneric("lprob")
 
-setGeneric("mstep",
-           function(obj, data, ..., its=3,control=list(),
-                    workers=Workers$new()) {
-             standardGeneric("mstep")
-           })
-
+mstep <- function(obj, data, ..., its=3,control=list(),
+                  workers=Workers$new()) {
+  UseMethod("mstep")
+}
+setGeneric("mstep")
 
 
 FModel <- R6Class(
@@ -109,17 +126,15 @@ FModel <- R6Class(
 
 setOldClass("FModel")
 
-setMethod("pvec","FModel",function(obj) obj$pvec)
-setMethod("pvec<-","FModel",function(obj,value) obj$pvec<- value)
-setMethod("lprob","FModel",
-           function(obj,data,par=pvec(obj)) {
-             obj$lprob(data,par)
-           })
+pvec.FModel <- function(obj) {obj$pvec}
+"pvec<-.FModel" <- function(obj,value) {obj$pvec<- value}
+lprob.FModel <- function(obj,data,par=pvec(obj)) {
+  obj$lprob(data,par)
+}
 
-setMethod("mstep","FModel",
-          function(obj, data, ..., its=3,control=list()) {
-            obj$mstep(data,...,its=its,control=list())
-          })
+mstep.FModel <- function(obj, data, ..., its=3,control=list()) {
+  obj$mstep(data,...,its=its,control=list())
+}
 
 ModelSet <- R6Class(
   "ModelSet",
@@ -188,100 +203,98 @@ ModelSet <- R6Class(
   )
 )
 
-
-
 setOldClass("ModelSet")
 
-setMethod("mstep","ModelSet",
-          function(obj, data, ..., its=3,control=list(),
+mstep.ModelSet <- function(obj, data, ..., its=3,control=list(),
                    workers=Workers$new()) {
-            obj$mstep(data,...,its=its,control=control,
-                      workers=workers)
-          })
+  obj$mstep(data,...,its=its,control=control, workers=workers)
+}
 
-setMethod("nsubj","ModelSet", function(obj) nsubj(obj$index))
-setMethod("nsubj<-","ModelSet", function(obj,value) {
+nsubj.ModelSet <- function(obj) {nsubj(obj$index)}
+"nsubj<-.ModelSet" <- function(obj,value) {
   nsubj(obj$index) <-as.integer(value)
   obj
-})
+}
 
 
-setMethod("nocc","ModelSet", function(obj) nocc(obj$index))
-setMethod("nocc<-","ModelSet", function(obj,value) {
+nocc.ModelSet <- function(obj) {nocc(obj$index)}
+"nocc<-.ModelSet" <- function(obj,value) {
   nocc(obj$index) <- as.integer(value)
   obj
-})
+}
 
-setMethod("maxocc","ModelSet", function(obj) maxocc(obj$index))
-setMethod("maxocc<-","ModelSet", function(obj,value) {
+maxocc.ModelSet <- function(obj) {maxocc(obj$index)}
+"maxocc<-.ModelSet" <- function(obj,value) {
   maxocc(obj$index) <- value
   obj
-})
+}
 
 
-setMethod("minocc","ModelSet", function(obj) minocc(obj$index))
-setMethod("minocc<-","ModelSet", function(obj,value) {
+"minocc.ModelSet" <- function(obj) {minocc(obj$index)}
+"minocc<-.ModelSet" <- function(obj,value) {
   minocc(obj$index) <- as.integer(value)
   obj
-})
+}
 
-setMethod("mstep","ModelSet",
-          function(obj, data, ..., its=3,control=list(),
-                   workers=Workers$new()) {
-            obj$mstep(data, ..., its=its, control=control, workers=workers)
-          })
+mstep.ModelSet <- function(obj, data, ..., its=3,control=list(),
+                           workers=Workers$new()) {
+  obj$mstep(data, ..., its=its, control=control, workers=workers)
+}
 
-setMethod("as_longform","ModelSet",
-          function(x,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L,weightType="all",
-                   name=deparse(substitute(x))) {
+as_longform.ModelSet <- function(x,...,n=nsubj(x),maxocc=nocc(x),
+                   minocc=1L,name=deparse(substitute(x))) {
   as_longform(x$index,n=n,maxocc=maxocc,minocc=minocc,
-              weightType=weightType,name=x$iname)
-          })
+              name=x$iname)
+}
 
-setGeneric("nmodels",function(x) {
-  standardGeneric("nmodels")
-})
+nmodels <- function(obj) {UseMethod("nmodels")}
+setGeneric("nmodels")
 
-setMethod("nmodels","ModelSet", function(x) {
-  length(x$models)
-})
-
-
+nmodels.ModelSet <- function(obj) {
+  length(obj$models)
+}
 
 
 ### Generic Model Set Functions
 
-setGeneric("drawInitial", function(model, isubj, npart, covar=NULL) {
-  standardGeneric("drawInitial")
-})
+drawInitial <- function(model, isubj, npart, covar=NULL) {
+  UseMethod("drawInitial")
+}
+setGeneric("drawInitial")
 
-setGeneric("ProbInit", function(model, isubj, thetas, covar=NULL) {
-  standardGeneric("ProbInit")
-})
+ProbInit <- function(model, isubj, thetas, covar=NULL) {
+  UseMethod("ProbInit")
+}
+setGeneric("ProbInit")
 
+drawData <- function(model,isubj,iocc,theta,covar=NULL) {
+  UseMethod("drawData")
+}
+setGeneric("drawData")
 
-setGeneric("drawData", function(model,isubj,iocc,theta,covar=NULL) {
-  standardGeneric("drawData")
-})
-
-setGeneric("evalEvidence", function(model, isubj, iocc, theta, data,
+evalEvidence <- function(model, isubj, iocc, theta, data,
                                     covar=NULL) {
-  standardGeneric("evalEvidence")
-})
+  UseMethod("evalEvidence")
+}
+setGeneric("evalEvidence")
 
 
-setGeneric("drawGrowth", function(model, isubj, iocc, theta, covar=NULL) {
-  standardGeneric("drawGrowth")
-})
 
-setGeneric("advanceWeights", function(model, isubj, iocc, lweights,
+drawGrowth <- function(model, isubj, iocc, theta, covar=NULL) {
+  UseMethod("drawGrowth")
+}
+setGeneric("drawGrowth")
+
+advanceWeights <- function(model, isubj, iocc, lweights,
                                       covar=NULL) {
-  standardGeneric("advanceWeights")
-})
+  UseMethod("advanceWeights")
+}
+setGeneric("advanceWeights")
 
-setGeneric("retreatWeights", function(model, isubj, iocc, rweights,
+
+retreatWeights <- function(model, isubj, iocc, rweights,
                                       covar=NULL) {
-  standardGeneric("retreatWeights")
-})
+  UseMethod("retreatWeights")
+}
+setGeneric("retreatWeights")
 

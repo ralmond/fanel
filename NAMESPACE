@@ -25,6 +25,65 @@ exportMethods(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        drawInitial, ProbInit, drawData, evalEvidence, drawGrowth,
        advanceWeights, retreatWeights
        )
+S3method(nsubj,Panel_Data)
+S3method("nsubj<-",Panel_Data)
+S3method(nsubj,Quadrature)
+S3method("nsubj<-",Quadrature)
+S3method(nsubj,ModelSet)
+S3method("nsubj<-",ModelSet)
+
+S3method(nocc,Panel_Data)
+S3method(nocc,Quadrature)
+S3method("nocc<-",Quadrature)
+S3method(nocc,ModelSet)
+S3method("nocc<-",ModelSet)
+
+S3method(maxocc,Panel_Data)
+S3method(maxocc,Quadrature)
+S3method("maxocc<-",Quadrature)
+S3method(maxocc,ModelSet)
+S3method("maxocc<-",ModelSet)
+
+S3method(minocc,Panel_Data)
+S3method(minocc,Quadrature)
+S3method("minocc<-",Quadrature)
+S3method(minocc,ModelSet)
+S3method("minocc<-",ModelSet)
+
+S3method(nquad,Quadrature)
+S3method("nquad<-",Quadrature)
+
+S3method(nmodels,ModelSet)
+
+S3method(get_subj,Quadrature)
+S3method("get_subj<-",Quadrature)
+
+S3method(pvec,FModel)
+S3method("pvec<-",FModel)
+S3method(lprob,FModel)
+
+S3method(mstep,FModel)
+S3method(mstep,ModelSet)
+
+S3method(drawInitial,Population)
+S3method(ProbInit,Population)
+S3method(drawData,Evidence)
+S3method(evalEvidence,Evidence)
+S3method(drawGrowth,Activities)
+S3method(advanceWeights,ActivitiesD)
+S3method(retreatWeights,ActivitiesD)
+S3method(drawInitial,POMDP)
+S3method(ProbInit,POMDP)
+S3method(drawData,POMDP)
+S3method(evalEvidence,POMDP)
+S3method(drawGrowth,POMDP)
+S3method(advanceWeights,POMDP)
+S3method(retreatWeights,POMDP)
+
+
+
+
+
 exportClass(Panmat, Panel_Frame, Panel_Data)
 export(Panel_Data, Panel_Frame, Panmat)
 export(panmat, mat, "mat<-", as.Panmat,

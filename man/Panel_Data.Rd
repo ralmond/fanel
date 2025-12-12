@@ -2,16 +2,16 @@
 \docType{class}
 \alias{Panel_Data-class}
 \alias{Panel_Data}
-\alias{nocc,Panel_Data-method}
-\alias{minocc,Panel_Data-method}
-\alias{maxocc,Panel_Data-method}
-\alias{nsubj,Panel_Data-method}
-\alias{nsubj<-,Panel_Data-method}
-\alias{isubj,Panel_Data-method}
-\alias{isubj<-,Panel_Data-method}
-\alias{get_subj,Panel_Data-method}
-\alias{get_subj<-,Panel_Data-method}
-\alias{as_longform,Panel_Data-method}
+\alias{nocc.Panel_Data}
+\alias{minocc.Panel_Data}
+\alias{maxocc.Panel_Data}
+\alias{nsubj.Panel_Data}
+\alias{nsubj<-.Panel_Data}
+\alias{isubj.Panel_Data}
+\alias{isubj<-.Panel_Data}
+\alias{get_subj.Panel_Data}
+\alias{get_subj<-.Panel_Data}
+\alias{as_longform.Panel_Data}
 \alias{panel_data}
 \title{Class \code{"Panel_Data"} --  Time and DeltaT}
 \description{

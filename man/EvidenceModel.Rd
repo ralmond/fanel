@@ -11,34 +11,37 @@
   the value of the latent variable.
 
 }
-\section{Public Fields}{
+\section{Slots and Active Values}{
 
   \describe{
-    \item{name}{Identifier for the model.}
-    \item{convergence}{If the maximizer was run, did it converge.}
-    \item{lp}{If the maximizer was run, the log posterior.}
-  }
-}
-\section{Active Fields}{
-  \describe{
-    \item{pvec}{Returns a vectorized version of the parameters.}
+    \item{\code{$convergence}:}{Logical variable indicating whether or
+      not the last \code{mstep} converged.}
+    \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
+    \item{\code{$name}:}{A name for the model, primarily used for printing.}
+    \item{\code{$wname}:}{The name of the weight column(s). }
+    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$pvec}:}{A vector of possibly transformed parameters
+      used in \code{mstep}.}
   }
 }
 
 \section{Methods}{
 
+  Many of these need to be overridden in the implementing classes.
+
   \describe{
-    \item{$draw}{\code{signature(theta,context=list())}:  Draws a random
+    \item{\code{$drawObs}}{\code{signature(theta,covars=list())}:  Draws a random
       response.}
-    \item{$llike}{\code{signature(Y,theta,context=list())}: Calculates the log
+    \item{\code{$llike}}{\code{signature(Y,theta,context=list())}: Calculates the log
       likelihood of the observations given the latent variable and
       current parameters.}
-    \item{$lprob}{\code{signature(data,par=self$pvec)}: Calculated the log likelihood of the
-      observations given estimated theta and argument parameters.}
-    \item{$mstep}{\code{signature(data,
+    \item{\code{$lprob}}{\code{signature(data,par=self$pvec)}: Calculated the
+      log likelihood of the observations given estimated theta and
+      argument parameters.} 
+    \item{\code{$mstep}}{\code{signature(data,...,
 	its=3,control=list())}:  Runs the optimizer for \code{its} steps.}
-    \item{$print}{\code{signature(...)}: Prints the object.}
-    \item{$toString}{\code{signature(...)}: Creates a string
+    \item{\code{$print}}{\code{signature(...)}: Prints the object.}
+    \item{\code{$toString}}{\code{signature(...)}: Creates a string
       represenation of the object.}
   }
 
@@ -46,7 +49,7 @@
   \describe{
     \item{theta}{The value of the latent variable, possibly a vector
       over particles.}
-    \item{context}{A list of additional measurement-occassion-subject
+    \item{covar}{A list of additional measurement-occassion-subject
       specific covariates.}
     \item{Y}{The observed value.}
     \item{par}{The vectorized parameter.}
@@ -59,10 +62,10 @@
 }
 \section{Superclasses and Subclasses}{
 
-  This is an \code{\link[R6]{R6Class}}
+  This is a subclass of \code{\linkS4class{FModel}}.
 
   Generally, a subclass needs to implment the \code{$pvec} active field
-  and the \code{$draw}, \code{$lprob}, \code{$llike}, \code{$toString} and
+  and the \code{$drawObs}, \code{$lprob}, \code{$llike}, \code{$toString} and
   \code{$initialize} methods.
 
   Currently implemented subclasses include:
@@ -101,6 +104,16 @@ MyNormalScore <- R6Class(
           weights <- data[[self$wnames]]
           sum(dnorm(Y,theta+par[1],exp(par[2]),log=TRUE)*weights)
         },
+        mstep = function(data,...) {
+          weights <- data[[self$wname]]
+          theta <- data[[self$tnames]]
+          Y <- data[[self$dnames]]
+          self$bias <- wtd.mean(Y,weights) - wtd.mean(theta,weights)
+          self$se <- wtd.sd(Y,weights)
+          self$converged <- true
+          self$lp <- self$lprob(data)
+          list(name=self$name,list(self$bias,self$se))
+        },
         toString=function(digits=2,...){
           paste0("<NS: ", self$name, " ( ",
                  round(self$bias,digits=digits),
@@ -121,3 +134,8 @@ MyNormalScore <- R6Class(
 
 }
 \keyword{classes}
+\keyword{models}
+\concept{ panel_data }
+\concept{ POMDP}
+\concept{ HMM}
+\concept{evidence_model}

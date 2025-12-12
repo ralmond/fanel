@@ -43,9 +43,11 @@
   \describe{
     \item{\code{$lprob}}{\code{signature(data,par=self$pvec)}:
       Calculates the log probability of the the starting position.}
-    \item{\code{$print}}{\code{signature(...)}: Prints the object.}
     \item{\code{$toString}}{\code{signature(...)}: Creates a string
       represenation of the object.}
+    \item{\code{$print}}{\code{signature(...)}: Prints the object.}
+    \item{\code{$mstep}}{\code{(data, ...)}:
+	This method does the optimization (may need to be overridden). } 
   }
 
   The arguments to these functions are as follows:
@@ -56,6 +58,7 @@
     \item{par}{The vectorized parameter.}
     \item{data}{A combined data set which contains columns for thetas
       and weights.}
+    \item{...}{Additional arguments for \code{\link{mstep}}.}
   }
 }
 \section{Constructor}{
@@ -73,6 +76,16 @@
 
   Existing subclasses:  \code{\linkS4class{NormalPop}},
   \code{\linkS4class{CategoricalPop}}
+
+}
+\section{M-step}{
+
+  The default m-step method runs the optimizer to iteratively find the
+  maximum of the \code{$lprob} function.  However, in a number of cases,
+  it might be possible to compute the maximum analytically.  In this
+  case, the class should override the \code{$mstep} method.  It should
+  return a list with the name of the model and some indication of the
+  result. 
 
 }
 \author{Russell G. Almond}
@@ -102,6 +115,12 @@ MyNormalPop <- R6Class(
           sigma <- self$sigma
           rnorm(npart,mu,sigma)
         },
+        initProbs = function(theta,covars=list()) {
+          ord <- order(theta,decreasing=FALSE)
+          ps <- pnorm(theta[ord],self$mu,self$sigma)
+          pcuts <- c(0,ps[-1]-diff(ps)/2,1) #Midpoints of p's.
+          diff(pcuts)[order(ord)] #order(ord) undoes the ordering.
+        },
         lprob = function(data,par=self$pvec) {
           mu <- par[1]
           sigma <- exp(par[2])
@@ -109,8 +128,14 @@ MyNormalPop <- R6Class(
           theta <- data[[self$tnames]]
           sum(dnorm(theta,mu,sigma,log=TRUE)*weights)
         },
-        cdf = function(theta,invariants=list()) {
-          pnorm(theta,self$mu,self$sigma)
+        mstep=function(data,...) {
+          weights <- data[[self$wname]]
+          theta <- data[[self$tnames]]
+          self$mu <- wtd.mean(theta,weights)
+          self$sigma <- wtd.sd(theta,weights)
+          self$lp <- sum(dnorm(theta,self$mu,self$sigma,log=TRUE)*weights)
+          self$convergence <- TRUE
+          list(name=self$name,list(mu=self$mu,sigma=self$sigma))
         },
         toString=function(digits=2,...){
           paste0("<NormalPopulation: ",
@@ -131,3 +156,6 @@ MyNormalPop <- R6Class(
 \keyword{classes}
 \keyword{models}
 \concept{ panel_data }
+\concept{population_model}
+\concept{ POMDP}
+\concept{ HMM}

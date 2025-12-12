@@ -134,33 +134,32 @@ panel_data <- function(time, dt, vari = NULL, invar= NULL,
   result
 }
 
-setMethod("nsubj","Panel_Data", function(obj) nsubj(obj$dt))
-setMethod("nsubj<-","Panel_Data", function(obj,value) {
+nsubj.Panel_Data <- function(obj) {nsubj(obj$dt)}
+"nsubj<-.Panel_Data" <- function(obj,value) {
   nsubj(obj$dt) <-as.integer(value)
   nsubj(obj$t) <-as.integer(value)
   obj
-})
+}
 
 
-setMethod("nocc","Panel_Data", function(obj) nocc(obj$dt))
-setMethod("minocc","Panel_Data", function(obj) minocc(obj$dt))
-setMethod("maxocc","Panel_Data", function(obj) maxocc(obj$dt))
+nocc.Panel_Data <- function(obj) {nocc(obj$dt)}
+minocc.Panel_Data <- function(obj) {minocc(obj$dt)}
+maxocc.Panel_Data <- function(obj) {maxocc(obj$dt)}
 
 
 
-setMethod("as_longform","Panel_Data",
-          function(x,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L,weightType="all",
-                   name=deparse(substitute(x))) {
+as_longform.Panel_Data <- function(x,...,n=nsubj(x),maxocc=nocc(x),
+                                   minocc=1L,
+                                   name=deparse(substitute(x))) {
   if (missing(name)) name <- "time"
   if (missing(minocc)) minocc <- 0L
-  as_longform(x$time,n,maxocc,minocc,name=name) |>
+  as_longform(x$time,n=n,maxocc=maxocc,minocc=minocc,name=name) |>
     dplyr::left_join(cbind(subj=1:n,x$invar),
                      dplyr::join_by("subj")) |>
-    dplyr::left_join(as_longform(x$vari,n,maxocc,
-                                        minocc),
+    dplyr::left_join(as_longform(x$vari,n=n,maxocc=maxocc,
+                                        minocc=minocc),
                      dplyr::join_by("subj","occ"))
-})
+}
 
 long2panel <- function(df, idcol="subj", timecol="time", occcol="occ",
                        dnames=character(),
@@ -195,23 +194,23 @@ long2panel <- function(df, idcol="subj", timecol="time", occcol="occ",
 
 }
 
-setMethod("get_subj","Panel_Data", function(x,subj) {
+setMethod("get_subj","Panel_Data", function(x,isubj) {
   invar <- x$invar
-  if (!is.null(invar)) invar <- invar[subj,]
-  panel_data(time=get_subj(x$time,subj),vari=get_subj(x$vari,subj),
-             invar=invar,dnames=x$dnames,isubj=subj)
+  if (!is.null(invar)) invar <- invar[isubj,]
+  panel_data(time=get_subj(x$time,isubj),vari=get_subj(x$vari,isubj),
+             invar=invar,dnames=x$dnames,isubj=isubj)
 })
 
-setMethod("get_subj<-","Panel_Data", function(x,subj,value) {
-  x$time[subj,] <- value$time[1L,]
-  x$vari[subj,,] <- value$vari[subj,,]
-  if (!is.null(value$invar)) x$invar[subj,] <- value$invar[1L,]
+setMethod("get_subj<-","Panel_Data", function(x,isubj,value) {
+  x$time[isubj,] <- value$time[1L,]
+  x$vari[isubj,,] <- value$vari[isubj,,]
+  if (!is.null(value$invar)) x$invar[isubj,] <- value$invar[1L,]
   x
 })
 
-setMethod("isubj","Panel_Data", function(obj) obj$isubj)
-setMethod("isubj<-","Panel_Data", function(obj,value) {
+isubj.Panel_Data <- function(obj) {obj$isubj}
+"isubj<-.Panel_Data" <- function(obj,value) {
   obj$isubj<-as.integer(value)
   obj
-})
+}
 

@@ -10,7 +10,7 @@
 
 }
 \usage{
-as_longform(x, n = nsubj(x), maxocc = maxocc(x), minocc = minocc(x),
+as_longform(x, ...,n = nsubj(x), maxocc = maxocc(x), minocc = minocc(x),
             weightType="all",
             name = deparse(substitute(x)))
 }
@@ -20,8 +20,9 @@ as_longform(x, n = nsubj(x), maxocc = maxocc(x), minocc = minocc(x),
   \item{maxocc}{The maximum occurance value.}
   \item{minocc}{The minimum occurance value, usually 1 or 0.}
   \item{weightType}{The types of weights to get (only used with
-    \code{\linkS4class{Quadrature}} classes.}
+    \code{\linkS4class{Quadrature}} classes).}
   \item{name}{The name to give the column for a \code{Panmat}.}
+  \item{\dots}{Separates the required and optional arguments.}
 }
 \details{
 

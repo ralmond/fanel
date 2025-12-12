@@ -142,61 +142,58 @@ Activities <- R6Class(
 
 setOldClass("Activities")
 
-setMethod("nsubj<-","Activities", function(obj,value) {
+"nsubj<-.Activities" <- function(obj,value) {
   nsubj(obj$index) <-as.integer(value)
   nsubj(obj$dt) <- as.integer(value)
   if (!is.null(obj$dosage)) nsubj(obj$dosage) <- as.integer(value)
   obj
-})
+}
 
 
-setMethod("nocc<-","Activities", function(obj,value) {
+"nocc<-.Activities" <- function(obj,value) {
   nocc(obj$index) <- as.integer(value)
   nocc(obj$dt) <- as.integer(value)
   if (!is.null(obj$dosage)) nocc(obj$dosage) <- as.integer(value)
   obj
-})
+}
 
-setMethod("maxocc<-","Activities", function(obj,value) {
+"maxocc<-.Activities" <- function(obj,value) {
   maxocc(obj$index) <- value
   maxocc(obj$dt) <- as.integer(value)
   if (!is.null(obj$dosage)) maxocc(obj$dosage) <- as.integer(value)
   obj
-})
+}
 
 
-setMethod("minocc<-","Activities", function(obj,value) {
+"minocc<-.Activities" <- function(obj,value) {
   minocc(obj$index) <- as.integer(value)
   minocc(obj$dt) <- as.integer(value)
   if (!is.null(obj$dosage)) minocc(obj$dosage) <- as.integer(value)
   obj
-})
+}
 
-setMethod("drawGrowth", "Activities",
-           function(model, isubj, iocc, theta, covar=NULL) {
+drawGrowth.Activities <- function(model, isubj, iocc, theta, covar=NULL) {
   model$drawNext(isubj, iocc, theta, covar=NULL)
-})
+}
 
 
-
-setMethod("as_longform","Activities",
-          function(x,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L,weightType="all",
-                   name=deparse(substitute(x))) {
+as_longform.Activities <- function(x,...,n=nsubj(x),maxocc=nocc(x),
+                                   minocc=1L,
+                                   name=deparse(substitute(x))) {
   as_longform(x$index,n=n,maxocc=maxocc,minocc=minocc,
-              weightType=weightType,name="action") |>
+              name="action") |>
     dplyr::left_join(
                as_longform(x$dt,n=n,maxocc=maxocc,minocc=minocc,
-                           weightType=weightType,name="deltaT"),
+                           name="deltaT"),
                dplyr::join_by("subj","occ")) ->
       result
   if (!is.null(x$dosage))
     dplyr::left_join(result,
                      as_longform(x$dosage,n=n,maxocc=maxocc,minocc=minocc,
-                                 weightType=weightType,name="dose"),
+                                 name="dose"),
                      dplyr::join_by("subj","occ")) ->
       result
   result
-          })
+}
 
 

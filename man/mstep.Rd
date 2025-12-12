@@ -135,7 +135,7 @@ pvec(obj) <- value
 
   The \code{$split_m} method of \code{\linkS4class{ModelSet}} classes
   (\code{\linkS4class{Population}}, \code{\linkS4class{Evidence}}, and
-  \code{\linkS4class{Actvities}}) split the data by their indexes and
+  \code{\linkS4class{Activities}}) split the data by their indexes and
   sends the chunks to the models in the collections.
 
 }
@@ -173,7 +173,7 @@ pvec(obj) <- value
   data for only occasion 0; for the \code{Activities} class, this adds
   the \dQuote{theta_1} columns.  The \code{mstep(POMDP)} method then
   calls all of the individual model \code{FModel$mstep} methods with
-  their data. 
+  their data.
 
   The default \code{mstep(\linkS4class{FModel})} method runs \code{optim}
   for \code{its} steps, however, specific models can implement exact methods
@@ -230,10 +230,10 @@ Sung to a Fast New Tune. \emph{Journal of the Royal Statsitical Society,
 
   \code{\linkS4class{ModelSet}} --- Next level model containers.
   Subclasses:  \code{\linkS4class{Population}},
-  \code{\linkS4class{Evidence}}, and \code{\linkS4class{Actvities}})
+  \code{\linkS4class{Evidence}}, and \code{\linkS4class{Activities}})
 
   \code{\linkS4class{FModel}} --- Low level model:  Subclasses
-  \code{\linkS4class{PopuluationModel}} (\code{\linkS4class{NormalPop}},
+  \code{\linkS4class{PopulationModel}} (\code{\linkS4class{NormalPop}},
   \code{\linkS4class{CategoricalPop}}), \code{\linkS4class{GrowthModel}}
   (\code{\linkS4class{TransitionModel}}),
   \code{\linkS4class{EvidenceModel}} and their subclasses.

@@ -1,4 +1,3 @@
-
 POMDP <- function(name,population,activities,evidence,
                 tname=population$tnames,
                 dname=evidence$dnames) {
@@ -31,64 +30,56 @@ evidence <- function(model) {model$components$evidence}
 
 setOldClass("POMDP")
 
-setMethod("nsubj","POMDP", function(obj) {
+nsubj.POMDP<- function(obj) {
   nsubj(population(obj))
-})
+}
 
-setMethod("nocc","POMDP", function(obj) {
+nocc.POMDP <- function(obj) {
   nocc(evidence(obj))
-})
+}
 
-setMethod("maxocc","POMDP", function(obj) {
+maxocc.POMDP <- function(obj) {
   maxocc(evidence(obj))
-})
+}
 
-setMethod("minocc","POMDP", function(obj) {
+minocc.POMDP <- function(obj) {
   maxocc(evidence(obj))
-})
+}
 
-setMethod("nmodels","POMDP",function(x) {
-  nmodels(population(x)) +
-  nmodels(evidence(x)) +
-  nmodels(activities(x))
-})
+nmodels.POMDP <-function(obj) {
+  nmodels(population(obj)) +
+  nmodels(evidence(obj)) +
+  nmodels(activities(obj))
+}
 
-setMethod("drawInitial", "POMDP",
-          function(model, isubj, npart, covar=NULL) {
-            drawInitial(population(model),isubj,npart,covar)
-})
+drawInitial.POMDP <- function(model, isubj, npart, covar=NULL) {
+  drawInitial(population(model),isubj,npart,covar)
+}
 
-setMethod("ProbInit", "POMDP",
-          function(model, isubj, thetas, covar=NULL) {
-            ProbInit(population(model),isubj,thetas,covar)
-          })
+ProbInit.POMDP <- function(model, isubj, thetas, covar=NULL) {
+  ProbInit(population(model),isubj,thetas,covar)
+}
 
-setMethod("drawGrowth", "POMDP",
-           function(model, isubj, iocc, theta, covar=NULL) {
-             drawGrowth(activities(model), isubj, iocc, theta, covar=NULL)
-           })
+drawGrowth.POMDP <- function(model, isubj, iocc, theta, covar=NULL) {
+  drawGrowth(activities(model), isubj, iocc, theta, covar=NULL)
+}
 
-
-setMethod("advanceWeights", "POMDP",
-          function(model, isubj, iocc, lweights, covar=NULL) {
+advanceWeights.POMDP <- function(model, isubj, iocc, lweights, covar=NULL) {
   advanceWeights(activities(model),isubj,iocc,lweights,covar)
-})
+}
 
-setMethod("retreatWeights", "POMDP",
-          function(model, isubj, iocc, rweights, covar=NULL) {
+retreatWeights.POMDP <- function(model, isubj, iocc, rweights, covar=NULL) {
   retreatWeights(activities(model),isubj,iocc,rweights,covar)
-})
+}
 
-setMethod("drawData", "POMDP",
-          function(model,isubj,iocc,theta,covar=NULL) {
-            drawData(evidence(evidence),isubj,iocc,theta,covar)
-})
+drawData.POMDP <- function(model,isubj,iocc,theta,covar=NULL) {
+  drawData(evidence(evidence),isubj,iocc,theta,covar)
+}
 
+evalEvidence.POMDP <- function(model, isubj, iocc, theta, data, covar=NULL) {
+  evalEvidence(evidence(model), isubj,iocc,theta,data,covar)
+}
 
-setMethod("evalEvidence", "POMDP",
-           function(model, isubj, iocc, theta, data, covar=NULL) {
-             evalEvidence(evidence(model), isubj,iocc,theta,data,covar)
-})
 
 
 

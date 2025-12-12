@@ -143,19 +143,22 @@ Population <- R6Class(
     initialize=function(name,popModels,groups=1L,
                         tname="theta",wname="w") {
       self$name <- name
-      self$popModels <- popModels
-      self$groups <- groups
+      self$models <- popModels
+      if (!is(groups,"Panmat") && is.null(dim(groups))) {
+        groups <- matrix(groups,ncol=1)
+      }
+      self$index <- as.Panmat(groups)
       self$tnames <- tname
       self$wname <- wname
     },
-    group = function(subj) {
-      self$index[subj,]
+    group = function(isubj) {
+      self$index[isubj,]
     },
-    drawInit = function(subj,npart,covars=NULL) {
-      self$models[[self$group(subj)]]$drawInit(npart,covars)
+    drawInit = function(isubj,npart,covars=NULL) {
+      self$models[[self$group(isubj)]]$drawInit(npart,covars)
     },
-    initProbs = function(subj,theta,covars=list()) {
-       self$models[[self$group(subj)]]$initProbs(theta,covars)
+    initProbs = function(isubj,theta,covars=list()) {
+       self$models[[self$group(isubj)]]$initProbs(theta,covars)
     },
     prepData = function(data) {
       dplyr::filter(data,occ==0)
@@ -165,15 +168,13 @@ Population <- R6Class(
 
 setOldClass("Population")
 
-setMethod("drawInitial", "Population",
-          function(model, isubj, npart, covar=NULL) {
-            model$drawInit(isubj,npart,covar)
-})
+drawInitial.Population <- function(model, isubj, npart, covar=NULL) {
+  model$drawInit(isubj,npart,covar)
+}
 
-setMethod("ProbInit", "Population",
-          function(model, isubj, thetas, covar=NULL) {
-            model$initProbs(isubj,thetas,covar)
-})
+ProbInit.Population <- function(model, isubj, thetas, covar=NULL) {
+  model$initProbs(isubj,thetas,covar)
+}
 
 
 

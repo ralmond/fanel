@@ -9,8 +9,9 @@
 \alias{maxocc<-}
 \alias{minocc}
 \alias{minocc<-}
+\alias{nmodels}
 
-\title{Accesses shape information about Panamt, Panel_Frame, and Panel_Data}
+\title{Accesses shape information about fanel objects}
 \description{
 
   Accesses the number of subject or occassions for a fanel data object.
@@ -29,6 +30,7 @@ maxocc(obj)
 maxocc(obj) <- value
 minocc(obj)
 minocc(obj) <- value
+nmodels(obj)
 }
 \arguments{
   \item{obj}{A \code{\linkS4class{Panmat}}, \code{\linkS4class{Panel_Frame}} or

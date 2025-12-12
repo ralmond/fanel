@@ -174,12 +174,12 @@ setMethod("cumsum","Panmat", function(x) {
   cpm
 })
 
-setMethod("get_subj","Panmat", function(x,subj) {
-  as.Panmat(x[subj,])
+setMethod("get_subj","Panmat", function(x,isubj) {
+  as.Panmat(x[isubj,])
 })
 
-setMethod("get_subj<-","Panmat", function(x,subj,value) {
-  x[subj,] <- as.matrix(value)
+setMethod("get_subj<-","Panmat", function(x,isubj,value) {
+  x[isubj,] <- as.matrix(value)
   x
 })
 

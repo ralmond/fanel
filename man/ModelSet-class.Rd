@@ -2,15 +2,16 @@
 \docType{class}
 \alias{ModelSet-class}
 \alias{ModelSet}
-\alias{maxocc,ModelSet-method}
-\alias{maxocc<-,ModelSet-method}
-\alias{minocc,ModelSet-method}
-\alias{minocc<-,ModelSet-method}
-\alias{mstep,ModelSet-method}
-\alias{nocc,ModelSet-method}
-\alias{nocc<-,ModelSet-method}
-\alias{nsubj,ModelSet-method}
-\alias{nsubj<-,ModelSet-method}
+\alias{maxocc.ModelSet}
+\alias{maxocc<-.ModelSet}
+\alias{minocc.ModelSet}
+\alias{minocc<-.ModelSet}
+\alias{mstep.ModelSet}
+\alias{nocc.ModelSet}
+\alias{nocc<-.ModelSet}
+\alias{nsubj.ModelSet}
+\alias{nsubj<-.ModelSet}
+\alias{nmodels.ModelSet}
 
 \title{Class \code{"ModelSet"}}
 \description{
@@ -54,7 +55,12 @@
       occasion associated with the index data.  Usually 0 or 1. }
     \item{\code{mstep}}{Implements the mstep (see below).}
     \item{\code{nocc},\code{nocc<-}}{Gets/sets the number of occasions.}
-    \item{\code{nsubj},\code{nsubj<-}}{Gets/sets the number of subjects.}
+    \item{\code{nsubj},\code{nsubj<-}}{Gets/sets the number of
+      subjects.}
+    \item{\code{nmodels}}{Returns the number of models.}
+    \item{as_longform}{\code{signature(x = "ModelSet")}: Returns
+      longform (\code{link{as_longform}}) data consisting of the index
+      variable. }
   }
 
   Some additional object methods 
@@ -63,13 +69,15 @@
     \item{\code{$toString}}{Generates a charcter representation.}
     \item{\code{$print}}{Prints the object; default method uses
       \code{$toString} so only that needs to be modified.}
-    \item{\code{$prepData}}{Prepares data for the mstep calculations.}
+    \item{\code{$prepData}}{Prepares data for the mstep calculations.
+      Defaults to identity function, but is often overridden by
+      subclasses.} 
     \item{\code{$split_m}}{Assigns data to models and builds a list of
       (model, data) pairs.}
-    \item{\code{$mstep}}{\code{signature(data = "Panel_Data",
+    \item{\code{$mstep}}{\code{signature(data = "Panel_Data",...,
 	its = "integer", control = "list", workers = "Workers")}:
-      This is the implementation of the m-step.  This method must be
-      implemented by the sub-classes.}
+      This is the implementation of the m-step.  Generic method calls
+      \code{$prepData} and \code{$split_m} and then runs over the pairs.}
   }
 
 }

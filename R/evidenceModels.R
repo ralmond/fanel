@@ -111,6 +111,16 @@ NormalScore <- R6Class(
       Y <- data[[self$dnames]]
       sum(dnorm(Y,theta+par[1],exp(par[2]),log=TRUE)*weights)
     },
+    mstep = function(data,...) {
+      weights <- data[[self$wname]]
+      theta <- data[[self$tnames]]
+      Y <- data[[self$dnames]]
+      self$bias <- wtd.mean(Y,weights) - wtd.mean(theta,weights)
+      self$se <- wtd.sd(Y,weights)
+      self$converged <- true
+      self$lp <- self$lprob(data)
+      list(name=self$name,list(self$bias,self$se))
+    },
     toString=function(digits=2,...) {
       paste0("<NS: ", self$name, " ( ",
              round(self$bias,digits=digits),
@@ -139,7 +149,7 @@ Evidence <- R6Class(
                         dname="Y") {
       self$name <- name
       self$models <- evidenceModels
-      self$index <- as.Pandat(tasks)
+      self$index <- as.Panmat(tasks)
       self$tnames <- tname
       self$wname <- wname
       self$dnames <- dname
@@ -152,7 +162,7 @@ Evidence <- R6Class(
              self$nsubjects, " x ",
              self$macocc, " >")
     },
-    evalEvidence = function(isubj,iocc,theta,Y,cov=NULL) {
+    evalEvidence = function(isubj,iocc,theta,Y,covar=NULL) {
       task <- self$task(isubj,iocc)
       if (all(is.na(Y)) || is.na(task)) {
         return(rep(0,dim(self$theta)[1]))
@@ -160,7 +170,7 @@ Evidence <- R6Class(
         self$models[[task]]$llike(Y,theta,cov)
       }
     },
-    drawObs = function(isubj,iocc,theta,cov=NULL) {
+    drawObs = function(isubj,iocc,theta,covar=NULL) {
       task <- self$task(isubj,iocc)
       if (is.na(task)) {
         return(rep(NA,dim(self$theta)[1]))
@@ -175,22 +185,20 @@ Evidence <- R6Class(
 setOldClass("Evidence")
 
 
-setMethod("drawData", "Evidence",
-          function(model,isubj,iocc,theta,covar=NULL) {
-            model$drawObs(isubj,iocc,theta,covar)
-})
+drawData.Evidence <- function(model,isubj,iocc,theta,covar=NULL) {
+  model$drawObs(isubj,iocc,theta,covar)
+}
 
-setMethod("evalEvidence", "Evidence",
-           function(model, isubj, iocc, theta, data, covar=NULL) {
-             model$evalEvidence(isubj,iocc,theta,data,covar)
-})
+evalEvidence.Evidence<- function(model, isubj, iocc, theta, data,
+                                 covar=NULL) {
+  model$evalEvidence(isubj,iocc,theta,data,covar)
+}
 
 
-setMethod("as_longform","Evidence",
-          function(x,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L,weightType="all",
-                   name=deparse(substitute(x))) {
+as_longform.Evidence <- function(x,...,n=nsubj(x),maxocc=nocc(x),
+                                 minocc=1L,
+                                 name=deparse(substitute(x))) {
   as_longform(x$index,n=n,maxocc=maxocc,minocc=minocc,
-              weightType=weightType,name="task")
-          })
+              name="task")
+}
 

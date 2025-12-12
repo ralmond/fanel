@@ -23,7 +23,7 @@
   These functions create a filter with the given window and parameters.
   The filter is a function with arguments \code{(t,tstar)}
   which provides a weight between 0 and 1.  It can be used as the value of
-  \code{\link{IRTF}$wfun}.
+  the \code{wfun} argument of \code{\link{qFilter}}.
 
 
 }
@@ -168,8 +168,8 @@ exponentialWindow(window=1,lambda=.8,...,symmetric=TRUE)
 
   A function with arguments \code{t,tstar} which gives a value between
   0 and 1 based the distance between the observation time (\code{t}) and
-  the target time (\code{tstar}).  This is suitable for the
-  \code{\link{IRTF}$wfun} field.
+  the target time (\code{tstar}).  This is suitable for the \code{wfun}
+  argument of the \code{\link{qFilter}} field.
 }
 \references{
 
@@ -181,8 +181,7 @@ exponentialWindow(window=1,lambda=.8,...,symmetric=TRUE)
 Russell Almond
 }
 \seealso{
-  The \code{\link{IRTF}} uses a window function as one of its fields, and the
-  \code{\link{irtf}} function uses a weight function as one of its examples.
+  The \code{\link{qFilter}} uses a window function as one of its arguments.
 }
 \examples{
 

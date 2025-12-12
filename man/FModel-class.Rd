@@ -2,9 +2,18 @@
 \docType{class}
 \alias{FModel-class}
 \alias{FModel}
-\alias{lprob,FModel-method}
-\alias{pvec,FModel-method}
-\alias{pvec<-,FModel-method}
+\alias{lprob.FModel}
+\alias{pvec.FModel}
+\alias{pvec<-.FModel}
+\alias{mstep.FModel}
+\alias{maxocc.FModel}
+\alias{maxocc<-.FModel}
+\alias{minocc.FModel}
+\alias{minocc<-.FModel}
+\alias{nocc.FModel}
+\alias{nocc<-.FModel}
+\alias{nsubj.FModel}
+\alias{nsubj<-.FModel}
 
 \title{Class \code{"FModel"}}
 \description{
@@ -42,9 +51,9 @@ reference object protocols.
       optimize parameters (see section below).}
     \item{\code{$mstep}}{\code{(data, ..., its=3,control=list(),
 	workers = NULL)}:  This method does the optimization (see
-      section below).} 
+      section below).}
     \item{lprob}{\code{(obj = "FModel", data= "data.frame",
-	pvec = "numeric",)}: 
+	pvec = "numeric",)}:
       Calculates the log probability of the data (which includes imputed
       values for the latent variables and weights).}
     \item{\code{$lprob}}{\code{(data,pvec=pvec(self))}:  The R6 method
@@ -78,7 +87,7 @@ reference object protocols.
 
   The \code{pvec} function and its corresponding getters need to get/set
   the parameters on an unbounded domain.  These are passed to
-  \code{optim}.  
+  \code{optim}.
 
 }
 \section{M-step protocol}{
@@ -98,14 +107,14 @@ reference object protocols.
   \code{$sigma}.  The \code{$pvec} method returns \code{c(self$mu,
     log(self$sigma))}.  The setter method for \code{$pvec} must undo
   this transformation.
-  
+
   The \code{$lprobs} method takes two arguments, the \code{data} and
   the parameter (\code{par}).  The latter is in the format determined by
   \code{$pvec}.  The \code{$lprobs} method must decode this to get the
   raw parameters.  It also must extract the columns it needs from the
   \code{data} object (see \code{\link{mstep}()}). It returns a real
   number giving the log of the probability of the data given the
-  parameters. 
+  parameters.
 
   The default \code{$mstep} method just runs \code{\link[stats]{optim}}
   to find the maximum log probability.  It returns a list with the name
