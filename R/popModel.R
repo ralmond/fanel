@@ -177,7 +177,7 @@ drawInitial.Population <- function(model, isubj, npart, covar=NULL) {
   model$drawInit(isubj,npart,covar)
 }
 
-ProbInit.Population <- function(model, isubj, thetas, covar=NULL) {
+probInit.Population <- function(model, isubj, thetas, covar=NULL) {
   model$initProbs(isubj,thetas,covar)
 }
 

@@ -262,10 +262,10 @@ drawInitial <- function(model, isubj, npart, covar=NULL) {
 }
 setGeneric("drawInitial")
 
-ProbInit <- function(model, isubj, thetas, covar=NULL) {
-  UseMethod("ProbInit")
+probInit <- function(model, isubj, thetas, covar=NULL) {
+  UseMethod("probInit")
 }
-setGeneric("ProbInit")
+setGeneric("probInit")
 
 drawData <- function(model,isubj,iocc,theta,covar=NULL) {
   UseMethod("drawData")

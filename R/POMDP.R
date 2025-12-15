@@ -56,8 +56,8 @@ drawInitial.POMDP <- function(model, isubj, npart, covar=NULL) {
   drawInitial(population(model),isubj,npart,covar)
 }
 
-ProbInit.POMDP <- function(model, isubj, thetas, covar=NULL) {
-  ProbInit(population(model),isubj,thetas,covar)
+probInit.POMDP <- function(model, isubj, thetas, covar=NULL) {
+  probInit(population(model),isubj,thetas,covar)
 }
 
 drawGrowth.POMDP <- function(model, isubj, iocc, theta, covar=NULL) {
@@ -87,13 +87,15 @@ evalEvidence.POMDP <- function(model, isubj, iocc, theta, data, covar=NULL) {
 setMethod("mstep","POMDP",
            function(obj, data, ..., its=3,control=list(),
                     workers=Workers$new(nmodels(obj))) {
-             pairlist <- c(population(obj)$split_m(data),
-                           evidence(obj)$split_m(data),
-                           activities(obj)$split_m(data))
              workers$start()
-             result <- workers$lapply(pairlist,\(pair) {
-               pair[[1]]$mstep(pair[[2]])
-             })
+             obj$components |>
+               lapply(\(com) com$split_m(data)) |>
+               purrr::list_flatten() |>
+               workers$lapply(\(pair) {
+                 pair[[1]]$mstep(pair[[2]])
+               }) -> result
+             Workers$flagStop()
+             result
            })
 
 

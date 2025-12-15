@@ -145,17 +145,17 @@ ActivitiesD <- R6Class(
   "ActivitiesD",
   inherit=Activities,
   public=list(
-    advance = function(subj,iocc,lweights,covar=NULL) {
-      self$models[[self$action(subj,iocc)]]$
-        advance(lweights,self$deltaT(subj,iocc),self$dose(subj,iocc),covar)
+    advance = function(isubj,iocc,lweights,covar=NULL) {
+      self$models[[self$action(isubj,iocc)]]$
+        advance(lweights,self$deltaT(isubj,iocc),self$dose(isubj,iocc),covar)
     },
-    retreat = function(subj,iocc,rweights,covar=NULL) {
-      self$models[[self$action(subj,iocc)]]$
-        retreat(rweights,self$deltaT(subj,iocc),self$dose(subj,iocc),covar)
+    retreat = function(isubj,iocc,rweights,covar=NULL) {
+      self$models[[self$action(isubj,iocc)]]$
+        retreat(rweights,self$deltaT(isubj,iocc),self$dose(isubj,iocc),covar)
     },
-    tmat = function(subj,iocc,covar) {
-      mod <- self$models[[self$action(subj,iocc)]]
-      mod$tmat(pvec(mod),self$deltaT(subj,iocc),self$dose(subj,iocc),covar)
+    tmat = function(isubj,iocc,covar) {
+      mod <- self$models[[self$action(isubj,iocc)]]
+      mod$tmat(pvec(mod),self$deltaT(isubj,iocc),self$dose(isubj,iocc),covar)
     },
     fillCache = function(data,workers=Workers$new()) {
       workers$start()

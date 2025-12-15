@@ -12,24 +12,24 @@ GrowthModel <- R6Class(
   )
 )
 
+setOldClass(c("GrowthModel","FModel"))
 
 BrownianGrowth <- R6Class(
   classname="BrownianGrowth",
   inherit=GrowthModel,
   public=list(
-    initialize = function(name,gain,inovSD,tname="theta",wname="w") {
+    initialize = function(name,gain,inovSD,tname="theta",wname="w",
+                          dtname="deltaT", dosname="dose") {
       self$name <- name
       self$gain <- gain
       self$inovSD <- inovSD
       self$tnames <- tname
       self$wname <- wname
+      self$dtname <- dtname
+      self$dosname <- dosname
     },
     gain=0,
     inovSD=.1,
-    drawNext = function(theta,deltaT,dose=deltaT,covars=list()) {
-      rnorm(length(theta),theta+self$gain*dose,
-            self$inovSD*sqrt(deltaT))
-    },
     lprob = function(data,par=self$pvec) {
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
@@ -68,6 +68,7 @@ BrownianGrowth <- R6Class(
   )
 )
 
+setOldClass(c("BrownianGrowth","GrowthModel","FModel"))
 
 Activities <- R6Class(
   "Activities",
@@ -76,9 +77,8 @@ Activities <- R6Class(
     name="ActitivitySet",
     dt=as.Panmat(1),
     dosage=NULL,
-    initialize=function(name,actions=1L,dt=1.0,
-                        growthModels=list(), dosage=NULL,
-                        tname="theta",wname="w",
+    initialize=function(name,growthModels=list(),actions=1L,dt=1.0,
+                        dosage=NULL,tname="theta",wname="w",
                         dtname="deltaT",dosname="dose") {
       self$name <- name
       self$index <- as.Panmat(actions)
@@ -115,19 +115,19 @@ Activities <- R6Class(
              self$nsubjects, " x ",
              self$macocc, " >")
     },
-    action = function(subj,iocc) {
-      self$index[subj,iocc]
+    action = function(isubj,iocc) {
+      self$index[isubj,iocc]
     }
   ),
   active=list(
-    dose = function(subj,iocc,value) {
-      if (is.null(self$dosage)) return(self$deltaT(subj,iocc))
-      if (missing(value)) return(self$dosage[subj,iocc])
-      self$dosage[self,iocc] <- value
+    dose = function(isubj,iocc,value) {
+      if (is.null(self$dosage)) return(self$deltaT(isubj,iocc))
+      if (missing(value)) return(self$dosage[isubj,iocc])
+      self$dosage[isubj,iocc] <- value
     },
-    deltaT = function(subj,iocc,value) {
-      if (missing(value)) return(self$dt[subj,iocc])
-      self$dt[self,iocc] <- value
+    deltaT = function(isubj,iocc,value) {
+      if (missing(value)) return(self$dt[isubj,iocc])
+      self$dt[isubj,iocc] <- value
     },
     dtname = function(value) {
       if (missing(value)) self$models[[1L]]$dtname

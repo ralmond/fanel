@@ -16,13 +16,13 @@ export(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", nmodels,
        get_subj, "get_subj<-", split_subj, add_subj, bind_subj,
        pvec, "pvec<-", lprob, mstep,
-       drawInitial, ProbInit, drawData, evalEvidence, drawGrowth,
+       drawInitial, probInit, drawData, evalEvidence, drawGrowth,
        advanceWeights, retreatWeights
        )
 exportMethods(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
        pvec, "pvec<-", lprob, mstep, nmodels,
-       drawInitial, ProbInit, drawData, evalEvidence, drawGrowth,
+       drawInitial, probInit, drawData, evalEvidence, drawGrowth,
        advanceWeights, retreatWeights
        )
 S3method(nsubj,Panel_Data)
@@ -66,14 +66,14 @@ S3method(mstep,FModel)
 S3method(mstep,ModelSet)
 
 S3method(drawInitial,Population)
-S3method(ProbInit,Population)
+S3method(probInit,Population)
 S3method(drawData,Evidence)
 S3method(evalEvidence,Evidence)
 S3method(drawGrowth,Activities)
 S3method(advanceWeights,ActivitiesD)
 S3method(retreatWeights,ActivitiesD)
 S3method(drawInitial,POMDP)
-S3method(ProbInit,POMDP)
+S3method(probInit,POMDP)
 S3method(drawData,POMDP)
 S3method(evalEvidence,POMDP)
 S3method(drawGrowth,POMDP)
