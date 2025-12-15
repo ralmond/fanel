@@ -12,7 +12,6 @@
   A container class for \code{\linkS4class{EvidenceModel}}s, indexed by
   \dQuote{task}.
 }
-\section{Objects from the Class}{A virtual Class: No objects may be created from it.}
 \section{Constructor}{
 
   The constructor is \code{Evidence$new(name, evidenceModels,

@@ -19,23 +19,24 @@
   An abstract container class for models.
 
 }
-\section{Objects from the Class}{A virtual Class: No objects may be created from it.}
-\section{Slots and active fields}{
+\section{Objects from the Class}{A virtual Class: No objects may be
+  created from it.} 
+\section{Public and Active Fields}{
   \describe{
-    \item{\code{name}:}{A \code{"character"} scalar giving the
+    \item{\code{$name}:}{A \code{"character"} scalar giving the
       a name for the collection. }
-    \item{\code{models}:}{A \code{"list"} of 
+    \item{\code{$models}:}{A \code{"list"} of 
       \code{\linkS4class{FModel}} objects containing the actual models.}
-    \item{\code{index}:}{Object of class \code{"Panmat"} giving the
+    \item{\code{$index}:}{Object of class \code{"Panmat"} giving the
       indexes of which model is used by which (subject, occasion)
       combination.}
-    \item{\code{iname}:}{String giving the name of the index (e.g.,
+    \item{\code{$iname}:}{String giving the name of the index (e.g.,
       \dQuote{group}, \dQuote{task}, or \dQuote{action}).}
-    \item{\code{tnames}:}{A \code{"character"} vector giving the names
+    \item{\code{$tnames}:}{A \code{"character"} vector giving the names
       of the latent variables. }
-    \item{\code{wname}:}{A \code{"character"} vector giving the name(s) of
+    \item{\code{$wname}:}{A \code{"character"} vector giving the name(s) of
       the weight columnn. }
-    \item{\code{dnames}:}{A \code{"character"} vector giving the name(s)
+    \item{\code{$dnames}:}{A \code{"character"} vector giving the name(s)
       of the data column.}
   }
 }
@@ -47,7 +48,7 @@
   \code{\linkS4class{Evidence}}. 
   
 }
-\section{S4 Methods and class methods }{
+\section{S4 Methods and Class methods }{
   \describe{
     \item{\code{maxocc},\code{maxocc<-}}{:  Gets/sets
       the maximum  occasion associated with the index data. }

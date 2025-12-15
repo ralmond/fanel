@@ -11,7 +11,7 @@
   the value of the latent variable.
 
 }
-\section{Slots and Active Values}{
+\section{Public and Active Fields}{
 
   \describe{
     \item{\code{$convergence}:}{Logical variable indicating whether or

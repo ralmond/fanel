@@ -17,18 +17,29 @@
   The constructor is \code{Population$new(name, popModels, groups=1L,
     tname="theta", wname="w")}.
 
-  The arguments for the constructor are:
+  The arguments for both constructors are:
   \describe{
     \item{\code{name}}{A character scalar identifying the model.}
     \item{\code{popModels}}{A list of
       \code{\linkS4class{PopulationModel}}s corresponding to groups.}
     \item{\code{groups}}{A \code{\linkS4class{Panmat}} giving the
       indexes of the population model to use for each student.}
+    \item{\code{dt}}{A \code{\linkS4class{Panmat}} giving the
+      time differences between each occasion.}
+    \item{\code{dosage}}{A \code{\linkS4class{Panmat}} giving the
+      exposure time/strenght between each occasion.  If \code{NULL},
+      then the time difference will be used.}
     \item{\code{tname}}{A character vector giving the names of the
       latent variables.  Needs to match the quadrature used.}
-    \item{\code{w}}{A character value giving the name of the weight
-      column.  Only the first value is used.  Again, this needs to match
-      what is in the quadrature.}
+    \item{\code{wname}}{The column names for the weights.  For
+      \code{Activities}, only the first value is used.  For
+      \code{ActivitiesD} this should be a vector of length three with
+      the second element being the left weights and the third the right
+      weights. Again, this needs to match what is in the quadrature.}
+    \item{\code{dtname}}{A character value giving the name of the time
+      difference column.}
+    \item{\code{dosname}}{A character value giving the name of the time
+      dosage column.}
   }
 }
 \section{Slots and Active Fields}{

@@ -10,6 +10,8 @@
 \alias{minocc}
 \alias{minocc<-}
 \alias{nmodels}
+\alias{nquad}
+\alias{nquad<-}
 
 \title{Accesses shape information about fanel objects}
 \description{
@@ -31,6 +33,8 @@ maxocc(obj) <- value
 minocc(obj)
 minocc(obj) <- value
 nmodels(obj)
+nquad(obj)
+nquad(obj) <- value
 }
 \arguments{
   \item{obj}{A \code{\linkS4class{Panmat}}, \code{\linkS4class{Panel_Frame}} or

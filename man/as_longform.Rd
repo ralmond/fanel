@@ -1,5 +1,6 @@
 \name{as_longform}
 \alias{as_longform}
+\alias{longform}
 \title{Converts panel data to a longform data frame.}
 \description{
 
@@ -13,6 +14,7 @@
 as_longform(x, ...,n = nsubj(x), maxocc = maxocc(x), minocc = minocc(x),
             weightType="all",
             name = deparse(substitute(x)))
+longform(quad,model,data)
 }
 \arguments{
   \item{x}{The data object to be converted into long form data.}
