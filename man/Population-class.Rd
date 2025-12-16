@@ -84,7 +84,7 @@
 	npart, covar=NULL)}, calls the
       \code{\linkS4class{PopulationModel}$drawInit} method with the
       model with referenced by \code{$group(isubj)}.}
-    \item{\code{ProbInit},\code{$initProbs}}{\code{(model, isubj,
+    \item{\code{probInit},\code{$initProbs}}{\code{(model, isubj,
 	theta, covar=NULL)}, calls the
       \code{\linkS4class{PopulationModel}$initProbs} method with the
       model with referenced by \code{$group(isubj)}.}
@@ -150,7 +150,7 @@ nsubj(apop)
 nmodels(apop)
 drawInitial(apop,1,5)
 drawInitial(apop,9,5)
-ProbInit(apop,1,c(-1,0,1))
+probInit(apop,1,c(-1,0,1))
 
 }
 \keyword{classes}

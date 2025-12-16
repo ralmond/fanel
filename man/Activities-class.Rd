@@ -157,7 +157,7 @@
     (\code{\link{BWFilter}}).} 
   \item{\code{$tmat}}{\code{(isubj,iocc,covar)}:  calculates the
     transition matrix for a given subject, occasion pair.}
-  \item{\code{$fillCache}}{\code{(data,workers=Workers$new())}: Does some
+  \item{\code{$fillCache}}{\code{(workers=Workers$new())}: Does some
     caching of the matrix construction, to make scoring more
     efficient.}
   \item{\code{$nmoments}}{\code{(value)}: The number of matrix
@@ -166,27 +166,92 @@
 }
 \section{Time and Dosage}{
 
+  Almond (2007) proposes two time frames for models representing student
+  learning:  calendar time and rehearsal time or dosage.  Calendar time
+  represents the time elapsed between the start and end of the activity
+  selection period; this is called \dQuote{deltaT} in \code{fanel}.  The
+  \dQuote{dose} represents the amoung of time the subject exercises with
+  the skill to be learned (or number of attempts at some activity).
+
+  In general, increases in skills are associated with dosage and
+  decreases with calendar time (\dQuote{deltaT}).
 
 }
 \section{ActivitiesD and Transition Models}{
 
+  Although the \code{\linkS4class{TransitionModel}} is a subclass of the 
+  \code{\link{GrowthModel}}s, it differs in a number of ways.  First,
+  the transition model assumes that the latent variable space is
+  discrete, and therefore the growth can be represented with a
+  transition matrix.  Second, growth models are designed to be used with
+  the \code{\link{particleFilter}} algorithm, and so only need the
+  \code{\link{drawGrowth}} function, the transition models are designed
+  to work with the \code{\link{bwFilter}} and hence need the
+  \code{\link{advanceWeights}} and \code{\link{retreatWeights}}
+  functions.
+
+  The \code{ActivitiesD} class (\sQuote{D} for discrete) are designed to
+  work with \code{\link{TransitionModels}} and have some extra methods
+  for supporting this.
+
 }
 \section{Making and Caching Matrixes}{
 
+  In continuous time Markov processes, calculating the transition matrix
+  is a bit expensive.  It involves a matrix exponential
+  (\code{\link{expLambdaT}}) which can be expensive to calculate.  This
+  is different for all values of time and dosage.  Hence,
+  \code{\linkS4class{TransitionModel}} objects cache the calculated
+  transition matrixes using a \code{\linkS4class{memoTree}}.
 
+  During the scoring process if two subjects--occasion pairs have the
+  same \code{deltaT} and \code{dose}, the second pair will be able to
+  use the cached code.  However, if the computations are done on
+  different threads, they will not be able to share the cache.  The
+  \code{$fillCache}} method precalculates the caches, using multiple
+  threads if \code{\linkS4class{Worker}} are supplied.
+
+}
+\references{
+  Almond, R. G. (2007). Cognitive Modeling to Represent Growth
+  (Learning) Using Markov Decision Processes. \emph{Technology, Instruction,
+  Cognition and Learning (TICL)}, \bold{5},
+313–324. \url{http://www.oldcitypublishing.com/TICL/TICL.html}
 }
 \author{Russell Almond}
 \note{
-%%  ~~further notes~~
+
+  The \code{$tname} and \code{$wname} fields must be co-ordinated with
+  the \code{\linkS4class{Quadrature}} class.  In particular, the
+  \code{\linkS4class{BWQuad}} has weights \code{c("w.full", "w.left",
+    and "w.right")} (only the first is needed for population models)
+  while the other quadratrues use just \code{"w"}.
+
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-%%  ~~objects to See Also as \code{\link{~~fun~~}}, ~~~
-%%  ~~or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
+
+  \code{\linkS4class{POMDP}} is the class which holds the
+  \code{Activities} or \code{ActivitiesD} class.
+
+  \code{\linkS4class{GrowthModel}} is the abstract class models
+  contained by \code{Activities}.  \code{\linkS4class{BrownianGrowth}} and
+  \code{\linkS4class{BrownianGrowth2}} are the current implementing
+  classes.  These are used with the \code{\link{particleFilter}}
+  algorithm. 
+
+  \code{\linkS4class{TransitionModel}} is the abstract class models
+  contained by \code{ActivitiesD}.  \code{\linkS4class{UpDownGrowth}} is
+  the current implementing class.  These are used with the
+  \code{\link{bwFilter}} algorithm.  The \code{\linkS4class{memoTree}}
+  is used to cache transition matrixes.
+  
 }
 \examples{
-showClass("Activities")
+acts <- Activities$new("ABtest",
+                       growthModels=list(BrownianGrowth("A",.1,.05),
+                                         BrownianGrowth("B",.2,.1)),
+                       actions=matrix(c(1,1,2,2, 2,2,1,1,),2,4,byrow=TRUE),
+                       dt=1,dosage=c(1,2,1,2))
+nmodels(acts)
 }
 \keyword{classes}

@@ -53,10 +53,10 @@ TransitionModel <- R6Class(
     lprob=function(data,par=pvec(self)) {
       self$cache$clear()
       split(data,self$splitter) |>
-        purrr::map_dbl(\(sdata) self$lpinner(par,sdata)) |>
+        purrr::map_dbl(\(sdata) self$lpinner(sdata,par)) |>
         purrr::reduce("+")
     },
-    lpinner = function(par=pvec(self),data) {
+    lpinner = function(data,par=pvec(self)) {
       G = self$tmat(par,data[1,"deltaT"],data[1,])
       split(data,~subj) |>
         purrr::map_dbl(\(sdata) {
@@ -65,7 +65,7 @@ TransitionModel <- R6Class(
           sum(lweight*log(rweight%*%G))
         }) |> purrr::reduce("+")
     },
-    fillCache = function(par=pvec(self),data) {
+    fillCache = function(data,par=pvec(self)) {
       self$cache$clear()
       split(data,self$splitter) |>
         purrr::walk(\(sdata) {
@@ -158,6 +158,8 @@ ActivitiesD <- R6Class(
       mod$tmat(pvec(mod),self$deltaT(isubj,iocc),self$dose(isubj,iocc),covar)
     },
     fillCache = function(data,workers=Workers$new()) {
+      data <- dplyr::left_join(as_longform(self),data,
+                               dplyr::join_by("self","occ"))
       workers$start()
       workers$lapply(unique(data$action), \(act) {
         mod <- self$growthModels[[act]]

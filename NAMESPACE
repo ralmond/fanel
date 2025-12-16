@@ -99,7 +99,7 @@ export(fixedQuad, particleQuad, BWQuad)
 export(PopulationModel, NormalPop, CategoricalPop, Population)
 exportClass(Population)
 
-export(GrowthModel, BrownianGrowth, Activities)
+export(GrowthModel, BrownianGrowth, BrownianGrowth2, Activities)
 exportClass(Activities)
 
 export(TransitionModel, UpDownGrowth, ActivitiesD)

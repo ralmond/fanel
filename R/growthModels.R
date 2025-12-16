@@ -48,9 +48,9 @@ BrownianGrowth <- R6Class(
       theta0 <- data[[self$tnames]]
       theta1 <- data[[paste0(self$tnames),"_1"]]
       weights <- data[[self$wname[1]]]
-      self$gain <- wtd.mean((theta1-theta0)/dose,weights)
-      self$inovSD <- wtd.sd((theta1-theta0-self$gain)/sqrt(deltaT),
-                             weights)
+      minov <- wtd.mean((theta1-theta0),weights)
+      self$gain <- minov/gain
+      self$inovSD <- wtd.sd((theta1-theta0-inov)/sqrt(deltaT),weights)
       list(name=self$name,lprob(data=data))
     },
     toString=function(digits=2,...) {
@@ -69,6 +69,70 @@ BrownianGrowth <- R6Class(
 )
 
 setOldClass(c("BrownianGrowth","GrowthModel","FModel"))
+
+BrownianGrowth2 <- R6Class(
+  classname="BrownianGrowth2",
+  inherit=BrownianGrowth,
+  public=list(
+    initialize = function(name,gain,loss,inovSD,tname="theta",wname="w",
+                          dtname="deltaT", dosname="dose") {
+      self$name <- name
+      self$gain <- gain
+      self$loss <- loss
+      self$inovSD <- inovSD
+      self$tnames <- tname
+      self$wname <- wname
+      self$dtname <- dtname
+      self$dosname <- dosname
+    },
+    loss=0,
+    lprob = function(data,par=self$pvec) {
+      deltaT <- data[[self$dtname]]
+      dose <- data[[self$dosname]]
+      if (is.null(dose)) dose <- deltaT
+      theta0 <- data[[self$tnames]]
+      theta1 <- data[[paste0(self$tnames,"_1")]]
+      weights <- data[[self$wname[1]]]
+      mu <- theta0 + par[1]*dose -par[2]*deltaT
+      sig <- exp(par[3])*sqrt(deltaT)
+      sum(dnorm(theta1,mu,sig,log=TRUE)*weights)
+    },
+    mstep = function(data,...) {
+      deltaT <- data[[self$dtname]]
+      dose <- data[[self$dosname]]
+      if (is.null(dose)) dose <- deltaT
+      theta0 <- data[[self$tnames]]
+      theta1 <- data[[paste0(self$tnames),"_1"]]
+      weights <- data[[self$wname[1]]]
+      mdt <- wtd.mean(deltaT,weights)
+      mdose <- wtd.mean(dose,weights)
+      mdtd <- mdt + mdose
+      minov <- wtd.mean((theta1-theta0),weights)
+      einov <- self$gain*mdose-self$loss*deltaT
+      self$gain <- self$gain + (minov-einov)/mdt
+      self$loss <- self$loss - (minov-einov)/mdose
+      self$inovSD <- wtd.sd((theta1-theta0-minov)/sqrt(deltaT),
+                             weights)
+      list(name=self$name,lprob(data=data))
+    },
+    toString=function(digits=2,...) {
+      paste0("<BrownianGrowth: ", self$name, " ( ",
+             paste(
+                 round(c(self$gain,self$loss,self$inovSD),
+                       digits=digits),
+                 collapse=", "), " )>")
+    }
+  ),
+  active=list(
+    pvec = function(value) {
+      if (missing(value)) return(c(self$gain,self$loss,log(self$inovSD)))
+      self$gain <- value[1]
+      self$loss <- value[2]
+      self$inovSD <- exp(value[3])
+    }
+  )
+)
+
 
 Activities <- R6Class(
   "Activities",
