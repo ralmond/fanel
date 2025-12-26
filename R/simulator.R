@@ -2,8 +2,11 @@ simulate.POMDP <- function(object, nsim, seed, ...,
                          covars=NULL,
                          workers=Workers$new()) {
   if (missing(covars)) {
-    stop("Covariates must be supplied.")
+    covars <- panel_data(dt=getDT(object))
+  } else if (!isTRUE(all.equal(getTime(object),getTime(covars)))) {
+    stop("Time codes are different for object and covariates.")
   }
+
   if (missing(nsim)) nsim=nsubj(object)
   if (!missing(seed)) {
     workers$seed <- seed
@@ -12,7 +15,7 @@ simulate.POMDP <- function(object, nsim, seed, ...,
 
   ldata <- as_longform(covars)
 
-  workers$lapply(split(ldata,~subj),\(cov,hmm){
+  workers$lapply(split(ldata,~subj),\(cov,hmm) {
     isubj <- cov$subj[1]
 
     tnames <- tnames(hmm)

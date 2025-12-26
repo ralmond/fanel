@@ -1,0 +1,83 @@
+Undocumented code objects:
+  ‘dname’ ‘dname<-’ ‘expLambdaT’ ‘getDT’ ‘getDT<-’ ‘getTime’
+  ‘getTime<-’ ‘memoTree’ ‘tname’ ‘tname<-’ ‘wname’ ‘wname<-’
+
+
++ POMDP-class.Rd
++ TransitionModel-class.Rd
++ UpDownGrowth-class.Rd
++ Simulate.Rd
++ bwFilter.Rd
++ qFilter.Rd
++ particleFilter.Rd
+
+* expLambdaT
+* normalForm
+
+* as_longform.Rd:58-60: Dropping empty section \examples
+* drawData.Rd:122-123: Dropping empty section \examples
+* bwFilter.Rd:109-110: Dropping empty section \examples
+* POMDP-class.Rd, 
+* mstep.Rd:256-258: Dropping empty section \examples
+* nsubj.Rd:53-54: Dropping empty section \examples
+* particleFilter.Rd:87-88: Dropping empty section \examples
+* qFilter.Rd:117-118: Dropping empty section \examples
+* simulate.Rd:61-63: Dropping empty section \examples
+
+* long2panel.Rd:71-73: Dropping empty section \seealso, \examples
+
+
+* Warning: S3 methods ‘getDT.ModelSet’, ‘getDT<-.ModelSet’ were declared in NAMESPACE but not found
+
+
+* biasDisplayGadget.Rd
+* bySubjPlot.Rd
+* methodTimeGadget.Rd
+
+Tests Needed
+
+all.equal.Panmat
+dname,tname,wname
+getTime,getDT
+get_subj, add_subj, split_subj, bind_subj
+
+lprob
+mstep
+drawInitial
+probInit
+drawData
+evalEvidence
+drawGrowth
+advance/retreatWeights
+expLambdaT
+logit, invlogit, cuts2probs
+
+FModel
+ModelSet
+Quadrature, fixed, particle, BW
+
+Population
+PopulationModel
+NormalPop
+CategoricalPop
+Evidence
+EvidenceModel
+GradedResponse
+NormalScore
+Activities, ActivitiesD
+GrowthModel
+BrownianGrowth(2)
+TransitionModel
+UpDownGrowth
+
+POMDP
+as_longform, longform
+simulate
+particleFilter
+bwFilter
+qFilter
+
+summaryq(q)
+
+bySubjPlot, byTimePlot
+methodTimeGadget, biasDisplayGadget

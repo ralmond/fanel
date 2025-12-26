@@ -1,111 +1,68 @@
 \name{simulate.POMDP}
 \alias{simulate.POMDP}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A Capitalized Title (ideally limited to 65 characters)
-}
+\alias{simulate}
+\title{Simulate Data from a POMDP Model}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+
+  This method simulates data from a \code{\linkS4class{POMDP}} model,
+  returning a \code{\linkS4class{Panel_Data}} with simulated data and
+  latent variables.
+
 }
 \usage{
-simulate.POMDP(object, nsim, seed, ..., covars = NULL, workers = Workers$new())
+\method{simulate}{POMDP}(object, nsim, seed, ...,
+covars = NULL, workers = Workers$new())
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{
-%%     ~~Describe \code{object} here~~
-}
-  \item{nsim}{
-%%     ~~Describe \code{nsim} here~~
-}
-  \item{seed}{
-%%     ~~Describe \code{seed} here~~
-}
-  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
-}
-  \item{covars}{
-%%     ~~Describe \code{covars} here~~
-}
-  \item{workers}{
-%%     ~~Describe \code{workers} here~~
-}
+  \item{object}{A \code{\linkS4class{POMDP}} object which describes the
+    model.}
+  \item{nsim}{An integer indicating the number of cases to simulate.}
+  \item{seed}{An optional seed for the random number generator.}
+  \item{\dots}{For other optional arguments.}
+  \item{covars}{A \code{\linkS4class{Panel_Data}} class object providing
+    covariates.  If supplied, these will be returned with the output
+    data.  If not supplied, a new one will be made based on the times in
+    the \code{POMDP}.}
+  \item{workers}{If a \code{\linkS4class{Workers}} object which allows
+    the work of the simulation to be split among threads.}
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+
+  This simulates data using the \code{\link{drawInitial}},
+  \code{\link{drawGrowth}}, (used to the generate values of the latent
+  variable) and \code{\link{drawData}} (used to generate the data)
+  called on the \code{\linkS4class{POMDP}}.  These are added to the
+  \code{covars} argument (a new one is made if not supplied).
+
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+  The value is a new \code{\linkS4class{Panel_Data}} class which has new
+  columns corresponding to \code{dname(object)} and
+  \code{tname(object)}, the latter with \dQuote{_sim} appended.
+  
+}
+\section{Parallel Processing}{
+  
+  The work is separated by subject, and each subject is simulated
+  independently.  These are split among the \code{workers}.
+  Turning on the debug option in the
+  workers argument (\code{\linkS4class{Workers}$new(debug=TRUE)}) will
+  run all in a single thread which makes debugging easier.
 
+}
+\author{Russell Almond}
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+
+  \code{\linkS4class{POMDP}}, \code{\linkS4class{Panel_Data}},
+  \code{\link{drawInitial}}
+  \code{\linkS4class{Workers}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or standard data sets, see data().
 
-## The function is currently defined as
-function (object, nsim, seed, ..., covars = NULL, workers = Workers$new()) 
-{
-    if (missing(covars)) {
-        stop("Covariates must be supplied.")
-    }
-    if (missing(nsim)) 
-        nsim = nsubj(object)
-    if (!missing(seed)) {
-        workers$seed <- seed
-    }
-    workers$start()
-    ldata <- as_longform(covars)
-    result <- purrr::list_rbind(workers$lapply(split(ldata, ~subj), 
-        function(cov, hmm) {
-            isubj <- cov$subj[1]
-            tnames <- tnames(hmm)
-            theta <- as.data.frame(lapply(tnames, function(n) rep(NA, 
-                nocc(cov))))
-            names(theta) <- tnames
-            dnames <- dnames(hmm)
-            data <- as.data.frame(lapply(dnames, function(n) rep(NA, 
-                nocc(cov))))
-            names(data) <- dnames
-            theta[1L, ] <- drawInitial(hmm, isubj, 1L, cov[1L, 
-                ])
-            for (iocc in 1L:maxocc(cov)) {
-                theta[iocc + 1L, ] <- drawGrowth(hmm, isubj, 
-                  iocc, theta[iocc, ], cov[iocc + 1L, ])
-                data[iocc, ] <- drawData(hmm, isubj, iocc, theta[iocc, 
-                  ], cov[iocc + 1L, ])
-            }
-            names(theta) <- paste0(tnames, "_sim")
-            cbind(cov, theta, data)
-        }, object))
-    workers$stopFlag()
-    long2panel(result, dnames = evidence(object)$dnames, invcols = covars$invarnames)
-  }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.
+\keyword{ ts }
+\concept{ panel_data }
+\concept{ simulation }
+\concept{ filter }
+

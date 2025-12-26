@@ -3,6 +3,8 @@
 \docType{class}
 \alias{BrownianGrowth-class}
 \alias{BrownianGrowth}
+\alias{BrownianGrowth2-class}
+\alias{BrownianGrowth2}
 
 \title{Class \code{"BrownianGrowth"}}
 \description{
@@ -15,6 +17,8 @@
       t}),}
   where \eqn{b} is the \code{gain} and \eqn{\sigma} is the
   \code{inovSD}.
+  The \code{BrownianGrowth2} class uses \eqn{\theta(t) + b \tau - c
+    \Delta t}, where \eqn{c} is the \code{loss} parameter.
 
 }
 \section{Public and Active Fields}{
@@ -22,6 +26,7 @@
   Local to this class:
   \describe{
     \item{\code{$gain}}{The rate at which the latent variable advances.}
+    \item{\code{$loss}}{The rate at which the latent variable retreats.}
     \item{\code{$inovSD}}{The rate at which the variance of the
       innovation varies with time.}
     \item{\code{$pvec}}{The parameter vector, \code{c(self$gain,
@@ -36,8 +41,8 @@
     \item{\code{$name}:}{A name for the model, primarily used for printing.}
     \item{\code{$wname}:}{The name of the weight column(s). }
     \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
-    \item{\code{$pvec}:}{A vector of possibly transformed parameters
-      used in \code{mstep}.}
+    \item{\code{$pvec}:}{Either \code{c(self$gain,exp(self$inovSD))} or
+      \code{c(self$gain,self$loss,exp(self$inovSD))}.}
     \item{\code{$dosname}}{The name of the dosage column in the
       \code{data} for \code{mstep}, defaults to \dQuote{dose}.}
     \item{\code{$dtname}}{The name of the delta time column in the
@@ -50,29 +55,23 @@
 \section{Methods}{
 
   \describe{
-    \item{initialize}{\code{signature(name,gain,inovSD)}:  Called by
-      \code{$new}.}
+    \item{initialize}{\code{signature(name,gain,inovSD)} or
+      \code{signature(name,loss,gain,inovSD)}:  Called by
+      \code{$new}}
   }
 
   Inherited methods:
     \describe{
-     \item{mstep}{\code{(obj = "FModel", data= "data.frame", its="integer",
-	control="list", workers = "Workers")}:  Runs the m-step to
-      optimize parameters (inherited from \code{\linkS4class{FModel}}).}
-    \item{\code{$mstep}}{\code{(data, ..., its=3,control=list(),
-	workers = NULL)}:  This method does the optimization (see
-      \code{\linkS4class{FModel}}).}
+     \item{mstep}{\code{(obj = "FModel", data= "data.frame", ...)}:
+       In this case a closed form maximum is available.}
+    \item{\code{$mstep}}{\code{(data, ...)}:  This method does the
+      optimization.}
     \item{lprob}{\code{(obj = "FModel", data= "data.frame",
 	pvec = "numeric",)}:
       Calculates the log probability of the data (which includes imputed
       values for the latent variables and weights).}
     \item{\code{$lprob}}{\code{(data,pvec=pvec(self))}:  The R6 method
       which implement this.}
-    \item{pvec}{\code{(obj = "FModel")}: Returns the
-      parameters as a vector.  The actual value depends on the
-      particular model class. }
-    \item{pvec<-}{\code{(obj = "FModel", value)}: Sets the parameter
-      vector. }
     \item{\code{$drawNext}}{\code{signature(theta,deltaT,dose=deltaT,
 	covars=list())}: Draws a random next value for the latent
       variables.}
@@ -88,20 +87,22 @@
 \section{Constructor}{
 
 To create a new object of this type call:
-\code{BrownianGrowth$new(\var{name},\var{gain},\var{inovSD})}
+\code{BrownianGrowth$new(\var{name},\var{gain},\var{inovSD})},
+\code{BrownianGrowth2$new(\var{name},\var{gain},\var{loss},\var{inovSD})}
 
 }
 \section{Superclasses and Subclasses}{
 
   Subclass of \code{\linkS4class{GrowthModel}}, which is in turn a
-  subclass of \code{\linkS4class{FModel}}.
+  subclass of \code{\linkS4class{FModel}}.  \code{BrownianGrowth2} is a
+  subclass. 
 
 }
 \author{Russell G. Almond}
 \seealso{
 
   \code{\linkS4class{GrowthModel}}, \code{\linkS4class{Activities}}
-  \code{\linkS4class{FModel}}
+  \code{\linkS4class{FModel}}, \code{\link{mstep}}
 
 }
 

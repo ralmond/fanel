@@ -11,7 +11,7 @@ bwFilter <- function(object,covars,quad,...,workers=Workers$new()) {
     thetas <- qua$theta(1L,1L)
 
     ## Forwards
-    lweights <- ProbInit(hmm,isubj,thetas,cov$getInvar(isubj))
+    lweights <- probInit(hmm,isubj,thetas,cov$getInvar(isubj))
     lweights <- lweights*exp(evalEvidence(hmm,isubj,0L,
                                           cov$getData(isubj,0L),
                                           thetas,cov$getVar(isubj,0L)))

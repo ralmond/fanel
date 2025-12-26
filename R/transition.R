@@ -16,11 +16,12 @@ TransitionModel <- R6Class(
     nmoments = 10,
     splitter = ~deltaT+dose,
     xtime=character(),
+    nStates=2,
     rmat = function(pvec=pvec(self),deltaT,dose=deltaT,covars=list()) {
       stop("No matrix definition provided for ", class(self))
     },
     tmat = function(pvec=pvec(self),deltaT,dose=deltaT,covars=list()) {
-      key <- c(deltaT,as.numeric(covars[1L,self$xtime]))
+      key <- c(deltaT,dose,as.numeric(covars[1L,self$xtime]))
       cached <- self$cache(key)$get(key)
       if (is.null(cached)) {
         cached <- expLambdaT(rmat(pvec,deltaT,dose,covars),self$nmoments)
@@ -94,7 +95,8 @@ UpDownGrowth <- R6Class(
   inherit=TransitionModel,
   public=list(
     initialize = function(name,nStates,uprate,downrate,
-                          tname="theta", wname="w") {
+                          tname="theta",
+                          wname=c("w.full", "w.left", "w.right")) {
       self$name <- name
       self$nStates <- nStates
       self$uprate <- uprate
@@ -104,8 +106,7 @@ UpDownGrowth <- R6Class(
     },
     uprate=0,
     downrate=0,
-    nStates=2,
-    rmat = function(pvec=pvec(self),deltaT,dose=deltaT,covar) {
+    rmat = function(pvec=pvec(self),deltaT,dose=deltaT, covar=list()) {
       up <- exp(pvec[1:(self$nStates-1)])
       down <- exp(pvec[self$nStates:length(pvec)])
       matR <- matrix(0,self$nStates,self$nStates)
@@ -145,6 +146,15 @@ ActivitiesD <- R6Class(
   "ActivitiesD",
   inherit=Activities,
   public=list(
+    initialize=function(name,growthModels=list(),actions=1L,dt=1.0,
+                        dosage=NULL,tname="theta",
+                        wname=c("w.full", "w.left", "w.right"),
+                        dtname="deltaT",dosname="dose") {
+      super$initialize(name=name,growthModels=growthModels,
+                       actions=actions,dt=dt,dosage=dosage,
+                       tname=tname,wname=wname,dtname=dtname,
+                       dosname=dosname)
+    },
     advance = function(isubj,iocc,lweights,covar=NULL) {
       self$models[[self$action(isubj,iocc)]]$
         advance(lweights,self$deltaT(isubj,iocc),self$dose(isubj,iocc),covar)
@@ -176,7 +186,16 @@ ActivitiesD <- R6Class(
       }
       if (missing(value)) return(self$models[[1]]$nmoments)
       lapply(self$models, \(m) m$nmoments <- value)
+    },
+    nstates = function(value) {
+      if (length(self$models)==0L) {
+        warn("No models defined.")
+        return(integer())
+      }
+      if (missing(value)) return(self$models[[1]]$nstates)
+      lapply(self$models, \(m) m$nstates <- value)
     }
+
   )
 )
 

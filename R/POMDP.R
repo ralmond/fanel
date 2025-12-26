@@ -30,6 +30,10 @@ evidence <- function(model) {model$components$evidence}
 
 setOldClass("POMDP")
 
+getDT.POMDP <- function(obj) {activities(obj)$dt}
+"getDT<-.POMDP" <- function(obj,value) {activities(obj)$dt <- value}
+
+
 nsubj.POMDP<- function(obj) {
   nsubj(population(obj))
 }
@@ -116,4 +120,28 @@ longform <- function(quad,model,data) {
   as_longform(quad) |>
     dplyr::left_join(as_longform(model), by) |>
     dplyr::left_join(as_longform(data), by)
+}
+
+tname.POMDP <- function(obj) {
+  obj$components[[1]]$tnames
+}
+"tname<-.POMDP" <- function(obj,value) {
+  lapply(obj$components, \(ms) ms$tnames <- value)
+  obj
+}
+
+dname.POMDP <- function(obj) {
+  obj$components[[1]]$dnames
+}
+"dname<-.POMDP" <- function(obj,value) {
+  lapply(obj$components, \(ms) ms$dnames <- value)
+  obj
+}
+
+wname.POMDP <- function(obj) {
+  obj$components[[1]]$wname
+}
+"wname<-.POMDP" <- function(obj,value) {
+  lapply(obj$components, \(ms) ms$wname <- value)
+  obj
 }

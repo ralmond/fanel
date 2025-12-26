@@ -183,3 +183,29 @@ setMethod("get_subj<-","Panmat", function(x,isubj,value) {
   x
 })
 
+all.equal.Panmat <- function(target, current, ... ) {
+  if (!is(current,"Panmat")) {
+    return(paste("Target is a Panmat, but current is a ",class(current)))
+  }
+  result <- all.equal(mat(target),mat(current))
+  if (isTRUE(result)) result <- character()
+  if (nsubj(target) != nsubj(current)) {
+    result <- c(result,paste("nsubj(target)=",nsubj(target),
+                             " but nsubj(current)=",nsubj(current),"."))
+  }
+  if (is.na(isubj(target) && !is.na(isubj(current))) ||
+      !isTRUE(isubj(target) == isubj(current))) {
+    result <- c(result,paste("isubj(target)=",isubj(target),
+                             " but isubj(current)=",isubj(current),"."))
+  }
+  if (minocc(target) != minocc(current)) {
+    result <- c(result,paste("minocc(target)=",minocc(target),
+                             " but minocc(current)=",minocc(current),"."))
+  }
+  if (minocc(target) != minocc(current)) {
+    result <- c(result,paste("minocc(target)=",minocc(target),
+                             " but minocc(current)=",minocc(current),"."))
+  }
+  if (length(result) == 0L) return(TRUE)
+  return(result)
+}

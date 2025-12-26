@@ -8,7 +8,11 @@
 \description{
 
   An abstract class representing the distribution of the latent variable
-  given its value at the previous occasion.
+  given its value at the previous occasion.  This class works with the
+  \code{\link{simulate.POMDP}} and \code{\link{particleFilter}}
+  functions.  The \code{\link{bwFilter}} requires the
+  \code{\link{TransitionModel}} class.  (The \code{\link{qFilter}}
+  ignores the growth/transition models.)
 
 }
 \section{Public and Active Fields}{
@@ -92,13 +96,13 @@
   Noted subclass is \code{\linkS4class{TransitionModel}}.
 
   Existing implementations are:
-  \code{\linkS4class{BrownianGrowth}},
+  \code{\linkS4class{BrownianGrowth}}, \code{\linkS4class{BrownianGrowth2}}
 
 }
 \author{Russell G. Almond}
 \seealso{
 
-  \code{\linkS4class{POMDP}}
+  \code{\linkS4class{POMDP}}, \code{\linkS4class{FModel}}
   \code{\linkS4class{Activities}},
   \code{\linkS4class{BrownianGrowth}},
   \code{\linkS4class{TransitionModel}}
@@ -179,3 +183,8 @@ MyBrownianGrowth <- R6Class(
 
 }
 \keyword{classes}
+\keyword{models}
+\concept{ panel_data }
+\concept{growth_model}
+\concept{ POMDP}
+\concept{ HMM}

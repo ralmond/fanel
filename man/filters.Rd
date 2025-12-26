@@ -1,4 +1,5 @@
 \name{filters}
+\alias{window}
 \alias{linearWindow}
 \alias{squareWindow}
 \alias{gaussianWindow}

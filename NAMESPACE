@@ -80,7 +80,42 @@ S3method(drawGrowth,POMDP)
 S3method(advanceWeights,POMDP)
 S3method(retreatWeights,POMDP)
 
+export(getTime, "getTime<-", getDT, "getDT<-", dname, "dname<-",
+       "tname", "tname<-", wname, "wname<-")
 
+S3method(dname,FModel)
+S3method("dname<-",FModel)
+S3method(tname,FModel)
+S3method("tname<-",FModel)
+S3method(wname,FModel)
+S3method("wname<-",FModel)
+
+S3method(getDT,ModelSet)
+S3method("getDT<-",ModelSet)
+S3method(dname,ModelSet)
+S3method("dname<-",ModelSet)
+S3method(tname,ModelSet)
+S3method("tname<-",ModelSet)
+S3method(wname,ModelSet)
+S3method("wname<-",ModelSet)
+
+S3method(getDT,POMDP)
+S3method("getDT<-",POMDP)
+S3method(dname,POMDP)
+S3method("dname<-",POMDP)
+S3method(tname,POMDP)
+S3method("tname<-",POMDP)
+S3method(wname,POMDP)
+S3method("wname<-",POMDP)
+
+S3method(getTime,Panel_Data)
+S3method("getTime<-",Panel_Data)
+S3method(getDT,Panel_Data)
+S3method("getDT<-",Panel_Data)
+S3method(dname,Panel_Data)
+S3method("dname<-",Panel_Data)
+
+S3method("all.equal",Panmat)
 
 
 

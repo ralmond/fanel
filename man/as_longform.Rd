@@ -4,10 +4,15 @@
 \title{Converts panel data to a longform data frame.}
 \description{
 
-  This unwinds panel data (objects of class \code{\linkS4class{Panmat}},
-  \code{\linkS4class{Panel_Frame}} and \code{\linkS4class{Panel_Data}})
-  into a data frame in long form data frame (or tibble) with rows
-  corresponding to subjects and occasions.
+  The \code{as_longform} methods unwind fanel objects (objects of class
+  \code{\linkS4class{Panmat}}, \code{\linkS4class{Panel_Frame}},
+  \code{\linkS4class{Panel_Data}}, \code{\linkS4class{Quadrature}},
+  \code{\linkS4class{ModelSet}}, and \code{\linkS4class{POMDP}}) into a
+  data frame in long form data frame (or tibble) with rows corresponding
+  to subjects and occasions. 
+
+  The \code{longform} function combines the quadrature, model and data
+  elements in the same data frame.
 
 }
 \usage{
@@ -25,6 +30,10 @@ longform(quad,model,data)
     \code{\linkS4class{Quadrature}} classes).}
   \item{name}{The name to give the column for a \code{Panmat}.}
   \item{\dots}{Separates the required and optional arguments.}
+  \item{quad}{A \code{\linkS4class{Quadrature}}.}
+  \item{model}{A \code{\linkS4class{POMDP}} and
+    \code{\linkS4class{ModelSet}} class.}
+  \item{data}{A \code{\linkS4class{Panel_Data}} object.}
 }
 \details{
 

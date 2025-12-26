@@ -1,7 +1,7 @@
 Package: fanel
 Type: Package
 Title: Filters for Pannel Data
-Version: 0.1.1
+Version: 0.1.2
 Maintainer: Russell Almond <ralmond@fsu.edu>
 Authors@R: c(
     person(given = "Russell",
@@ -26,7 +26,7 @@ Depends:
     R (>= 4.4.0)
 Imports: 
     stats, Hmisc, ggplot2, methods, parallelly, dplyr, purrr,
-    tidyr, tidyselect
+    tidyr, tidyselect, mgcv
 Suggests: 
     plotly,
     knitr,

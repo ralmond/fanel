@@ -24,7 +24,7 @@
   occaions.
 
   \code{ActivitiesD} is a subclass of \code{Activities} which is
-  designed to work with the \code{\link{BWFilter}}.  It particular,
+  designed to work with the \code{\link{bwFilter}}.  It particular,
   \code{ActivitiesD} supports the \code{$rmat()}, \code{$tmat()},
   \code{$advance()} and \code{$retreat()} methods needed for that filter.
 
@@ -147,22 +147,25 @@
 
   Methods used only by \code{ActivitiesD}.
 
-  \item{\code{advanceWeights},\code{$advance}}{\code{(model, isubj,
-      iocc, lweights, covar=NULL)}:  Calculates updated left weights in
-    the forward part of the Baum--Welch algorithm
-    (\code{\link{BWFilter}}).}
-  \item{\code{retreatWeights},\code{$retreat}}{\code{(model, isubj,
-      iocc, lweights, covar=NULL)}:  Calculates updated right weights in
-    the reverse part of the Baum--Welch algorithm
-    (\code{\link{BWFilter}}).} 
-  \item{\code{$tmat}}{\code{(isubj,iocc,covar)}:  calculates the
-    transition matrix for a given subject, occasion pair.}
-  \item{\code{$fillCache}}{\code{(workers=Workers$new())}: Does some
-    caching of the matrix construction, to make scoring more
-    efficient.}
-  \item{\code{$nmoments}}{\code{(value)}: The number of matrix
-    multiplications do to in \code{\link{expLambdaT}}.}
-
+  \describe{
+    \item{\code{advanceWeights},\code{$advance}}{\code{(model, isubj,
+	iocc, lweights, covar=NULL)}:  Calculates updated left weights in
+      the forward part of the Baum--Welch algorithm
+      (\code{\link{bwFilter}}).}
+    \item{\code{retreatWeights},\code{$retreat}}{\code{(model, isubj,
+	iocc, lweights, covar=NULL)}:  Calculates updated right weights in
+      the reverse part of the Baum--Welch algorithm
+      (\code{\link{bwFilter}}).} 
+    \item{\code{$tmat}}{\code{(isubj,iocc,covar)}:  calculates the
+      transition matrix for a given subject, occasion pair.}
+    \item{\code{$fillCache}}{\code{(workers=Workers$new())}: Does some
+      caching of the matrix construction, to make scoring more
+      efficient.}
+    \item{\code{$nmoments}}{\code{(value)}: The number of matrix
+      multiplications do to in \code{\link{expLambdaT}}.}
+    \item{\code{$nstates}}{\code{(value)}: The size of the matrix.} 
+    
+  }
 }
 \section{Time and Dosage}{
 
@@ -191,8 +194,9 @@
   functions.
 
   The \code{ActivitiesD} class (\sQuote{D} for discrete) are designed to
-  work with \code{\link{TransitionModels}} and have some extra methods
-  for supporting this.
+  work with \code{\link{TransitionModel}}s and have some extra methods
+  for supporting this.  Note that all of the contained models must have
+  the same matrix size, \code{$nstates}.
 
 }
 \section{Making and Caching Matrixes}{
@@ -208,8 +212,8 @@
   same \code{deltaT} and \code{dose}, the second pair will be able to
   use the cached code.  However, if the computations are done on
   different threads, they will not be able to share the cache.  The
-  \code{$fillCache}} method precalculates the caches, using multiple
-  threads if \code{\linkS4class{Worker}} are supplied.
+  \code{$fillCache} method precalculates the caches, using multiple
+  threads if \code{\linkS4class{Workers}} are supplied.
 
 }
 \references{
@@ -247,11 +251,18 @@
   
 }
 \examples{
+\dontrun{
 acts <- Activities$new("ABtest",
-                       growthModels=list(BrownianGrowth("A",.1,.05),
-                                         BrownianGrowth("B",.2,.1)),
-                       actions=matrix(c(1,1,2,2, 2,2,1,1,),2,4,byrow=TRUE),
+                       growthModels=list(BrownianGrowth$new("A",.1,.05),
+                                         BrownianGrowth$new("B",.2,.1)),
+                       actions=matrix(c(1,1,2,2, 2,2,1,1),2,4,byrow=TRUE),
                        dt=1,dosage=c(1,2,1,2))
 nmodels(acts)
 }
+}
 \keyword{classes}
+\keyword{models}
+\concept{panel_data}
+\concept{population_model}
+\concept{ POMDP}
+\concept{ HMM}

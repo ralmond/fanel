@@ -30,6 +30,10 @@ BrownianGrowth <- R6Class(
     },
     gain=0,
     inovSD=.1,
+    drawNext = function(theta,deltaT,dose=deltaT,covars=NULL) {
+      rnorm(length(theta),theta,self$inovSD*sqrt(deltaT)) +
+        dose*self$gain
+    },
     lprob = function(data,par=self$pvec) {
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
@@ -48,9 +52,9 @@ BrownianGrowth <- R6Class(
       theta0 <- data[[self$tnames]]
       theta1 <- data[[paste0(self$tnames),"_1"]]
       weights <- data[[self$wname[1]]]
-      minov <- wtd.mean((theta1-theta0),weights)
-      self$gain <- minov/gain
-      self$inovSD <- wtd.sd((theta1-theta0-inov)/sqrt(deltaT),weights)
+      inov <- wtd.mean((theta1-theta0)/dose,weights)
+      self$gain <- inov
+      self$inovSD <- wtd.sd((theta1-theta0-inov*dose)/sqrt(deltaT),weights)
       list(name=self$name,lprob(data=data))
     },
     toString=function(digits=2,...) {
@@ -86,6 +90,10 @@ BrownianGrowth2 <- R6Class(
       self$dosname <- dosname
     },
     loss=0,
+    drawNext = function(theta,deltaT,dose=deltaT,covars=NULL) {
+      rnorm(length(theta),theta,self$inovSD*sqrt(deltaT)) +
+        dose*self$gain - deltaT*self$loss
+    },
     lprob = function(data,par=self$pvec) {
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
@@ -206,6 +214,10 @@ Activities <- R6Class(
 
 setOldClass(c("Activities","ModelSet"))
 
+getDT.Activities <- function (obj) {obj$dt}
+"getDT<-.Activities" <- function (obj,value) {obj$dt <-value}
+
+
 "nsubj<-.Activities" <- function(obj,value) {
   nsubj(obj$index) <-as.integer(value)
   nsubj(obj$dt) <- as.integer(value)
@@ -239,6 +251,10 @@ setOldClass(c("Activities","ModelSet"))
 drawGrowth.Activities <- function(model, isubj, iocc, theta, covar=NULL) {
   model$drawNext(isubj, iocc, theta, covar=NULL)
 }
+
+getTime.Activities <- function(obj) {obj$time}
+"getTime<-.Activities" <- function(obj,value) {obj$time <- value}
+
 
 
 as_longform.Activities <- function(x,...,n=nsubj(x),maxocc=nocc(x),

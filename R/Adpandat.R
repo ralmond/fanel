@@ -146,7 +146,18 @@ nocc.Panel_Data <- function(obj) {nocc(obj$dt)}
 minocc.Panel_Data <- function(obj) {minocc(obj$dt)}
 maxocc.Panel_Data <- function(obj) {maxocc(obj$dt)}
 
+getTime.Panel_Data <- function(obj) {obj$time}
+"getTime<-.Panel_Data" <- function(obj,value) {obj$time <- value}
+getDT.Panel_Data <- function(obj) {obj$dt}
+"getDT<-.Panel_Data" <- function(obj,value) {obj$dt <- value}
 
+
+
+dname.Panel_Data <- function(obj) obj$dnames
+"dname<-.Panel_Data" <- function(obj,value) {
+  obj$dnames <- value
+  obj
+}
 
 as_longform.Panel_Data <- function(x,...,n=nsubj(x),maxocc=nocc(x),
                                    minocc=1L,

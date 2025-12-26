@@ -126,7 +126,7 @@
 
   Code using Workers:
   \code{\link{particleFilter}}, \code{\link{simulate.POMDP}}
-  \code{\link{BWFilter}}, \code{\link{qFilter}}
+  \code{\link{bwFilter}}, \code{\link{qFilter}}
   \code{\link{mstep}}
 
 

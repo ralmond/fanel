@@ -49,7 +49,7 @@ pvec(obj) <- value
   \emph{E-step}.  The role of the E-step is to calculate the expected
   value of the log posterior based on the current parameter values.  The
   basic filtering functions,  \code{\link{particleFilter}},
-  \code{\link{BWFilter}} and even \code{\link{qFilter}}, all return a
+  \code{\link{bwFilter}} and even \code{\link{qFilter}}, all return a
   quadrature with its weights filled in.  These give an approximate
   posterior distribution for the latent variable(s) theta.  This gets
   bound with the input data into the \code{data} object, which is then
@@ -246,7 +246,7 @@ Sung to a Fast New Tune. \emph{Journal of the Royal Statsitical Society,
   \code{\link{longform}(quad,model,data)} -- which puts the data together.
 
   \code{\linkS4class{Quadrature}} -- output of E-step, which is one of
-  the funcitons:  \code{\link{particleFilter}}, \code{\link{BWFilter}},
+  the funcitons:  \code{\link{particleFilter}}, \code{\link{bwFilter}},
   or \code{\link{qFilter}}
 
   \code{\linkS4class{Panel_Data}} -- the basic data and covaraites.

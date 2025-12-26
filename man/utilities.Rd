@@ -4,7 +4,9 @@
 \alias{invlogit}
 \title{Some useful calculation functions.}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+
+  Internal utility functions which may be of some use.
+  
 }
 \usage{
 cuts2probs(cuts)
@@ -13,54 +15,39 @@ invlogit(x)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{cuts}{
-%%     ~~Describe \code{cuts} here~~
-}
+  \item{cuts}{The probability at being in a particular category or
+    above.}
+  \item{p}{A value between 0 and 1.}
+  \item{x}{A real value.}
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+
+  The \code{cuts2probs} function is a helper function for the
+  \code{\linkS4class{GradedResponse}} model.
+
+  The \code{logit} and \code{invlogit} functions are the logistic and
+  inverse logistic functions.
+  
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+  The \code{cuts2probs} function returns a probability vector of length
+  one more than the cuts.
 
+  The \code{logit} and \code{invlogit} return a real number and a
+  probability respectively.
+
+}
+\author{Russell Almond}
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\linkS4class{GradedResponse}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or standard data sets, see data().
 
-## The function is currently defined as
-function (cuts)
-{
-    if (!is.matrix(cuts))
-        cuts <- matrix(cuts, 1L, length(cuts))
-    -t(apply(cbind(1, cuts, 0), 1, diff))
-  }
+cuts2probs(c(.7,.5,.1))
+logit(.5)
+invlogit(1)
+
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.
+\keyword{ utilities }
+\concept{ IRT }

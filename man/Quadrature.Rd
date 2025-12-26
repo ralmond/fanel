@@ -140,7 +140,7 @@ Class \code{"\link[R6]{R6Class}"}, directly.
     \item{nquad}{\code{signature(obj = "Quadrature")}: Gets the number
       of quadrature points. }
     \item{nquad<-}{\code{signature(obj = "Quadrature")}: Sets the number
-      of quadrature points (only works for \code{\link{ParticleFilter}}).}
+      of quadrature points (only works for \code{\link{particleFilter}}).}
     \item{nsubj}{\code{signature(obj = "Quadrature")}: Gets the number
       of subjects. }
     \item{nsubj<-}{\code{signature(obj = "Quadrature")}: Sets the number

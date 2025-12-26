@@ -1,114 +1,114 @@
 \name{bwFilter}
 \alias{bwFilter}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A Capitalized Title (ideally limited to 65 characters)
-}
+\title{Runs the Baum-Welch Filter on a POMDP Model and Data}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+
+  The Baum-Welch filter is designed to work with a categorical latent
+  variable, where the \code{\linkS4class{TransitionModel}}s can be
+  described through transition matrixes.  This filter is designed to
+  work with a \code{\linkS4class{POMDP}} where the activities are an
+  \code{\linkS4class{ActivitiesD}} and return a
+  \code{\linkS4class{BWQuad}}.
+
 }
 \usage{
 bwFilter(object, covars, quad, ..., workers = Workers$new())
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{
-%%     ~~Describe \code{object} here~~
-}
-  \item{covars}{
-%%     ~~Describe \code{covars} here~~
-}
-  \item{quad}{
-%%     ~~Describe \code{quad} here~~
-}
-  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
-}
-  \item{workers}{
-%%     ~~Describe \code{workers} here~~
-}
+  \item{object}{A \code{\linkS4class{POMDP}} giving the information
+    about the population, growth models and evidence.}
+  \item{covars}{A \code{\linkS4class{Panel_Data}} which has the data and
+    any other needed covariates.}
+  \item{quad}{A \code{\linkS4class{BWQuad}} to store the results.}
+  \item{\dots}{Separates required from optional parameters.}
+  \item{workers}{A \code{\link{Workers}} object to control parallel
+    processing.}
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+
+  The Baum-Welsch algorithm is based on a discrete latent variable,
+  where each quadrature point represents a possible state of the latent
+  variable. It then works in two directions:  forward and back.
+
+  In the forward phase, initial weights are assigned based on calling 
+  \code{\link{probInit}} on the \code{\linkS4class{Population}}.  For
+  each observation/growth period, the weights are updated using
+  \code{\link{advanceWeights}} and the result is multiplied by the value
+  from \code{exp(\link{evalEvidence}())}.  This produces the
+  \dQuote{left} weights.
+
+  In the backward phase, the initial weights are set to 1, at each stage
+  the weights are multiplied by the likelihood
+  (\code{exp(evalEvidence())}) and then multiplied on the other side by
+  the transition matrix (\code{\link{retreatWeights}}).  This produces
+  the \dQuote{right} weights.
+
+  The separate left and right weights are needed for the
+  \code{\link{mstep}} of the EM algorithm on the
+  \code{\linkS4class{TransitionModel}}.  (Note that the \code{$lweights}
+  and \code{$rweights} of the \code{\linkS4class{BWQuad}} are on the
+  natural scale unlike the other quadratures in which \code{$lweights}
+  are on the log scale.)  The \dQuote{full} weights are created by
+  multiplying the left and right weights.
+
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+
+  A \code{\linkS4class{BWQuad}} object containing the quadrature points
+  and the left and right weights.
+
+}
+\section{Parallel Processing}{
+  
+  The work is separated by subject, and each subject is scored
+  independently.  These are split among the \code{workers}.
+  Turning on the debug option in the
+  workers argument (\code{\linkS4class{Workers}$new(debug=TRUE)}) will
+  run all in a single thread which makes debugging easier.
+
 }
 \references{
-%% ~put references to the literature/web site here ~
+
+Almond, R. G. (2025). A Partially Observed Markov Decision Process for
+Learning Progressions. Annual Meeting of the Florida Educational
+Research Association, Ft. Myers, Florida. https://ralmond.net/LearnDP
+  
+[Baum-Welch Algorithm
+(Wikipedia)](https://en.wikipedia.org/wiki/Baum%E2%80%93Welch_algorithm) 
+
 }
-\author{
-%%  ~~who you are~~
-}
+\author{Russell Almond}
 \note{
-%%  ~~further notes~~
+
+  The Baum-Welch algorithm assumes that the latent state is a single
+  categorical variable.  It is probably sensible to think about applying
+  the algorithm to a categorical variable which represents quadrature
+  points for an underlying continuous variable, however, this will
+  probably require a new kind of transition model.
+
+  For a \eqn{K}-dimensional discrete latent variable, the weights are
+  actually \eqn{K}-dimensional tensors unrolled to vectors.  The
+  transition \dQuote{matrix} is actually a \eqn{K\cdot K}-dimensional
+  tensor flattend into a matrix.
+
+  For a multidimensional continuous or mixed latent variable, I suggest
+  giving up and using the \code{\link{particleFilter}}.
+  
+
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+
+  \code{\linkS4class{POMDP}}, \code{\linkS4class{ActivitiesD}},
+  \code{\linkS4class{TransitionModel}},
+  \code{\linkS4class{Panel_Data}}, \code{\linkS4class{BWQuad}},
+  \code{\linkS4class{Workers}}, 
+  \code{\link{evalEvidence}}, \code{\link{probInit}},
+  \code{\link{advanceWeights}}, \code{\link{retreatWeights}}  
+
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or standard data sets, see data().
-
-## The function is currently defined as
-function (object, covars, quad, ..., workers = Workers$new()) 
-{
-    workers$start()
-    qlist <- workers$lapply(split_subj(covars), function(cov, 
-        hmm, qua) {
-        isubj <- cov$isubj
-        qua <- get_subj(qua, isubj)
-        maxocc(qua) <- maxocc(cov)
-        qua$isubj <- isubj
-        qua$resetWeights()
-        thetas <- qua$theta(1L, 1L)
-        lweights <- ProbInit(hmm, isubj, thetas, cov$getInvar(isubj))
-        lweights <- lweights * exp(evalEvidence(hmm, isubj, 0L, 
-            cov$getData(isubj, 0L), thetas, cov$getVar(isubj, 
-                0L)))
-        qua$lweights[1L, 1L, ] <- lweights
-        for (iocc in 1L:maxocc(cov)) {
-            lweights <- advanceWeights(hmm, isubj, iocc, lweights, 
-                cov$getVar(isubj, iocc))
-            lweights <- lweights * exp(evalEvidence(hmm, isubj, 
-                iocc, cov$getData(isubj, iocc), thetas, cov$getVar(isubj, 
-                  iocc)))
-            qua$lweights[1L, iocc + 1L, ] <- lweights
-        }
-        iocc <- maxocc(cov)
-        rweights <- rep(1, nquad(qua))
-        rweights <- rweights * exp(evalEvidence(hmm, isubj, iocc, 
-            cov$getData(isubj, iocc), thetas, cov$getVar(isubj, 
-                iocc)))
-        qua$rweights[1L, iocc + 1L, ] <- rweights
-        for (iocc in maxocc(cov):1L) {
-            rweights <- retreatWeights(hmm, isubj, iocc, rweights, 
-                cov$getVar(isubj, iocc))
-            rweights <- rweights * exp(evalEvidence(hmm, isubj, 
-                iocc - 1L, cov$getData(isubj, iocc - 1L), thetas, 
-                cov$getVar(isubj, iocc - 1L)))
-            qua$rweights[1L, iocc, ] <- rweights
-        }
-        qua
-    }, object, get_subj(quad, 1))
-    workers$stopFlag()
-    bind_subj(qlist)
-  }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.
+\keyword{ ts }
+\concept{ panel_data }
+\concept{ filter }
+\concept{ Baum-Welch}

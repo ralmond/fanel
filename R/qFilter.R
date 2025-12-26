@@ -13,7 +13,7 @@ qFilter <- function(object,covars,quad,wfun,...,workers=Workers$new()) {
     nt <- length(tstar)
     nq <- nquad(qua)
 
-    iprobs <- ProbInit(hmm,isubj,thetas, cov$getInvar(isubj))
+    iprobs <- probInit(hmm,isubj,thetas, cov$getInvar(isubj))
     qua$lweights[isubj,,] <- outer(log(iprobs),
                                      wf(cov$dt[isubj,0L],tstar),"*")
 

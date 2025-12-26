@@ -27,9 +27,34 @@ setGeneric("minocc")
 setGeneric("minocc<-")
 
 nquad <- function(obj) {UseMethod("nquad")}
-setGeneric("nquad",function(obj) standardGeneric("nquad"))
+setGeneric("nquad")
 "nquad<-" <- function(obj,value) {UseMethod("nquad<-")}
 setGeneric("nquad<-")
+
+getTime <- function(obj) {UseMethod("getTime")}
+setGeneric("getTime")
+"getTime<-" <- function(obj,value) {UseMethod("getTime<-")}
+setGeneric("getTime<-")
+
+getDT <- function(obj) {UseMethod("getDT")}
+setGeneric("getDT")
+"getDT<-" <- function(obj,value) {UseMethod("getDT<-")}
+setGeneric("getDT<-")
+
+tname <- function(obj) UseMethod("tname")
+setGeneric("tname")
+"tname<-" <- function(obj,value) UseMethod("tname<-")
+setGeneric("tname<-")
+
+dname <- function(obj) UseMethod("dname") 
+setGeneric("dname")
+"dname<-" <- function(obj,value) UseMethod("dname<-")
+setGeneric("dname<-")
+
+wname <- function(obj) UseMethod("wname") 
+setGeneric("wname")
+"wname<-" <- function(obj,value) UseMethod("wname<-")
+setGeneric("wname<-")
 
 
 as_longform <- function(x,...,n=nsubj(x),maxocc=maxocc(x),
@@ -127,14 +152,37 @@ FModel <- R6Class(
 setOldClass("FModel")
 
 pvec.FModel <- function(obj) {obj$pvec}
-"pvec<-.FModel" <- function(obj,value) {obj$pvec<- value}
+"pvec<-.FModel" <- function(obj,value) {
+  obj$pvec<- value
+  obj
+}
 lprob.FModel <- function(obj,data,par=pvec(obj)) {
   obj$lprob(data,par)
+  obj
 }
 
 mstep.FModel <- function(obj, data, ..., its=3,control=list()) {
   obj$mstep(data,...,its=its,control=list())
 }
+
+tname.FModel <- function(obj) obj$tnames
+"tname<-.FModel" <- function(obj,value) {
+  obj$tnames <- value
+  obj
+}
+
+dname.FModel <- function(obj) obj$dnames
+"dname<-.FModel" <- function(obj,value) {
+  obj$dnames <- value
+  obj
+}
+
+wname.FModel <- function(obj) obj$wname
+"wname<-.FModel" <- function(obj,value) {
+  obj$wname <- value
+  obj
+}
+
 
 ModelSet <- R6Class(
   "ModelSet",
@@ -298,3 +346,49 @@ retreatWeights <- function(model, isubj, iocc, rweights,
 }
 setGeneric("retreatWeights")
 
+tname.ModelSet <- function(obj) {
+  obj$tnames
+}
+"tname<-.ModelSet" <- function(obj,value) {
+  obj$tnames <- value
+  obj
+}
+
+dname.ModelSet <- function(obj) obj$dnames
+"dname<-.ModelSet" <- function(obj,value) {
+  obj$dnames <- value
+  obj
+}
+
+wname.ModelSet <- function(obj) obj$wname
+"wname<-.ModelSet" <- function(obj,value) {
+  obj$wname <- value
+  obj
+}
+
+
+getTime.ModelSet <- function(obj) {
+  obj$times
+}
+"getTime<-.ModelSet" <- function(obj,value) {
+  if (is.null(obj$times)) {
+    stop("Times are not settable for object of class",
+         class(obj),".")
+  }
+  obj$times <- value
+  obj
+}
+
+
+getDT.ModelSet <- function(obj) {
+  obj$dt
+}
+"getDT<-.ModelSet" <- function(obj,value) {
+  if (is.null(obj$dt)) {
+    stop("Delta times are not settable for object of class",
+         class(obj),".")
+  }
+  obj$dt <- value
+  obj
+}
+  
