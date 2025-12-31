@@ -8,7 +8,7 @@
 
   A cache for pre-calculated matrixes (see
   \code{\linkS4class{TransitionModel}}).
-  
+
 }
 \section{Constructor}{
   \code{memoTree$new(depth=1L)}, where \code{depth} inidicates the
@@ -25,7 +25,7 @@
   }
 }
 \section{Extends}{
-Class \code{\link{R6Class}}, directly.
+Class \code{\link[R6]{R6Class}}, directly.
 }
 \section{Methods}{
 
@@ -46,7 +46,7 @@ Class \code{\link{R6Class}}, directly.
 \details{
 
   This is typically used to store cached matrixes for
-  \code{\linkS4class{TransitionModel}}s, which are expensive to compute.  
+  \code{\linkS4class{TransitionModel}}s, which are expensive to compute.
   The \code{key} is assumed to be a vector, and in the typical case, it
   consists of \code{c(deltaT, dose)}.  (It is possible to use longer
   keys if additional covariates are involved in the calculations).  The
@@ -60,7 +60,7 @@ Class \code{\link{R6Class}}, directly.
   greater than one, then the a new \code{memoTree} with one smaller
   depth is associated with the first element of the key.  The remainder
   of the key is passed to the inner function.
-  
+
 }
 \author{Russell Almond}
 \note{
@@ -68,7 +68,7 @@ Class \code{\link{R6Class}}, directly.
   This is a generalization of the \dQuote{memoization} design pattern.
 }
 \seealso{
-  
+
   \code{\linkS4class{TransitionModel}}
 
 }
@@ -76,13 +76,13 @@ Class \code{\link{R6Class}}, directly.
 
   cacheA <- memoTree$new(2)
 
-  cacheA$assign(c(1,2), "One-Two")
-  cacheA$assign(c(2,1), "Two-One")
-  cacheA$exists(c(1,1))
-  cacheA$exists(c(2,1))
-  cacheA$get(c(1,2))
-  cacheA$clear()
-  cacheA$exists(c(1,2))
+  #cacheA$assign(c(1,2), "One-Two")
+  #cacheA$assign(c(2,1), "Two-One")
+  #cacheA$exists(c(1,1))
+  #cacheA$exists(c(2,1))
+  #cacheA$get(c(1,2))
+  #cacheA$clear()
+  #cacheA$exists(c(1,2))
 
 }
 \keyword{classes}

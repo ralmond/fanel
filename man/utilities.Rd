@@ -1,4 +1,5 @@
 \name{cuts2probs}
+\alias{utilties}
 \alias{cuts2probs}
 \alias{logit}
 \alias{invlogit}

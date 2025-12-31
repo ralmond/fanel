@@ -123,37 +123,37 @@ Class \code{"\link[R6]{R6Class}"}, directly.
 }
 \section{Methods}{
   \describe{
-    \item{as_longform}{\code{signature(x = "Quadrature")}: Converts the
+    \item{as_longform}{\code{(x = "Quadrature")}: Converts the
       quadrature into very long form (with indexes subj, occ and quad). }
-    \item{maxocc}{\code{signature(obj = "Quadrature")}: Gets the maximum
+    \item{maxocc}{\code{(obj = "Quadrature")}: Gets the maximum
       occasion index.}
-    \item{maxocc<-}{\code{signature(obj = "Quadrature")}: Sets the
+    \item{maxocc<-}{\code{(obj = "Quadrature")}: Sets the
       maximum occasion index. }
-    \item{minocc}{\code{signature(obj = "Quadrature")}: Gets the minimum
+    \item{minocc}{\code{(obj = "Quadrature")}: Gets the minimum
       occasion index.}
-    \item{minocc<-}{\code{signature(obj = "Quadrature")}: Sets the
+    \item{minocc<-}{\code{(obj = "Quadrature")}: Sets the
       minimum occasion index. }
-    \item{nocc}{\code{signature(obj = "Quadrature")}: Gets the number of
+    \item{nocc}{\code{(obj = "Quadrature")}: Gets the number of
       occasions. }
-    \item{nocc<-}{\code{signature(obj = "Quadrature")}: Sets the number
+    \item{nocc<-}{\code{(obj = "Quadrature")}: Sets the number
       of occasions.}
-    \item{nquad}{\code{signature(obj = "Quadrature")}: Gets the number
+    \item{nquad}{\code{(obj = "Quadrature")}: Gets the number
       of quadrature points. }
-    \item{nquad<-}{\code{signature(obj = "Quadrature")}: Sets the number
+    \item{nquad<-}{\code{(obj = "Quadrature")}: Sets the number
       of quadrature points (only works for \code{\link{particleFilter}}).}
-    \item{nsubj}{\code{signature(obj = "Quadrature")}: Gets the number
+    \item{nsubj}{\code{(obj = "Quadrature")}: Gets the number
       of subjects. }
-    \item{nsubj<-}{\code{signature(obj = "Quadrature")}: Sets the number
+    \item{nsubj<-}{\code{(obj = "Quadrature")}: Sets the number
       of subjects.}
-    \item{isubj}{\code{signature(obj = "Quadrature")}: Gets the index of
+    \item{isubj}{\code{(obj = "Quadrature")}: Gets the index of
       the focus subject (see \code{\link{split_subj}}).}
-    \item{isubj<-}{\code{signature(obj = "Quadrature")}: Sets the index
+    \item{isubj<-}{\code{(obj = "Quadrature")}: Sets the index
       of the focus subject.}
-    \item{get_subj}{\code{signature(x = "Quadrature", subj="integer")}:
+    \item{get_subj}{\code{(x = "Quadrature", subj="integer")}:
       Returns a
       subquadrature focused on a single individual.  See
       \code{\link{split_subj}}. }
-    \item{get_subj<-}{\code{signature(x = "Quadrature", subj =
+    \item{get_subj<-}{\code{(x = "Quadrature", subj =
 	"integer", value = "Quadrature")}: Replaces
       sub-quadrature focused on a single individual.  See
       \code{\link{split_subj}}. }

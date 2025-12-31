@@ -5,7 +5,7 @@
 
   This function does some basic cleaning in preparation for building a
   \code{\linkS4class{Panel_Frame}} object.  It is called by
-  \code{\link{long2panel}} and \code{panel_frame}.  
+  \code{\link{long2panel}} and \code{panel_frame}.
 
 }
 \usage{
@@ -42,16 +42,16 @@ normalForm(data, idcol = "subj", occcol = "occ", zerostart = TRUE)
 \seealso{
 
   \code{\linkS4class{Panel_Frame}}, \code{\linkS4class{Panel_Data}},
-  \code{\link{long2panel}} and \code{panel_frame}.  
+  \code{\link{long2panel}} and \code{panel_frame}.
 }
 \examples{
   dat <- data.frame(subj=rep(1L:2L,each=4L),
                     occ=rep(1L:4L,2L),
                     value=1:8)
-  normalForm(dat)
+  fanel:::normalForm(dat)
 
   names(dat) <- c("foo","bar","value")
-  normalForm(dat[,3:1],"foo","bar")
+  fanel:::normalForm(dat[,3:1],"foo","bar")
 
 }
 \keyword{ internal }

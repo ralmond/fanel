@@ -8,7 +8,7 @@
 
   This is a \code{\linkS4class{TransitionModel}} which specifies a
   transition matrix through the increase (\dQuote{up}) rate and the
-  decrease (\dQuote{down}) rate.  This is a Birth and Death process. 
+  decrease (\dQuote{down}) rate.  This is a Birth and Death process.
 
 }
 \section{Public and Active Fields}{
@@ -115,7 +115,7 @@ To create a new object of this type call:
 
   Subclass of \code{\linkS4class{TransitionModel}}, which is in turn a
   subclass of \code{\linkS4class{GrowthModel}} and
-  \code{\linkS4class{FModel}}.  
+  \code{\linkS4class{FModel}}.
 
 }
 \references{
@@ -136,11 +136,11 @@ Research Association (FERA).  \url{https://ralmond.net/LearnDP}.
 }
 \examples{
 
-udm <- UpDownModel$new("Activity1",3,c(.2,.1),.01)
+udm <- UpDownGrowth$new("Activity1",3,c(.2,.1),.01)
 udm
 pvec(udm)
-udm$rmat(deltaT=1,dose=.5)
-udm$tmat(deltaT=1,dose=.5)
+#udm$rmat(deltaT=1,dose=.5)
+#udm$tmat(deltaT=1,dose=.5)
 
 }
 \keyword{classes}

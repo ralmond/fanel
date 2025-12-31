@@ -9,7 +9,7 @@
 \alias{nsubj<-.Panel_Data}
 \alias{isubj.Panel_Data}
 \alias{isubj<-.Panel_Data}
-\alias{get_subj.Panel_Data}
+\alias{get_subj,Panel_Data-method}
 \alias{get_subj<-,Panel_Data-method}
 \alias{as_longform,Panel_Data-method}
 \alias{panel_data}

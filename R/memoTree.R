@@ -4,7 +4,7 @@ memoTree <- R6Class(
     depth=1L,
     initialize=function(depth=1L) {
       self$depth <- depth
-      private$cache=new.env(parent=emptyenv)
+      private$cache=new.env(parent=emptyenv())
     },
     exists=function(key){
       key <- as.character(key)

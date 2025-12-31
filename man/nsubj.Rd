@@ -12,17 +12,6 @@
 \alias{nmodels}
 \alias{nquad}
 \alias{nquad<-}
-\alias{dname}
-\alias{dname<-}
-\alias{tname}
-\alias{tname<-}
-\alias{wname}
-\alias{wname<-}
-\alias{getTime}
-\alias{getTime<-}
-\alias{getDT}
-\alias{getDT<-}
-
 
 
 \title{Accesses shape information about fanel objects}
@@ -47,17 +36,6 @@ minocc(obj) <- value
 nmodels(obj)
 nquad(obj)
 nquad(obj) <- value
-dname(obj)
-dname(obj) <- value
-tname(obj)
-tname(obj) <- value
-wname(obj)
-wname(obj) <- value
-getTime(obj)
-getTime(obj) <- value
-getDT(obj)
-getDT(obj) <- value
-
 }
 \arguments{
   \item{obj}{A \code{\linkS4class{Panmat}}, \code{\linkS4class{Panel_Frame}} or

@@ -26,8 +26,9 @@ Depends:
     R (>= 4.4.0)
 Imports: 
     stats, Hmisc, ggplot2, methods, parallelly, dplyr, purrr,
-    tidyr, tidyselect, mgcv
+    tidyr, tidyselect
 Suggests: 
+    mgcv,
     plotly,
     knitr,
     shiny,

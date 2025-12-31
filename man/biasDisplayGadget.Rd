@@ -42,31 +42,7 @@ biasDisplayGadget(biastab)
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or standard data sets, see data().
 
-## The function is currently defined as
-function (biastab) 
-{
-    subjlist <- unique(biastab$subj)
-    ui <- shiny::fillPage(shiny::inputPanel(shiny::selectInput("subj", 
-        "Subject:", 1:10, multiple = TRUE, selectize = FALSE)), 
-        shiny::plotOutput("plot"), shiny::tableOutput("table"))
-    server <- function(input, output, session) {
-        output$plot <- shiny::renderPlot(ggplot2::ggplot(biastab, 
-            ggplot2::aes(y = biastab$scaledBias, x = biastab$method, 
-                colour = biastab$subj)) + ggplot2::scale_y_continuous(limits = c(-3, 
-            3)) + ggplot2::geom_point() + ggplot2::geom_line(data = dplyr::filter(biastab, 
-            biastab$subj \%in\% input$subjcc), mapping = ggplot2::aes(x = as.numeric(.data$method), 
-            y = .data$scaledBias, colour = .data$subj)) + ggplot2::geom_hline(ggplot2::aes(yintercept = 0)))
-        output$table <- shiny::renderTable(round(dplyr::summarize(dplyr::group_by(biastab, 
-            .data$method), bias = mean(.data$bias), mse = mean(.data$bias^2), 
-            t = mean(.data$scaledBias), t2 = sum(.data$scaledBias^2)), 
-            3))
-    }
-    shiny::shinyApp(ui, server)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

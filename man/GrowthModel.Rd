@@ -60,7 +60,7 @@
       variables.}
     \item{\code{$lprob}}{\code{signature(data,par=pvec(self))}:
       Calculated the log likelihood of the estimated growth given
-      argument parameters.} 
+      argument parameters.}
     \item{\code{$print}}{\code{signature(...)}: Prints the object.}
     \item{\code{$toString}}{\code{signature(...)}: Creates a string
       represenation of the object.}
@@ -70,11 +70,11 @@
   \describe{
     \item{theta}{The value of the latent variable at the initial time.}
     \item{deltaT}{The time elapsed between the previous and current
-      occasion.} 
+      occasion.}
     \item{deltaT}{The amount to which the activity was done between the
-      previous and current  occasion.} 
+      previous and current  occasion.}
     \item{covars}{A data-frame containing covariates at the current
-      occasion.} 
+      occasion.}
     \item{par}{The vectorized parameter.}
     \item{data}{A combined data set which contains columns for thetas
       and weights.}
@@ -134,8 +134,6 @@ MyBrownianGrowth <- R6Class(
       self$dtname <- dtname
       self$dosname <- dosname
     },
-    gain=0,
-    inovSD=.1,
     gain=0,
     inovSD=.1,
     ## Note that the mean depends on dose, and the SD on deltaT

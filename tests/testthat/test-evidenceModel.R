@@ -114,5 +114,48 @@ test_that("NormalScore llike", {
 })
 
 
+test_that("{evidenceModel$convergence:}", {
+  ## {Logical variable indicating whether or
+  ##     not the last mstep converged.}
+})
+test_that("{evidenceModel$lp:}", {
+  ## {The log-posterior after the last mstep.}
+})
+test_that("{evidenceModel$name:}", {
+  ## {A name for the model, primarily used for printing.}
+})
+test_that("{evidenceModel$wname:}", {
+  ## {The name of the weight column(s). }
+})
+test_that("{evidenceModel$tnames:}", {
+  ## {The name(s) of the latent variable(s).}
+})
+test_that("{evidenceModel$pvec:}", {
+  ## {A vector of possibly transformed parameters
+  ##     used in mstep.}
+  ## }
+})
 
-
+test_that("{evidenceModel$drawObs}", {
+  ## {signature(theta,covars=list()):  Draws a random
+  ##     response.}
+})
+test_that("{evidenceModel$llike}", {
+  ## {signature(Y,theta,context=list()): Calculates the log
+  ##     likelihood of the observations given the latent variable and
+  ##     current parameters.}
+})
+test_that("{evidenceModel$lprob}", {
+  ## {signature(data,par=self$pvec): Calculated the
+  ##     log likelihood of the observations given estimated theta and
+  ##     argument parameters.} 
+})
+test_that("{evidenceModel$mstep}", {
+  ## {signature(data,...,
+  ##       its=3,control=list()):  Runs the optimizer for its steps.}
+})
+test_that("{evidenceModel$print}", {
+  ## {signature(...): Prints the object.}
+  ##   \item{$toString}{signature(...): Creates a string
+  ##     represenation of the object.}
+})
