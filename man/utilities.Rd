@@ -7,17 +7,15 @@
 \description{
 
   Internal utility functions which may be of some use.
-  
+
 }
 \usage{
 cuts2probs(cuts)
 logit(p)
 invlogit(x)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{cuts}{The probability at being in a particular category or
-    above.}
+  \item{cuts}{A matrix of values between 0 and 1.  Values in each row should be decreasing.}
   \item{p}{A value between 0 and 1.}
   \item{x}{A real value.}
 }
@@ -28,7 +26,7 @@ invlogit(x)
 
   The \code{logit} and \code{invlogit} functions are the logistic and
   inverse logistic functions.
-  
+
 }
 \value{
 
@@ -45,7 +43,7 @@ invlogit(x)
 }
 \examples{
 
-cuts2probs(c(.7,.5,.1))
+cuts2probs(matrix(c(.7,.5,.1, .4,.25,.1),2,3,byrow=TRUE))
 logit(.5)
 invlogit(1)
 
