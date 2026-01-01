@@ -41,7 +41,8 @@ Class \code{\link[R6]{R6Class}}, directly.
   }
 
   Note that the \code{key} argument is a vector, and is converted to a
-  character.
+  character.  It generally should have a length that matches \code{$depth},
+  but \code{$exists} will work with a shorter key.
 }
 \details{
 
@@ -76,13 +77,13 @@ Class \code{\link[R6]{R6Class}}, directly.
 
   cacheA <- memoTree$new(2)
 
-  #cacheA$assign(c(1,2), "One-Two")
-  #cacheA$assign(c(2,1), "Two-One")
-  #cacheA$exists(c(1,1))
-  #cacheA$exists(c(2,1))
-  #cacheA$get(c(1,2))
-  #cacheA$clear()
-  #cacheA$exists(c(1,2))
+  cacheA$assign(c(1,2), "One-Two")
+  cacheA$assign(c(2,1), "Two-One")
+  cacheA$exists(c(1,1))
+  cacheA$exists(c(2,1))
+  cacheA$get(c(1,2))
+  cacheA$clear()
+  cacheA$exists(c(1,2))
 
 }
 \keyword{classes}
