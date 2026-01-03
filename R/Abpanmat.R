@@ -30,6 +30,9 @@ setMethod("print","Panmat",function(x, ...) print(x@mat,...))
 mat <- function(pmat) {
   pmat@mat
 }
+setMethod("as.matrix","Panmat",function(x, ...) {
+  mat(x)
+})
 
 "mat<-" <- function (pmat,value) {
   if (!is.matrix(value))
@@ -72,9 +75,9 @@ setMethod("nocc<-","Panmat", function(obj,value) {
   obj
 })
 
-setMethod("maxocc","Panmat", function(obj) obj@nocc+1L-obj@minocc)
+setMethod("maxocc","Panmat", function(obj) obj@nocc+(obj@minocc-1L))
 setMethod("maxocc<-","Panmat", function(obj,value) {
-  obj@nocc <- as.integer(value) + obj@minocc
+  obj@nocc <- as.integer(value) - obj@minocc + 1L
   obj
 })
 
@@ -169,13 +172,17 @@ setMethod("diff","Panmat", function(x, ...) {
 })
 
 setMethod("cumsum","Panmat", function(x) {
-  cpm <- panmat(t(apply(cbind(0,x@mat),1,cumsum)))
+  cpm <- panmat(t(apply(x@mat,1,\(row) {
+    cumsum(c(0,rep_len(row,nocc(x))))
+  })))
   nsubj(cpm) <- nsubj(x)
   cpm
 })
 
 setMethod("get_subj","Panmat", function(x,isubj) {
-  as.Panmat(x[isubj,])
+  result <- as.Panmat(x[isubj,])
+  isubj(result) <- isubj
+  result
 })
 
 setMethod("get_subj<-","Panmat", function(x,isubj,value) {
@@ -194,7 +201,8 @@ all.equal.Panmat <- function(target, current, ... ) {
                              " but nsubj(current)=",nsubj(current),"."))
   }
   if (is.na(isubj(target) && !is.na(isubj(current))) ||
-      !isTRUE(isubj(target) == isubj(current))) {
+      (!is.na(isubj(target)) &&
+       !isTRUE(isubj(target) == isubj(current)))) {
     result <- c(result,paste("isubj(target)=",isubj(target),
                              " but isubj(current)=",isubj(current),"."))
   }
@@ -202,9 +210,9 @@ all.equal.Panmat <- function(target, current, ... ) {
     result <- c(result,paste("minocc(target)=",minocc(target),
                              " but minocc(current)=",minocc(current),"."))
   }
-  if (minocc(target) != minocc(current)) {
-    result <- c(result,paste("minocc(target)=",minocc(target),
-                             " but minocc(current)=",minocc(current),"."))
+  if (maxocc(target) != maxocc(current)) {
+    result <- c(result,paste("maxocc(target)=",maxocc(target),
+                             " but maxocc(current)=",maxocc(current),"."))
   }
   if (length(result) == 0L) return(TRUE)
   return(result)

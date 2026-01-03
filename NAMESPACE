@@ -124,7 +124,7 @@ export(Panel_Data, Panel_Frame, Panmat)
 export(panmat, mat, "mat<-", as.Panmat,
        panel_frame, as_longform,
        time2occ, panel_data, long2panel)
-exportMethods(as.Panmat,
+exportMethods(as.Panmat, as.matrix,
               "[", "[<-",as_longform, diff, cumsum, names)
 
 export(Quadrature, FixedQuad, ParticleQuad, BWQuad)

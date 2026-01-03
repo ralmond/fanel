@@ -76,57 +76,132 @@ test_that("as_longform Panmat", {
 
 })
 
-test_that(" {Panmat-class}", {
+test_that("all.equal.Panmat", {
+  matpm <- matrix(1:10,2,5,byrow=TRUE)
+  pm <- panmat(matpm)
+  pm2 <- panmat(matrix(1:10,2,5,byrow=TRUE))
+  expect_true(all.equal(pm,pm2))
+  ## target other
+  expect_match(all.equal(pm,matpm),"Target is a Panmat, but.*")
+  ## mat different
+  pm2m <- panmat(matrix(1:10,2,5))
+  expect_false(isTRUE(all.equal(pm,pm2m)))
+  ## nsubj
+  pm1a <- panmat(matrix(1:5,1,5))
+  pm1b <- panmat(matrix(1:5,1,5),nsubj=5)
+  expect_match(all.equal(pm1a,pm1b),"nsubj.*")
+  ## isubj different
+  pm1c <- pm1a
+  isubj(pm1c) <- 1L
+  expect_match(all.equal(pm1a,pm1c),"isubj.*")
+  expect_match(all.equal(pm1c,pm1a),"isubj.*")
+  ## minocc different
+  pm1d <- panmat(matrix(1:5,1,5),minocc=0L)
+  expect_true(any(grepl("minocc.*",all.equal(pm1a,pm1d))))
+  ## maxocc different
+  pm1e <- panmat(matrix(1:4,1,4))
+  expect_true(any(grepl("maxocc.*",all.equal(pm1a,pm1e))))
+
 })
-test_that(" {Panmat}", {
-})
-test_that("[,Panmat-method",{
-})
-test_that("[<-,Panmat-method",{
-})
+
+
+
 test_that(" {as.Panmat}", {
+  matpm <- matrix(1:10,2,5,byrow=TRUE)
+  pm <- panmat(matpm)
+  expect_true(all.equal(pm,as.Panmat(pm)))
+  expect_true(all.equal(pm,as.Panmat(matpm)))
+  pm1 <- panmat(1:5)
+  expect_true(all.equal(pm1,as.Panmat(1:5)))
+  pmc <- panmat(c("red","blue","green"))
+  expect_true(all.equal(pmc,as.Panmat(c("red","blue","green"))))
+
 })
-test_that(" {as.Panmat,Panmat-method}", {
-})
-test_that(" {as.Panmat,matrix-method}", {
-})
-test_that(" {as.Panmat,character-method}", {
-})
-test_that(" {as.Panmat,numeric-method}", {
-})
-test_that(" {as_longform,Panmat-method}", {
-})
-test_that(" {nocc,Panmat-method}", {
-})
-test_that(" {nocc<-,Panmat-method}", {
-})
+
 test_that(" {maxocc,Panmat-method}", {
+  matpm <- matrix(1:10,2,5,byrow=TRUE)
+  pm1 <- panmat(matpm,minocc=1L)
+  pm0 <- panmat(matpm,minocc=0L)
+  expect_equal(minocc(pm1),1L)
+  expect_equal(minocc(pm0),0L)
+  expect_equal(maxocc(pm1),5L)
+  expect_equal(maxocc(pm0),4L)
+
+  minocc(pm0) <- 2L
+  expect_equal(maxocc(pm0),6L)
+
+  pmm <- panmat(matrix(1:2,2,1),minocc=0,nocc=5)
+  expect_equal(maxocc(pmm),4L)
+  maxocc(pmm) <- 3L
+  expect_equal(nocc(pmm),4L)
+  expect_equal(maxocc(pmm),3L)
+  minocc(pmm) <- 1L
+  expect_equal(nocc(pmm),4L)
+  expect_equal(maxocc(pmm),4L)
+  expect_equal(minocc(pmm),1L)
+
+
 })
-test_that(" {maxocc<-,Panmat-method}", {
-})
-test_that(" {minocc,Panmat-method}", {
-})
-test_that(" {minocc<-,Panmat-method}", {
-})
-test_that(" {nsubj,Panmat-method}", {
-})
-test_that(" {nsubj<-,Panmat-method}", {
-})
-test_that(" {isubj,Panmat-method}", {
-})
-test_that(" {isubj<-,Panmat-method}", {
-})
-test_that(" {panmat}", {
-})
+
 test_that(" {mat}", {
-})
-test_that(" {mat<-}", {
+  matpm <- matrix(1:10,2,5,byrow=TRUE)
+  pm <- panmat(matpm)
+  expect_equal(nsubj(pm),2L)
+  expect_equal(nocc(pm),5L)
+  expect_equal(as.numeric(pm[2,3]),8)
+  expect_equal(mat(pm),matpm)
+
+  mat2 <- matrix(6:9,1,4)
+  mat(pm) <- mat2
+  expect_equal(nsubj(pm),2L)
+  expect_equal(nocc(pm),4L)
+  expect_equal(as.numeric(pm[2,3]),8)
+  expect_equal(mat(pm),mat2)
+
+
 })
 test_that(" {diff,Panmat-method}", {
+  pm <- panmat(matrix(c(1:5,(1:5)*2),2,5,byrow=TRUE),minocc=1L)
+  pmd <- diff(pm)
+  pme <- panmat(matrix(c(rep(1,4),rep(2,4)),2,4,byrow=TRUE))
+  expect_equal(pmd,pme)
 })
 test_that(" {cumsum,Panmat-method}", {
+  pm <- panmat(matrix(c(0:4,(0:4)*2),2,5,byrow=TRUE),minocc=1L)
+  pme <- panmat(matrix(c(rep(1,4),rep(2,4)),2,4,byrow=TRUE))
+  pmc <- cumsum(pme)
+  expect_equal(pmc,pm)
+
+  pm1 <- panmat(matrix(1:2,2,1),minocc=2L,nocc=4L)
+  pm1c <-cumsum(pm1)
+  expect_equal(pm1c,pm)
 })
+
+
+test_that(" {isubj,Panmat-method}", {
+  pm <- panmat(1:5)
+  expect_true(is.na(isubj(pm)))
+  isubj(pm) <- 3L
+  expect_equal(isubj(pm),3L)
+})
+
 test_that(" {get_subj,Panmat-method}", {
+  pm <- panmat(matrix(c(0:4,(0:4)*2),2,5,byrow=TRUE),minocc=1L)
+  pm1 <- panmat(0:4,isubj=1L)
+  pm2 <- panmat((0:4)*2,isubj=2L)
+  expect_equal(get_subj(pm,1L),pm1)
+  expect_equal(get_subj(pm,2L),pm2)
+
 })
 test_that(" {get_subj<-,Panmat-method}", {
+  pm <- panmat(matrix(c(0:4,(0:4)*2),2,5,byrow=TRUE),minocc=1L)
+  pme1 <- panmat(matrix(c((0:4),(0:4)),2,5,byrow=TRUE),minocc=1L)
+  pme2 <- panmat(matrix(c((0:4)*2,(0:4)),2,5,byrow=TRUE),minocc=1L)
+  pm1 <- panmat(0:4,isubj=2L)
+  pm2 <- panmat((0:4)*2,isubj=1L)
+  get_subj(pm,2) <- pm1
+  expect_equal(pm,pme1)
+  get_subj(pm,1) <- pm2
+  expect_equal(pm,pme2)
+
 })

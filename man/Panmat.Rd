@@ -6,6 +6,7 @@
 \alias{[<-,Panmat-method}
 \alias{as.Panmat}
 \alias{as.Panmat,Panmat-method}
+\alias{as.matrix,Panmat-method}
 \alias{as.Panmat,matrix-method}
 \alias{as.Panmat,character-method}
 \alias{as.Panmat,numeric-method}
@@ -71,42 +72,43 @@
 }
 \section{Methods}{
   \describe{
-    \item{[}{\code{signature(x = "Panmat", i, j, ..., drop=FALSE)}:
+    \item{[}{\code{(x = "Panmat", i, j, ..., drop=FALSE)}:
       Selects elements of the matrix, adjusting indexes in the 1-row or
       1-column cases.  (See details).}
-    \item{[<-}{\code{signature(x = "Panmat", i, j, ..., value)}: sets an
+    \item{[<-}{\code{(x = "Panmat", i, j, ..., value)}: sets an
       element}
     \item{as.Panmat}{Converts argument into a Panmat if necessary.  If given a vector,
       assumes that the length is the number of occasions. }
-    \item{nocc}{\code{signature(obj = "Panmat")}: Returns the number
+    \item{nocc}{\code{(obj = "Panmat")}: Returns the number
       of occasions. }
-    \item{nocc<-}{\code{signature(obj = "Panmat",value = "integer")}: Sets the
+    \item{nocc<-}{\code{(obj = "Panmat",value = "integer")}: Sets the
       number of occasions }
-    \item{minocc}{\code{signature(obj = "Panmat")}: Returns the minimum index of occasions
+    \item{minocc}{\code{(obj = "Panmat")}: Returns the minimum index of occasions
       usually 0 or 1. }
-    \item{minocc<-}{\code{signature(obj = "Panmat",value = "integer")}: Sets the
+    \item{minocc<-}{\code{(obj = "Panmat",value = "integer")}: Sets the
       index of the first occasion, usually 0 or 1.}
-    \item{maxocc}{\code{signature(obj = "Panmat")}: Returns the maximum occaions index.}
-    \item{maxocc<-}{\code{signature(obj = "Panmat",value = "integer")}: Sets the
+    \item{maxocc}{\code{(obj = "Panmat")}: Returns the maximum occaions index.}
+    \item{maxocc<-}{\code{(obj = "Panmat",value = "integer")}: Sets the
       maximum occasion index. }
-    \item{nsubj}{\code{signature(obj = "Panmat")}: Returns the number of
+    \item{nsubj}{\code{(obj = "Panmat")}: Returns the number of
       subjects.}
-    \item{nsubj<-}{\code{signature(obj = "Panmat",value = "integer")}:
+    \item{nsubj<-}{\code{(obj = "Panmat",value = "integer")}:
       Sets the number of subjects. }
-    \item{isubj}{\code{signature(obj = "Panmat")}: Returns the index of the
+    \item{isubj}{\code{(obj = "Panmat")}: Returns the index of the
       focus subject, or \code{NA} if focused on multiple objects.}
-    \item{isubj<-}{\code{signature(obj = "Panmat",value = "integer")}:
+    \item{isubj<-}{\code{(obj = "Panmat",value = "integer")}:
       Sets the index of the focus subject. }
-    \item{mat}{\code{signature(obj = "Panmat")}:  returns the underlying matrix.}
-    \item{mat<-}{\code{signature(obj = "Panmat",value="matrix")}:  sets the underlying
+    \item{mat}{\code{(obj = "Panmat")}:  returns the underlying matrix.}
+    \item{as.matrix}{\code{(x,...)}:  returns the underlying matrix.}
+    \item{mat<-}{\code{(obj = "Panmat",value="matrix")}:  sets the underlying
       matrix.}
-    \item{get_subj}{\code{signature(x = "Panmat", subj="integer")}:
+    \item{get_subj}{\code{(x = "Panmat", subj="integer")}:
       fetches a smaller Panmat focused on subject.  See
       \code{\link{split_subj}}.}
-    \item{get_subj<-}{\code{signature(x = "Panmat", subj="integer",
+    \item{get_subj<-}{\code{(x = "Panmat", subj="integer",
       value="Panmat")}: replaces or inserts smaller Panmat focused
       on subject.}
-    \item{as_longform}{\code{signature(x = "Quadrature")}: Converts the
+    \item{as_longform}{\code{(x = "Quadrature")}: Converts the
       quadrature into long form (with indexes subj and occ). }
   }
 }
