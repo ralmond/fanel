@@ -194,8 +194,8 @@ setMethod("get_subj<-","Panel_Frame", function(x,isubj,value) {
 })
 
 
-setMethod("isubj","Panmat", function(obj) obj@isubj)
-setMethod("isubj<-","Panmat", function(obj,value) {
+setMethod("isubj","Panel_Frame", function(obj) obj@isubj)
+setMethod("isubj<-","Panel_Frame", function(obj,value) {
   obj@isubj<-as.integer(value)
   obj
 })

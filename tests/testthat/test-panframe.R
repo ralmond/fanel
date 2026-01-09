@@ -149,41 +149,6 @@ test_that("Panel Frame, 0-base",{
 
 })
 
-test_that("Panel Frame complete", {
-
-  long <- data.frame(subj=rep(1:2,each=6),
-                     occ=rep(0:5,2),
-                     dat1=c(NA,0,0,0,1,1,NA,1,0,1,0,1),
-                     dat2=c(NA,rep(10,5),NA,rep(20,5)),
-                     cov1=c(NA,101:105,NA,111:115),
-                     cov2=c(NA,201:205,NA,NA,212:215))
-  short <- data.frame(inv1=c("M","F"),inv2=c(300,500))
-  time=matrix(c(0:5,2*(0:5)),2,6,byrow=TRUE)
-  pd <- panel_data(time=time,vari=long,invar=short,
-                   dnames=c("dat1","dat2"))
-  expect_equal(pd$dnames,c("dat1","dat2"))
-  expect_equal(dim(mat(pd$time)),c(2,6))
-  expect_equal(dim(mat(pd$dt)),c(2,5))
-  expect_equal(dim(pd$invar),c(2,2))
-  expect_equal(nsubj(pd$vari),2L)
-  expect_equal(nocc(pd$vari),6L)
-  expect_equal(minocc(pd$vari),0L)
-  expect_equal(maxocc(pd$vari),5L)
-
-  expect_equal(pd$getVar(1,0),data.frame(inv1="M",inv2=300,dat1=NA_integer_,
-                                         dat2=NA_integer_,
-                                         cov1=NA_integer_,
-                                         cov2=NA_integer_))
-  expect_equal(pd$getVar(2,1),data.frame(inv1="F",inv2=500,dat1=1,dat2=20,
-                                         cov1=111,cov2=NA_integer_),
-               ignore_attr=TRUE)
-  expect_equal(pd$getData(1,3),data.frame(dat1=0,dat2=10),
-               ignore_attr=TRUE)
-  pd$setData(1,3,data.frame(dat1=2,dat2=11))
-  expect_equal(pd$getData(1,3),data.frame(dat1=2,dat2=11),
-               ignore_attr=TRUE)
-
-})
 
 test_that("as_longform Panel_Frame", {
   dat <- data.frame(subj=rep(1L:2L,each=4L),
@@ -194,35 +159,39 @@ test_that("as_longform Panel_Frame", {
 
 })
 
-test_that("Panel_Frame-class {Panel_Frame-class}", {
-})
-test_that("Panel_Frame-class {Panel_Frame}", {
-})
-test_that("{[,Panel_Frame-method}",{
-})
-test_that("[<-,Panel_Frame-method}",{
-})
-test_that(" {nocc,Panel_Frame-method}", {
-})
-test_that(" {minocc,Panel_Frame-method}", {
-})
-test_that(" {maxocc,Panel_Frame-method}", {
-})
-test_that(" {nsubj,Panel_Frame-method}", {
-})
 test_that(" {isubj,Panel_Frame-method}", {
+  dat <- data.frame(subj=rep(1L:2L,each=4L),
+                    occ=rep(1L:4L,2L),
+                    value1=1:8,value2=101:108)
+  pd <- panel_frame(dat,zerostart=FALSE)
+  pd1 <- get_subj(pd,1L)
+  pd2 <- get_subj(pd,2L)
+  expect_true(is.na(isubj(pd)))
+  expect_equal(isubj(pd1),1L)
+  expect_equal(isubj(pd2),2L)
+
+  isubj(pd2) <- 7
+  expect_equal(isubj(pd2),7L)
+
 })
-test_that(" {isubj<-,Panel_Frame-method}", {
-})
-test_that(" {names,Panel_Frame-method}", {
-})
+
 test_that(" {get_subj,Panel_Frame-method}", {
+  dat <- data.frame(subj=rep(1L:2L,each=4L),
+                    occ=rep(1L:4L,2L),
+                    value1=1:8,value2=101:108)
+  pd <- panel_frame(dat,zerostart=FALSE)
+
+  pd1 <- get_subj(pd,1L)
+  pd2 <- get_subj(pd,2L)
+  expect_equal(pd1[1,],pd[1,])
+  expect_equal(pd2[1,],pd[2,])
+
+  isubj(pd1) <- 2L
+  get_subj(pd,2) <- pd1
+  expect_equal(pd[2,]$value1,1:4)
+  expect_equal(pd[2,]$value2,101:104)
 })
-test_that(" {get_subj<-,Panel_Frame-method}", {
-})
-test_that(" {as_longform,Panel_Frame-method}", {
-})
-test_that(" {panel_frame}", {
-})
+
+
 
 
