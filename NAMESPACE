@@ -15,12 +15,14 @@ exportClass(FModel,ModelSet)
 export(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", nmodels,
        get_subj, "get_subj<-", split_subj, add_subj, bind_subj,
+       isubj, "isubj<-",
        pvec, "pvec<-", lprob, mstep,
        drawInitial, probInit, drawData, evalEvidence, drawGrowth,
        advanceWeights, retreatWeights
        )
 exportMethods(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
+       isubj, "isubj<-",
        pvec, "pvec<-", lprob, mstep, nmodels,
        drawInitial, probInit, drawData, evalEvidence, drawGrowth,
        advanceWeights, retreatWeights
@@ -31,6 +33,11 @@ S3method(nsubj,Quadrature)
 S3method("nsubj<-",Quadrature)
 S3method(nsubj,ModelSet)
 S3method("nsubj<-",ModelSet)
+
+S3method(isubj,"Panel_Data")
+S3method(isubj,"Quadrature")
+S3method("isubj<-","Panel_Data")
+S3method("isubj<-","Quadrature")
 
 S3method(nocc,Panel_Data)
 S3method(nocc,Quadrature)

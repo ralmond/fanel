@@ -257,20 +257,19 @@ getTime.Activities <- function(obj) {obj$time}
 
 
 
-as_longform.Activities <- function(x,...,n=nsubj(x),maxocc=nocc(x),
-                                   minocc=1L,
-                                   name=deparse(substitute(x))) {
-  as_longform(x$index,n=n,maxocc=maxocc,minocc=minocc,
-              name="action") |>
+as_longform.Activities <- function(x,...,n=nsubj(x),mxocc=maxocc(x),
+                                   mnocc=minocc(x)) {
+  as_longform(x$index,n=n,mxocc=mxocc,mnocc=mnocc,
+              name=x$iname) |>
     dplyr::left_join(
-               as_longform(x$dt,n=n,maxocc=maxocc,minocc=minocc,
-                           name="deltaT"),
+               as_longform(x$dt,n=n,mxocc=mxocc,mnocc=mnocc,
+                           name=dtname(x)),
                dplyr::join_by("subj","occ")) ->
       result
   if (!is.null(x$dosage))
     dplyr::left_join(result,
-                     as_longform(x$dosage,n=n,maxocc=maxocc,minocc=minocc,
-                                 name="dose"),
+                     as_longform(x$dosage,n=n,mxocc=mxocc,mnocc=mnocc,
+                                 name=dosname(x)),
                      dplyr::join_by("subj","occ")) ->
       result
   result

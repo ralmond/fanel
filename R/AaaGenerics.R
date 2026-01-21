@@ -46,37 +46,37 @@ setGeneric("tname")
 "tname<-" <- function(obj,value) UseMethod("tname<-")
 setGeneric("tname<-")
 
-dname <- function(obj) UseMethod("dname") 
+dname <- function(obj) UseMethod("dname")
 setGeneric("dname")
 "dname<-" <- function(obj,value) UseMethod("dname<-")
 setGeneric("dname<-")
 
-wname <- function(obj) UseMethod("wname") 
+wname <- function(obj) UseMethod("wname")
 setGeneric("wname")
 "wname<-" <- function(obj,value) UseMethod("wname<-")
 setGeneric("wname<-")
 
 
-as_longform <- function(x,...,n=nsubj(x),maxocc=maxocc(x),
-                        minocc=minocc(x),weightType="all",
+as_longform <- function(x,...,n=nsubj(x),mxocc=maxocc(x),
+                        mnocc=minocc(x),weightType="all",
                         name=deparse(substitute(x))) {
   UseMethod("as_longform")
 }
 setGeneric("as_longform")
 
-get_subj <- function(x,isubj) {UseMethod("get_Subj")}
+get_subj <- function(x,isub) {UseMethod("get_subj")}
 setGeneric("get_subj")
-"get_subj<-" <- function(x,isubj,value) {UseMethod("get_Subj<-")}
+"get_subj<-" <- function(x,isub,value) {UseMethod("get_subj<-")}
 setGeneric("get_subj<-")
 
 split_subj <- function(x) {
-  lapply(1L:nsubj(x), \(isubj) get_subj(x,isubj))
+  lapply(1L:nsubj(x), \(isub) get_subj(x,isub))
 }
 
 add_subj <- function(x, xnew) {
-  isubj <- isubj(xnew)
-  if (is.na(isubj)) isubj <- nsubj(x)+1L
-  get_subj(x,isubj) <- xnew
+  isub <- isubj(xnew)
+  if (is.na(isub)) isub <- nsubj(x)+1L
+  get_subj(x,isub) <- xnew
 }
 
 bind_subj <- function(xlist) {
@@ -289,9 +289,9 @@ mstep.ModelSet <- function(obj, data, ..., its=3,control=list(),
   obj$mstep(data, ..., its=its, control=control, workers=workers)
 }
 
-as_longform.ModelSet <- function(x,...,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L,name=deparse(substitute(x))) {
-  as_longform(x$index,n=n,maxocc=maxocc,minocc=minocc,
+as_longform.ModelSet <- function(x,...,n=nsubj(x),mxocc=maxocc(x),
+                   mnocc=minocc(x)) {
+  as_longform(x$index,n=n,mxocc=mxocc,mnocc=mnocc,
               name=x$iname)
 }
 
@@ -391,4 +391,4 @@ getDT.ModelSet <- function(obj) {
   obj$dt <- value
   obj
 }
-  
+

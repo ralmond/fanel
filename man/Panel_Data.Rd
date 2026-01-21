@@ -5,6 +5,8 @@
 \alias{nocc.Panel_Data}
 \alias{minocc.Panel_Data}
 \alias{maxocc.Panel_Data}
+\alias{dname.Panel_Data}
+\alias{dname<-.Panel_Data}
 \alias{nsubj.Panel_Data}
 \alias{nsubj<-.Panel_Data}
 \alias{isubj.Panel_Data}
@@ -93,29 +95,31 @@
 }
 \section{S4 Methods}{
   \describe{
-    \item{\code{as_longform}}{\code{signature(x = "Panel_Data")}: Converts to a
+    \item{\code{as_longform}}{\code{(x = "Panel_Data")}: Converts to a
       longform tibble.}
-    \item{\code{nocc},\code{nocc<-}}{\code{signature(obj =
+    \item{\code{nocc},\code{nocc<-}}{\code{(obj =
 	"Panel_Data")}: gets/sets the number of occasions.)}
-    \item{\code{minocc},\code{minocc<-}}{\code{signature(obj =
+    \item{\code{minocc},\code{minocc<-}}{\code{(obj =
 	"Panel_Data")}: gets/sets the index of the
       minimum occasion, usually 0 or 1.)}
-    \item{\code{maxocc},\code{maxocc<-}}{\code{signature(obj =
+    \item{\code{maxocc},\code{maxocc<-}}{\code{(obj =
 	"Panel_Data")}: gets/sets the index of the
       maximum occasions.}
-    \item{\code{nsubj}\code{nsubj<-}}{\code{signature(obj =
+    \item{\code{dname}.\code{dname<-}}{\code{(obj =
+	"Panel_Data")}: gets/sets the names of the data columns. }
+    \item{\code{nsubj}.\code{nsubj<-}}{\code{(obj =
 	"Panel_Data")}: gets/sets the number of subjects. }
-    \item{\code{isubj},\code{isubj<-}}{\code{signature(obj =
+    \item{\code{isubj},\code{isubj<-}}{\code{(obj =
 	"Panel_Data")}: Gets/sets the
       index of the focus subject, or \code{NA} if focused on multiple
       objects.}
-    \item{\code{get_subj}}{\code{signature(x = "Panel_Data", subj="integer")}:
+    \item{\code{get_subj}}{\code{(x = "Panel_Data", isub="integer")}:
       fetches a smaller Panmat focused on subject.  See
       \code{\link{split_subj}}.}
-    \item{\code{get_subj<-}}{\code{signature(x = "Panel_Data", subj="integer",
+    \item{\code{get_subj<-}}{\code{(x = "Panel_Data", isub="integer",
       value="Panmat")}: replaces or inserts smaller Panmat focused
       on subject.}
-    \item{\code{as_longform}}{\code{signature(x = "Quadrature")}: Converts the
+    \item{\code{as_longform}}{\code{(x = "Quadrature")}: Converts the
       quadrature into long form (with indexes subj and occ). }
   }
 }

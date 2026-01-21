@@ -155,16 +155,16 @@ setMethod("[<-","Panel_Frame",function(x, i, j, v, ..., value) {
 
 
 setMethod("as_longform","Panel_Frame",
-          function(x,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L) {
+          function(x,...,n=nsubj(x),mxocc=maxocc(x),
+                   mnocc=minocc(x)) {
   result <- x@dat
   result <- data.frame(subj=rep(1L:nsubj(x),each=nocc(x)),
                        occ=rep(x@minocc+0L:x@nocc1,
                                rep=nsubj(x)),
                        result)
-  if (nocc(x)==1L && maxocc-minocc > 0L) {
+  if (nocc(x)==1L && mxocc-mnocc > 0L) {
     r1 <- result
-    for (iocc in minocc:maxocc) {
+    for (iocc in mnocc:mxocc) {
       r1$occ <- iocc
       result <- rbind(result,r1)
     }
@@ -181,15 +181,15 @@ setMethod("as_longform","Panel_Frame",
   result
 })
 
-setMethod("get_subj","Panel_Frame", function(x,isubj) {
-  new("Panel_Frame",dat=x[isubj,,],nsubj=1L,
-      minocc=minocc(x),nocc1=nocc(x)-1L,isubj=isubj)
-
+setMethod("get_subj","Panel_Frame", function(x,isub) {
+  new("Panel_Frame",dat=x[isub,,],nsubj=1L,
+      minocc=minocc(x),nocc1=nocc(x)-1L,isubj=as.integer(isub))
 })
 
-setMethod("get_subj<-","Panel_Frame", function(x,isubj,value) {
-  x[isubj,,] <- value@dat
-  isubj(x) <- NA_integer_
+setMethod("get_subj<-","Panel_Frame", function(x,isub,value) {
+  x@nsubj <- ifelse(isub>nsubj(x),as.integer(isub),nsubj(x))
+  x[isub,,] <- value@dat
+  x@isubj <- NA_integer_
   x
 })
 

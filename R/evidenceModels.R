@@ -202,10 +202,4 @@ evalEvidence.Evidence<- function(model, isubj, iocc, theta, data,
 }
 
 
-as_longform.Evidence <- function(x,...,n=nsubj(x),maxocc=nocc(x),
-                                 minocc=1L,
-                                 name=deparse(substitute(x))) {
-  as_longform(x$index,n=n,maxocc=maxocc,minocc=minocc,
-              name="task")
-}
 

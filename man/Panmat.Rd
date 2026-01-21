@@ -102,10 +102,10 @@
     \item{as.matrix}{\code{(x,...)}:  returns the underlying matrix.}
     \item{mat<-}{\code{(obj = "Panmat",value="matrix")}:  sets the underlying
       matrix.}
-    \item{get_subj}{\code{(x = "Panmat", subj="integer")}:
+    \item{get_subj}{\code{(x = "Panmat", isub="integer")}:
       fetches a smaller Panmat focused on subject.  See
       \code{\link{split_subj}}.}
-    \item{get_subj<-}{\code{(x = "Panmat", subj="integer",
+    \item{get_subj<-}{\code{(x = "Panmat", isub="integer",
       value="Panmat")}: replaces or inserts smaller Panmat focused
       on subject.}
     \item{as_longform}{\code{(x = "Quadrature")}: Converts the

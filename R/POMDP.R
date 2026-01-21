@@ -105,9 +105,8 @@ setMethod("mstep","POMDP",
 
 
 setMethod("as_longform","POMDP",
-          function(x,n=nsubj(x),maxocc=maxocc(x),
-                   minocc=minocc(x),weightType="all",
-                   name=deparse(substitute(x))) {
+          function(x,...,n=nsubj(x),mxocc=maxocc(x),
+                   mnocc=minocc(x),weightType="all") {
             as_longform(evidence(x)) |>
               dplyr::left_join(as_longform(activities(x)),
                                dplyr::join_by("subj","occ")) |>

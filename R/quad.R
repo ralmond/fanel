@@ -166,9 +166,8 @@ nquad.Quadrature <- function(obj) {obj$nquad}
 
 
 
-as_longform.Quadrature <- function(x,..., n=nsubj(x),maxocc=nocc(x),
-                                   minocc=1L,weightType="all",
-                                   name=deparse(substitute(x))) {
+as_longform.Quadrature <- function(x,..., n=nsubj(x),mxocc=maxocc(x),
+                                   mnocc=minocc(x),weightType="all") {
   result <- data.frame(subj=1L:nsubj(x),each=nocc(x)*nquad(x),
                        occ=rep(rep(minocc(x):maxocc(x),each=nquad(x)),
                                nsubj(x)),
@@ -205,8 +204,8 @@ as_longform.Quadrature <- function(x,..., n=nsubj(x),maxocc=nocc(x),
     }
   }
   result |>
-    dplyr::left_join(as_longform(x$times,n=n,maxocc=maxocc,
-                                 minocc=minocc,name=name),
+    dplyr::left_join(as_longform(x$times,n=n,mxocc=mxocc,
+                                 mnocc=mnocc,name=name),
                      dplyr::join_by("subj","occ")) |>
     dplyr::left_join(as_longform(thetas),by)
 

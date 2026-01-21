@@ -63,7 +63,7 @@ test_that("as_longform Panmat", {
   long <- as_longform(pm)
   expect_equal(dim(long),c(10,3))
   expect_equal(names(long),c("subj","occ","pm"))
-  expect_equal(long$occ,rep(1:5,2))
+  expect_equal(long$occ,rep(0:4,2))
 
   pm1 <- panmat(matrix(1:5,1,5),nsubj=3L)
   long1 <- as_longform(pm1)
@@ -203,5 +203,17 @@ test_that(" {get_subj<-,Panmat-method}", {
   expect_equal(pm,pme1)
   get_subj(pm,1) <- pm2
   expect_equal(pm,pme2)
+
+  pmt <- panmat(matrix(c(0:5,2*(0:5),3*(0:5)),3,6,byrow=TRUE),
+                minocc=0L)
+  pmt1 <- get_subj(pmt,1)
+  pmt2 <- get_subj(pmt,2)
+  pmt3 <- get_subj(pmt,3)
+
+  get_subj(pmt1,2) <- pmt3
+  expect_true(is.na(isubj(pmt1)))
+  expect_equal(nsubj(pmt1),2L)
+  expect_equal(pmt1[1,],pmt[1,])
+  expect_equal(pmt1[2,],pmt[3,])
 
 })

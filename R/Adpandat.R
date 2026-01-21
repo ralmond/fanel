@@ -38,10 +38,22 @@ Panel_Data <- R6Class(
       print(self$toString(...),...)
     },
     getVar=function(subj,occ) {
-      data.frame(private$invariant[subj,],
-                 private$variant[subj,occ])
+      if (missing(subj)) {
+        subj <- 1L:nsubj(self)
+      }
+      if (missing(occ)) {
+        occ <- minocc(self):maxocc(self)
+      }
+      as.data.frame(c(private$invariant[subj,],
+                      private$variant[subj,occ]))
     },
     getData = function(subj, occ) {
+      if (missing(subj)) {
+        subj <- 1L:nsubj(self)
+      }
+      if (missing(occ)) {
+        occ <- minocc(self):maxocc(self)
+      }
       if (is.null(private$variant)) return (NA)
       private$variant[subj,occ,self$dnames]
     },
@@ -55,6 +67,17 @@ Panel_Data <- R6Class(
       panmat(private$variant[,,vname],nsubj=nsubj(self),
              nocc=nocc(self),minocc=minocc(self),
              isubj=isubj(self))
+    },
+    add_subj = function(isub,value) {
+      get_subj(private$Times,isub) <- value$time
+      get_subj(private$DeltaT,isub) <- value$dt
+      get_subj(private$variant,isub) <- value$vari
+      if (!is.null(value$invar)) {
+        private$invariant[isub,] <- value$invar[1L,]
+      }
+      if (!is.na(self$isubj) && self$isubj != isub) {
+        self$isubj <- NA
+      }
     }
   ),
   private=list(
@@ -78,12 +101,20 @@ Panel_Data <- R6Class(
       mat(private$Times) <- mat(cumsum(value))
     },
     maxocc=function() {
-      nocc(private$DeltaT)
+      maxocc(private$Times)
+    },
+    minocc=function() {
+      maxocc(private$Times)
+    },
+    nsubj=function(value) {
+      if (missing(value)) return(nsubj(private$Times))
+      nsubj(private$Times) <- as.integer(value)
+      nsubj(private$DeltaT) <- as.integer(value)
     },
     vari=function(value) {
       if (missing(value)) return(private$variant)
       if (!is(value,"Panel_Frame")) {
-        value <- panel_frame(value)
+        value <- panel_frame(value,zerostart=TRUE)
       }
       private$variant <- value
     },
@@ -107,7 +138,7 @@ Panel_Data <- R6Class(
   )
 )
 
-setOldClass("Panel_Data")
+setOldClass(c("Panel_Data","R6"))
 
 panel_data <- function(time, dt, vari = NULL, invar= NULL,
                        dnames=character(),isubj=NA_integer_) {
@@ -134,17 +165,16 @@ panel_data <- function(time, dt, vari = NULL, invar= NULL,
   result
 }
 
-nsubj.Panel_Data <- function(obj) {nsubj(obj$dt)}
+nsubj.Panel_Data <- function(obj) {obj$nsubj}
 "nsubj<-.Panel_Data" <- function(obj,value) {
-  nsubj(obj$dt) <-as.integer(value)
-  nsubj(obj$t) <-as.integer(value)
+  obj$nsubj <-as.integer(value)
   obj
 }
 
 
-nocc.Panel_Data <- function(obj) {nocc(obj$dt)}
-minocc.Panel_Data <- function(obj) {minocc(obj$dt)}
-maxocc.Panel_Data <- function(obj) {maxocc(obj$dt)}
+nocc.Panel_Data <- function(obj) {nocc(obj$time)}
+minocc.Panel_Data <- function(obj) {minocc(obj$time)}
+maxocc.Panel_Data <- function(obj) {maxocc(obj$time)}
 
 getTime.Panel_Data <- function(obj) {obj$time}
 "getTime<-.Panel_Data" <- function(obj,value) {obj$time <- value}
@@ -159,18 +189,16 @@ dname.Panel_Data <- function(obj) obj$dnames
   obj
 }
 
-as_longform.Panel_Data <- function(x,...,n=nsubj(x),maxocc=nocc(x),
-                                   minocc=1L,
-                                   name=deparse(substitute(x))) {
-  if (missing(name)) name <- "time"
-  if (missing(minocc)) minocc <- 0L
-  as_longform(x$time,n=n,maxocc=maxocc,minocc=minocc,name=name) |>
-    dplyr::left_join(cbind(subj=1:n,x$invar),
-                     dplyr::join_by("subj")) |>
-    dplyr::left_join(as_longform(x$vari,n=n,maxocc=maxocc,
-                                        minocc=minocc),
-                     dplyr::join_by("subj","occ"))
-}
+setMethod(as_longform,"Panel_Data",
+          function(x,...,n=nsubj(x),mxocc=maxocc(x),
+                                    mnocc=minocc(x)) {
+  time <- as_longform(x$time,n=n,mxocc=mxocc,mnocc=mnocc,
+                      name="time")
+  invar <- cbind(subj=1:n,x$invar)
+  var <- as_longform(x$vari,n=n,mxocc=mxocc,mnocc=mnocc)
+  dplyr::left_join(time,invar, dplyr::join_by("subj")) |>
+    dplyr::left_join(var, dplyr::join_by("subj","occ"))
+})
 
 long2panel <- function(df, idcol="subj", timecol="time", occcol="occ",
                        dnames=character(),
@@ -205,17 +233,15 @@ long2panel <- function(df, idcol="subj", timecol="time", occcol="occ",
 
 }
 
-setMethod("get_subj","Panel_Data", function(x,isubj) {
+setMethod("get_subj","Panel_Data", function(x,isub) {
   invar <- x$invar
-  if (!is.null(invar)) invar <- invar[isubj,]
-  panel_data(time=get_subj(x$time,isubj),vari=get_subj(x$vari,isubj),
-             invar=invar,dnames=x$dnames,isubj=isubj)
+  if (!is.null(invar)) invar <- invar[isub,]
+  panel_data(time=get_subj(x$time,isub),vari=get_subj(x$vari,isub),
+             invar=invar,dnames=x$dnames,isubj=isub)
 })
 
-setMethod("get_subj<-","Panel_Data", function(x,isubj,value) {
-  x$time[isubj,] <- value$time[1L,]
-  x$vari[isubj,,] <- value$vari[isubj,,]
-  if (!is.null(value$invar)) x$invar[isubj,] <- value$invar[1L,]
+setMethod("get_subj<-","Panel_Data", function(x,isub,value) {
+  x$add_subj(isub,value)
   x
 })
 

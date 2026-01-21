@@ -192,6 +192,25 @@ test_that(" {get_subj,Panel_Frame-method}", {
   expect_equal(pd[2,]$value2,101:104)
 })
 
+test_that("get_subj<-.PanelFrame", {
+  long <- data.frame(subj=rep(1:3,each=6),
+                     occ=rep(0:5,3),
+                     dat1=c(NA,rep(1,5),NA,rep(2,5),NA,rep(3,5)),
+                     dat2=c(NA,rep(10,5),NA,rep(20,5),NA,rep(30,5)),
+                     cov1=c(NA,101:105,NA,111:115,NA,121:125),
+                     cov2=c(NA,201:205,NA,NA,212:215,NA,221:225))
 
+  pf <- panel_frame(long,zerostart = TRUE)
+  pf1 <- get_subj(pf,1L)
+  pf2 <- get_subj(pf,2L)
+  pf3 <- get_subj(pf,3L)
+
+  get_subj(pf1,3L) <- pf2
+  expect_true(is.na(isubj(pf1)))
+  expect_equal(nsubj(pf1),3L)
+  expect_equal(pf1[1,]$cov1,pf[1,]$cov1)
+  expect_equal(pf1[3,]$cov1,pf[2,]$cov1)
+
+})
 
 

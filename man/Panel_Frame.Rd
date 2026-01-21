@@ -88,10 +88,10 @@
       Sets the index of the focus subject. }
     \item{names}{\code{signature(x = "Panel_Frame")}:  Returns the names
       of the columns of the underlying data frame.}
-    \item{get_subj}{\code{signature(x = "Panel_Frame", subj="integer")}:
+    \item{get_subj}{\code{signature(x = "Panel_Frame", isub="integer")}:
       fetches a smaller Panmat focused on subject.  See
       \code{\link{split_subj}}.}
-    \item{get_subj<-}{\code{signature(x = "Panel_Frame", subj="integer",
+    \item{get_subj<-}{\code{signature(x = "Panel_Frame", isub="integer",
       value="Panmat")}: replaces or inserts smaller Panmat focused
       on subject.}
     \item{as_longform}{\code{signature(x = "Quadrature")}: Converts the

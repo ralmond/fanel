@@ -147,11 +147,11 @@ setMethod("as.matrix","Panmat",function(x, ...) x@mat)
 
 
 setMethod("as_longform","Panmat",
-          function(x,n=nsubj(x),maxocc=nocc(x),
-                   minocc=1L,weightType="all",
-                   name=deparse(substitute(x))) {
+          function(x,...,n=nsubj(x),mxocc=maxocc(x),
+                         mnocc=minocc(x),
+                         name=deparse(substitute(x))) {
   col <- as.vector(t(x@mat))
-  ncc <- maxocc-minocc+1L
+  ncc <- mxocc-mnocc+1L
   if (ncol(x@mat)==1L && ncc > 1L) {
     col <- rep(col,each=ncc)
   }
@@ -159,7 +159,7 @@ setMethod("as_longform","Panmat",
     col <- rep(col,n)
   }
   result <- data.frame(rep(1L:n,each=ncc),
-                       rep(minocc:maxocc,n),
+                       rep(mnocc:mxocc,n),
                        col)
   names(result) <- c("subj","occ",name)
   result
@@ -179,14 +179,31 @@ setMethod("cumsum","Panmat", function(x) {
   cpm
 })
 
-setMethod("get_subj","Panmat", function(x,isubj) {
-  result <- as.Panmat(x[isubj,])
-  isubj(result) <- isubj
+setMethod("get_subj","Panmat", function(x,isub) {
+  result <- as.Panmat(x[isub,])
+  isubj(result) <- isub
   result
 })
 
-setMethod("get_subj<-","Panmat", function(x,isubj,value) {
-  x[isubj,] <- as.matrix(value)
+padSubj.Panmat <- function(x,isub) {
+  nr <- nrow(mat(x))
+  if (isub <= nr) return(x)
+  nc <- ncol(mat(x))
+  mat(x) <- matrix(c(t(mat(x)),rep(NA,(isub-nr)*nc)),
+                   isub,nc,byrow=TRUE)
+  x
+}
+
+setMethod("get_subj<-","Panmat", function(x,isub,value) {
+  value <- as.matrix(value)
+  if (isub > nrow(mat(x))) {
+    if (nrow(mat(x)) > 1L || any(abs(mat(x)-value)>.0001)) {
+      x <- padSubj.Panmat(x,isub)
+    }
+  }
+  x[isub,] <- as.matrix(value)
+  nsubj(x) <- ifelse(isub>nsubj(x),isub,nsubj(x))
+  if (!isTRUE(isubj(x)==isub)) isubj(x) <- NA
   x
 })
 
