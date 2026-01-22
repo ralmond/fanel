@@ -76,7 +76,7 @@ Panel_Data <- R6Class(
         private$invariant[isub,] <- value$invar[1L,]
       }
       if (!is.na(self$isubj) && self$isubj != isub) {
-        self$isubj <- NA
+        self$isubj <- NA_integer_
       }
     }
   ),

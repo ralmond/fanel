@@ -77,6 +77,7 @@ add_subj <- function(x, xnew) {
   isub <- isubj(xnew)
   if (is.na(isub)) isub <- nsubj(x)+1L
   get_subj(x,isub) <- xnew
+  x
 }
 
 bind_subj <- function(xlist) {

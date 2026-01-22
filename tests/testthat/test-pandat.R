@@ -233,10 +233,28 @@ test_that("Panel_Data-class {isubj.Panel_Data}", {
 
 })
 
-test_that("split_subj",{
-})
-test_that("add_subj",{
-})
-test_that("bind_subj",{
+test_that("split add bind_subj",{
+  long <- data.frame(subj=rep(1:3,each=6),
+                     occ=rep(0:5,3),
+                     dat1=c(NA,rep(1,5),NA,rep(2,5),NA,rep(3,5)),
+                     dat2=c(NA,rep(10,5),NA,rep(20,5),NA,rep(30,5)),
+                     cov1=c(NA,101:105,NA,111:115,NA,121:125),
+                     cov2=c(NA,201:205,NA,NA,212:215,NA,221:225))
+  short <- data.frame(inv1=c("M","F","O"),inv2=c(100,200,300))
+  time<-matrix(c(0:5,2*(0:5),3*(0:5)),3,6,byrow=TRUE)
+  pd <- panel_data(time=time,vari=long,invar=short,
+                   dnames=c("dat1","dat2"))
+  pds <- split_subj(pd)
+  expect_equal(sapply(pds,isubj),1L:3L)
+  pd1 <- bind_subj(pds[3:1])
+  expect_equal(pd1,pd)
+
+  pds <- split_subj(pd)
+  for (isub in 1L:length(pds))
+    isubj(pds[[isub]]) <- NA_integer_
+
+  pd2 <- bind_subj(pds)
+  expect_equal(pd2,pd)
+
 })
 
