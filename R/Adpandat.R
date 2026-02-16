@@ -228,7 +228,9 @@ long2panel <- function(df, idcol="subj", timecol="time", occcol="occ",
 
   panel_data(time=as.Panmat(time),
              vari = new("Panel_Frame", dat=dat, nsubj=nf$nsubj,
-                        minocc=nf$minocc, nocc1=nocc-1L),
+                        minocc=nf$minocc, nocc1=nocc-1L,
+                        byocc=nf$byocc,bysubj=nf$bysubj,
+                        isubj=NA_integer_),
              invar = invar, dnames=dnames)
 
 }

@@ -1,13 +1,75 @@
-test_that("Quadrature-class {Quadrature-class}", {
+test_that("Quadrature-class {static, !bysubj}", {
+  times <- panmat(1L:5L)
+  thetav <- qnorm((0:10 +.5)/11)
+  q1 <- fixedQuad(times,thetav)
+  expect_true(is(q1,"FixedQuad"))
+  expect_equal(maxocc(q1),5L)
+  expect_equal(minocc(q1),1L)
+  expect_equal(nocc(q1),5L)
+  expect_equal(nsubj(q1),1L)
+  expect_true(is.na(isubj(q1)))
+  expect_equal(nquad(q1),11L)
+  expect_true(q1$static)
+  expect_false(q1$bysubj)
+
+  expect_equal(q1$thetas,array(thetav,c(1,1,11,1)))
+  expect_equal(q1$times,times)
+  expect_equal(q1$wname,"w")
+  expect_equal(q1$tnames,"theta")
+  expect_equal(q1$dtheta,1L)
+
 })
-test_that("Quadrature-class {Quadrature}", {
+
+test_that("Quadrature-class {!static, !bysubj}", {
+  times <- panmat(1L:5L)
+  thetav <- t(sapply(1L:5L, \(t) {
+    qnorm((0:10 +.5)/11,(t-3)/2)
+  }))
+  q1 <- fixedQuad(times,array(thetav,c(1,5,11,1)),static=FALSE)
+  expect_true(is(q1,"FixedQuad"))
+  expect_equal(maxocc(q1),5L)
+  expect_equal(minocc(q1),1L)
+  expect_equal(nocc(q1),5L)
+  expect_equal(nsubj(q1),1L)
+  expect_true(is.na(isubj(q1)))
+  expect_equal(nquad(q1),11L)
+  expect_false(q1$static)
+  expect_false(q1$bysubj)
+
+  expect_equal(q1$thetas,array(thetav,c(1,5,11,1)))
+  expect_equal(q1$times,times)
+  expect_equal(q1$wname,"w")
+  expect_equal(q1$tnames,"theta1")
+  expect_equal(q1$dtheta,1L)
+
 })
-test_that("Quadrature-class {FixedQuad-class}", {
+
+test_that("Quadrature-class {static, bysubj}", {
+  times <- panmat(1L:5L)
+  thetav <- rbind(qnorm((0:10 +.5)/11,-.5),
+                  qnorm((0:10 +.5)/11,.5))
+  q1 <- fixedQuad(times,array(thetav,c(2,1,11,1)),
+                  nsubj=2L,bysubj=TRUE)
+  expect_true(is(q1,"FixedQuad"))
+  expect_equal(maxocc(q1),5L)
+  expect_equal(minocc(q1),1L)
+  expect_equal(nocc(q1),5L)
+  expect_equal(nsubj(q1),2L)
+  expect_true(is.na(isubj(q1)))
+  expect_equal(nquad(q1),11L)
+  expect_true(q1$static)
+  expect_true(q1$bysubj)
+
+  expect_equal(q1$thetas,array(thetav,c(2,1,11,1)))
+  nsubj(times) <- 2L
+  expect_equal(q1$times,times)
+  expect_equal(q1$wname,"w")
+  expect_equal(q1$tnames,"theta1")
+  expect_equal(q1$dtheta,1L)
+
 })
-test_that("Quadrature-class {FixedQuad}", {
-})
-test_that("Quadrature-class {fixedQuad}", {
-})
+
+
 test_that("Quadrature-class {as_longform.Quadrature}", {
 })
 test_that("Quadrature-class {get_subj.Quadrature}", {
@@ -43,7 +105,7 @@ test_that("{FixedQuad$static:}", {
   ## {A logical value.  If true then the quadrature
   ##       points are the same for each occasion.}
 })
-test_that("{FixedQuad$bySubj:}", {
+test_that("{FixedQuad$bysubj:}", {
   ## {A logical value.  If false then the quadrature
   ##       points are different for each subject.}
 })
@@ -93,19 +155,19 @@ test_that("{FixedQuad$nquad:}", {
   ##       quadrature points.}
 })
 
-test_that("{FixedQuad$$weights(type='default')}", {
+test_that("{FixedQuad$weights(type='default')}", {
   ## {Returns normalized weights (on probability,
   ##       not log scale).}
 })
-test_that("{FixedQuad$$resetWeights()}", {
+test_that("{FixedQuad$resetWeights()}", {
   ## {Clears the weights before re-running filter.}
 })
-test_that("{FixedQuad$$theta(subj,occ,quad,value)}", {
+test_that("{FixedQuad$theta(subj,occ,quad,value)}", {
   ## {Gets (if value is missing)
   ##       or sets the quadrature points for a given subject, occasion.  The
   ##       quad field can be missing to set all quadrature points.}
 })
-test_that("{FixedQuad$$lweight(subj,occ,quad,value)}", {
+test_that("{FixedQuad$lweight(subj,occ,quad,value)}", {
   ## {Gets (if value is missing)
   ##       or sets the log weights for a given occasion. Again, quad
   ##       can be omitted.}

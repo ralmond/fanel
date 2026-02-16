@@ -15,14 +15,14 @@ exportClass(FModel,ModelSet)
 export(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", nmodels,
        get_subj, "get_subj<-", split_subj, add_subj, bind_subj,
-       isubj, "isubj<-",
+       isubj, "isubj<-", bysubj, "bysubj<-", byocc, "byocc<-",
        pvec, "pvec<-", lprob, mstep,
        drawInitial, probInit, drawData, evalEvidence, drawGrowth,
        advanceWeights, retreatWeights
        )
 exportMethods(nsubj, "nsubj<-", nocc, "nocc<-", maxocc, "maxocc<-",
        minocc, "minocc<-", nquad, "nquad<-", get_subj, "get_subj<-",
-       isubj, "isubj<-",
+       isubj, "isubj<-", bysubj, "bysubj<-", byocc, "byocc<-",
        pvec, "pvec<-", lprob, mstep, nmodels,
        drawInitial, probInit, drawData, evalEvidence, drawGrowth,
        advanceWeights, retreatWeights
@@ -126,17 +126,17 @@ S3method("all.equal",Panmat)
 
 
 
-exportClass(Panmat, Panel_Frame, Panel_Data)
-export(Panel_Data, Panel_Frame, Panmat)
+exportClass(Panmat, Panel_Frame, Quad_Frame, Panel_Data)
+export(Panel_Data, Panel_Frame, Quad_Frame, Panmat)
 export(panmat, mat, "mat<-", as.Panmat,
-       panel_frame, as_longform,
+       panel_frame, as_longform, quad_frame,
        time2occ, panel_data, long2panel)
 exportMethods(as.Panmat, as.matrix,
               "[", "[<-",as_longform, diff, cumsum, names)
 
 export(Quadrature, FixedQuad, ParticleQuad, BWQuad)
 exportClass(Quadrature)
-export(fixedQuad, particleQuad, BWQuad)
+export(fixedQuad, particleQuad, BWquad)
 
 export(PopulationModel, NormalPop, CategoricalPop, Population)
 exportClass(Population)

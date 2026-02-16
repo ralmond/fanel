@@ -46,7 +46,7 @@
 
   \code{FixedQuad} which has constructor:
   \code{fixedQuad(times,qpoints,tnames=vnames(qpoints),
-    static=TRUE, bysubj=(nsubj(times)>1L),
+    static=TRUE, bysubj=FALSE),
     nsubjects=nsubj(times),isubj=NA_integer_)}.
   This variant has a fixed quadrature which is the same for all
   occasions. This is designed to be
@@ -54,16 +54,25 @@
 
   \code{BWQuad} which has constructor:
   \code{BWquad(times,qpoints,tnames=vnames(qpoints),
-    static=TRUE, bysubj=(nsubj(times)>1L),
+    static=TRUE, bysubj=FALSE,
     nsubjects=nsubj(times),isubj=NA_integer_)}.  This also has a fixed
   quadrature, but it has but both forward and backwards weights.  This
   is designed to be used with the Baum-Welch filter
   \code{\link{bwFilter}}  function.
 
+  The \code{qpoints} argument needs to be one of the following: a data
+  frame giving the quadrature points, with rows indicating quadrature
+  points and columns dimensions, or a four-dimensional array.  The array form
+  is used if \code{static} is false or \code{bySubj} is true, and should have
+  dimensions \dQuote{subj}, \dQuote{occ}, \dQuote{quad}, \dQuote{quaddim}.
+  As a special case, a vector without dimensions is treated as a data frame
+  with a single column.
+
+
 
   \code{ParticleQuad} which has constructor:
-  \code{fixedQuad(times,nquadrature,tnames=vnames(qpoints), static=TRUE,
-  bysubj=(nsubj(times)>1L), nsubjects=nsubj(times),isubj=NA_integer_)}.
+  \code{particleQuad(times,nquadrature,tnames=vnames(qpoints), static=TRUE,
+  bysubj=TRUE, nsubjects=nsubj(times),isubj=NA_integer_)}.
   This is a random quadrature whose points (particles) move between each
   occaions.  This is designed to be used with the
   \code{\link{particleFilter}} function.
