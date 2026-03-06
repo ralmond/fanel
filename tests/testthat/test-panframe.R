@@ -193,6 +193,21 @@ test_that("as_longform Panel_Frame", {
   pd <- panel_frame(dat,zerostart=FALSE)
   expect_equal(as_longform(pd),dat)
 
+  dat1 <- dat[dat$subj==1L,]
+  pd1 <- panel_frame(dat1,zerostart=FALSE)
+  bysubj(pd1) <- FALSE
+  lf1 <- as_longform(pd1,n=3L)
+  expect_equal(nrow(lf1),3*nrow(dat1))
+  expect_equal(lf1[lf1$subj==2L,2:4],dat1[2:4],ignore_attr=TRUE)
+  expect_equal(unique(lf1$subj),1L:3L)
+
+  dat2 <- dat[dat$occ==1L,]
+  pd2 <- panel_frame(dat2,zerostart=FALSE)
+  lf2 <- as_longform(pd2,mnocc=0L,mxocc=2L)
+  expect_equal(nrow(lf2),3*nrow(dat2))
+  expect_equal(lf2[lf2$occ==1L,],dat2,ignore_attr=TRUE)
+  expect_equal(unique(lf2$occ),0L:2L)
+
 })
 
 test_that(" {isubj,Panel_Frame-method}", {
@@ -427,7 +442,58 @@ test_that("Quad_Frame get_subj",{
   expect_equal(nsubj(qf3.1),2L)
   expect_true(is.na(isubj(qf3.1)))
   expect_equal(qf3.1[1:2,,],qf3[1:2,,],ignore_attr=TRUE)
+})
 
+test_that("Quad_Frame, as_longform", {
+  dat <- data.frame(subj=rep(1L:2L,each=12L),
+                    occ=rep(rep(1L:4L,2L),each=3L),
+                    quad=rep(1L:3L,8L),
+                    theta=1:24)
+  pd <- quad_frame(dat,zerostart=FALSE)
+  expect_equal(as_longform(pd),dat)
+
+  dat1 <- dat[dat$subj==1L,]
+  pd1 <- quad_frame(dat1,zerostart=FALSE)
+  bysubj(pd1) <- FALSE
+  lf1 <- as_longform(pd1,n=3L)
+  expect_equal(nrow(lf1),3*nrow(dat1))
+  expect_equal(lf1[lf1$subj==2L,2:4],dat1[2:4],ignore_attr=TRUE)
+  expect_equal(unique(lf1$subj),1L:3L)
+
+  dat2 <- dat[dat$occ==1L,]
+  pd2 <- quad_frame(dat2,zerostart=FALSE)
+  lf2 <- as_longform(pd2,mnocc=0L,mxocc=2L)
+  expect_equal(nrow(lf2),3*nrow(dat2))
+  expect_equal(lf2[lf2$occ==1L,],dat2,ignore_attr=TRUE)
+  expect_equal(unique(lf2$occ),0L:2L)
+
+})
+
+test_that("Quad_Frame, as_quad_frame", {
+  dat <- data.frame(subj=rep(1L:2L,each=12L),
+                    occ=rep(rep(1L:4L,2L),each=3L),
+                    quad=rep(1L:3L,8L),
+                    theta=1:24)
+  pd <- quad_frame(dat)
+  expect_equal(as_quad_frame(pd),pd)
+
+  pd1 <- as_quad_frame(dat)
+  expect_equal(pd1,pd)
+
+  df1 <- data.frame(Theta1=1:3,Theta2=4:6)
+  pd2 <- as_quad_frame(df1)
+  expect_equal(pd2[1,1,],df1,ignore_attr=TRUE)
+
+  mat <- matrix(1:6,3,2)
+  colnames(mat) <- c("Theta1","Theta2")
+
+  pd3 <- as_quad_frame(mat)
+  expect_equal(pd3[1,1,],as.data.frame(mat),
+               ignore_attr=TRUE)
+
+  pd4 <- as_quad_frame(1:3)
+  expect_equal(pd4[1,1,],data.frame(theta=1:3),
+               ignore_attr=TRUE)
 
 })
 

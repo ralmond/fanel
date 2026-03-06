@@ -48,7 +48,7 @@ normalForm <- function(data,idcol="subj",occcol="occ",
       names(data)[names(data)==occcol] <- "occ"
     }
     bocc <- maxocc > minocc
-    if (bocc) by <- c(by,list("occ"))
+    by <- c(by,list("occ")) # Want this if occ column exists.
   } else {
     bocc <- FALSE
     if (zerostart) {
@@ -268,7 +268,8 @@ setMethod("as_longform","Panel_Frame",
 
   if (!byocc(x) && mxocc-mnocc > 0L) {
     r1 <- result
-    for (iocc in mnocc:mxocc) {
+    result$occ<-mnocc
+    for (iocc in (mnocc+1L):mxocc) {
       r1$occ <- iocc
       result <- rbind(result,r1)
     }
@@ -327,6 +328,27 @@ quad_frame <- function(data,idcol="subj",occcol="occ",
       nocc1=normed$maxocc-normed$minocc, nquad=normed$nquad,
       isubj=isubj, bysubj=normed$bysubj, byocc=normed$byocc)
 }
+
+setGeneric("as_quad_frame",function(x) standardGeneric("as_quad_frame"))
+
+setMethod("as_quad_frame","Quad_Frame",function(x) x)
+
+setMethod("as_quad_frame","data.frame",function(x) {
+  if (!("quad" %in% names(x))) {
+    x$quad <- 1L:nrow(x)
+  }
+  quad_frame(x)
+})
+
+setMethod("as_quad_frame","matrix",function(x) {
+  as_quad_frame(as.data.frame(x))
+})
+
+setMethod("as_quad_frame","numeric",function(x) {
+  as_quad_frame(data.frame(theta=x))
+})
+
+
 
 setMethod("nquad","Quad_Frame", function(obj) obj@nquad)
 setMethod("nquad<-","Quad_Frame", function(obj,value) {

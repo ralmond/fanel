@@ -130,9 +130,10 @@ exportClass(Panmat, Panel_Frame, Quad_Frame, Panel_Data)
 export(Panel_Data, Panel_Frame, Quad_Frame, Panmat)
 export(panmat, mat, "mat<-", as.Panmat,
        panel_frame, as_longform, quad_frame,
-       time2occ, panel_data, long2panel)
+       time2occ, panel_data, long2panel, as_quad_frame)
 exportMethods(as.Panmat, as.matrix,
-              "[", "[<-",as_longform, diff, cumsum, names)
+              "[", "[<-",as_longform, diff, cumsum, names,
+              as_quad_frame)
 
 export(Quadrature, FixedQuad, ParticleQuad, BWQuad)
 exportClass(Quadrature)
