@@ -39,6 +39,13 @@ S3method(isubj,"Quadrature")
 S3method("isubj<-","Panel_Data")
 S3method("isubj<-","Quadrature")
 
+S3method(bysubj,"Quadrature")
+S3method("bysubj<-","Quadrature")
+
+S3method(byocc,"Quadrature")
+S3method("byocc<-","Quadrature")
+
+
 S3method(nocc,Panel_Data)
 S3method(nocc,Quadrature)
 S3method("nocc<-",Quadrature)

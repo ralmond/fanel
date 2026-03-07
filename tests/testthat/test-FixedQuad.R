@@ -1,4 +1,4 @@
-test_that("Quadrature-class {static, !bysubj}", {
+test_that("Quadrature-class {!byocc, !bysubj}", {
   times <- panmat(1L:5L)
   thetav <- qnorm((0:10 +.5)/11)
   q1 <- fixedQuad(times,thetav)
@@ -9,10 +9,10 @@ test_that("Quadrature-class {static, !bysubj}", {
   expect_equal(nsubj(q1),1L)
   expect_true(is.na(isubj(q1)))
   expect_equal(nquad(q1),11L)
-  expect_true(q1$static)
-  expect_false(q1$bysubj)
+  expect_false(byocc(q1))
+  expect_false(bysubj(q1))
 
-  expect_equal(q1$thetas,array(thetav,c(1,1,11,1)))
+  expect_equal(q1$thetas,as_quad_frame(thetav))
   expect_equal(q1$times,times)
   expect_equal(q1$wname,"w")
   expect_equal(q1$tnames,"theta")
@@ -20,12 +20,17 @@ test_that("Quadrature-class {static, !bysubj}", {
 
 })
 
-test_that("Quadrature-class {!static, !bysubj}", {
+test_that("Quadrature-class {byocc, !bysubj}", {
   times <- panmat(1L:5L)
-  thetav <- t(sapply(1L:5L, \(t) {
-    qnorm((0:10 +.5)/11,(t-3)/2)
-  }))
-  q1 <- fixedQuad(times,array(thetav,c(1,5,11,1)),static=FALSE)
+  thetas <-
+    data.frame(occ=rep(0L:4L,each=11),
+               quad=rep(1L:11L,5),
+               theta=do.call("c",
+                             lapply(1L:5L, \(t) {
+                      qnorm((0:10 +.5)/11,(t-3)/2)
+              })))
+
+  q1 <- fixedQuad(times,thetas,byocc=TRUE)
   expect_true(is(q1,"FixedQuad"))
   expect_equal(maxocc(q1),5L)
   expect_equal(minocc(q1),1L)
@@ -33,23 +38,25 @@ test_that("Quadrature-class {!static, !bysubj}", {
   expect_equal(nsubj(q1),1L)
   expect_true(is.na(isubj(q1)))
   expect_equal(nquad(q1),11L)
-  expect_false(q1$static)
-  expect_false(q1$bysubj)
+  expect_true(byocc(q1))
+  expect_false(bysubj(q1))
 
-  expect_equal(q1$thetas,array(thetav,c(1,5,11,1)))
+  expect_equal(q1$thetas,as_quad_frame(thetas))
   expect_equal(q1$times,times)
   expect_equal(q1$wname,"w")
-  expect_equal(q1$tnames,"theta1")
+  expect_equal(q1$tnames,"theta")
   expect_equal(q1$dtheta,1L)
 
 })
 
-test_that("Quadrature-class {static, bysubj}", {
+test_that("Quadrature-class {!byocc, bysubj}", {
   times <- panmat(1L:5L)
-  thetav <- rbind(qnorm((0:10 +.5)/11,-.5),
-                  qnorm((0:10 +.5)/11,.5))
-  q1 <- fixedQuad(times,array(thetav,c(2,1,11,1)),
-                  nsubj=2L,bysubj=TRUE)
+  thetas <- data.frame(subj=rep(1L:2L,each=11L),
+                       quad=rep(1L:11L,2L),
+                       theta = c(qnorm((0:10 +.5)/11,-.5),
+                                  qnorm((0:10 +.5)/11,.5)))
+  q1 <- fixedQuad(times,thetas,
+                  nsubjects=2L,bysubj=TRUE)
   expect_true(is(q1,"FixedQuad"))
   expect_equal(maxocc(q1),5L)
   expect_equal(minocc(q1),1L)
@@ -57,14 +64,14 @@ test_that("Quadrature-class {static, bysubj}", {
   expect_equal(nsubj(q1),2L)
   expect_true(is.na(isubj(q1)))
   expect_equal(nquad(q1),11L)
-  expect_true(q1$static)
-  expect_true(q1$bysubj)
+  expect_false(byocc(q1))
+  expect_true(bysubj(q1))
 
-  expect_equal(q1$thetas,array(thetav,c(2,1,11,1)))
+  expect_equal(q1$thetas,as_quad_frame(thetas))
   nsubj(times) <- 2L
   expect_equal(q1$times,times)
   expect_equal(q1$wname,"w")
-  expect_equal(q1$tnames,"theta1")
+  expect_equal(q1$tnames,"theta")
   expect_equal(q1$dtheta,1L)
 
 })
