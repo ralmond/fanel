@@ -329,6 +329,16 @@ quad_frame <- function(data,idcol="subj",occcol="occ",
       isubj=isubj, bysubj=normed$bysubj, byocc=normed$byocc)
 }
 
+na_quad_frame <- function(nsubj,minocc,maxocc,nquad,qnames="theta",
+                          isubj=NA_integer_) {
+  len <- (maxocc-minocc+1L)*nsubj*nquad
+  dat <- as.data.frame(lapply(qnames,\(qn) rep(NA_real_,len)))
+  names(dat) <- qnames
+  new("Quad_Frame",dat=dat,nsubj=nsubj,minocc=minocc,
+      nocc1=maxocc-minocc,nquad=nquad, isubj=isubj,
+      bysubj=nsubj>1L,byocc=maxocc>minocc)
+}
+
 setGeneric("as_quad_frame",function(x) standardGeneric("as_quad_frame"))
 
 setMethod("as_quad_frame","Quad_Frame",function(x) x)
@@ -371,6 +381,14 @@ setMethod("nquad<-","Quad_Frame", function(obj,value) {
   }
   obj
 })
+
+setMethod("qname","Quad_Frame",function(obj) {names(obj@dat)})
+setMethod("qname<-","Quad_Frame",function(obj,value) {
+  names(obj@dat) <- value
+  obj
+})
+
+
 
 ### [,Quad_Frame ----
 setMethod("[","Quad_Frame",function(x, i, j, q, v, ..., drop=FALSE) {

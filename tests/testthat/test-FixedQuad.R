@@ -12,11 +12,11 @@ test_that("Quadrature-class {!byocc, !bysubj}", {
   expect_false(byocc(q1))
   expect_false(bysubj(q1))
 
-  expect_equal(q1$thetas,as_quad_frame(thetav))
+  expect_equal(q1$quadpoints,as_quad_frame(thetav))
   expect_equal(q1$times,times)
   expect_equal(q1$wname,"w")
-  expect_equal(q1$tnames,"theta")
-  expect_equal(q1$dtheta,1L)
+  expect_equal(q1$qnames,"theta")
+  expect_equal(q1$dquad,1L)
 
 })
 
@@ -41,11 +41,11 @@ test_that("Quadrature-class {byocc, !bysubj}", {
   expect_true(byocc(q1))
   expect_false(bysubj(q1))
 
-  expect_equal(q1$thetas,as_quad_frame(thetas))
+  expect_equal(q1$quadpoints,as_quad_frame(thetas))
   expect_equal(q1$times,times)
   expect_equal(q1$wname,"w")
-  expect_equal(q1$tnames,"theta")
-  expect_equal(q1$dtheta,1L)
+  expect_equal(q1$qnames,"theta")
+  expect_equal(q1$dquad,1L)
 
 })
 
@@ -67,180 +67,308 @@ test_that("Quadrature-class {!byocc, bysubj}", {
   expect_false(byocc(q1))
   expect_true(bysubj(q1))
 
-  expect_equal(q1$thetas,as_quad_frame(thetas))
+  expect_equal(q1$quadpoints,as_quad_frame(thetas))
   nsubj(times) <- 2L
   expect_equal(q1$times,times)
   expect_equal(q1$wname,"w")
-  expect_equal(q1$tnames,"theta")
-  expect_equal(q1$dtheta,1L)
+  expect_equal(q1$qnames,"theta")
+  expect_equal(q1$dquad,1L)
 
 })
 
 
 test_that("Quadrature-class {as_longform.Quadrature}", {
-})
-test_that("Quadrature-class {get_subj.Quadrature}", {
-})
-test_that("Quadrature-class {get_subj<-.Quadrature}", {
-})
-test_that("Quadrature-class {maxocc.Quadrature}", {
-})
-test_that("Quadrature-class {maxocc<-.Quadrature}", {
-})
-test_that("Quadrature-class {minocc.Quadrature}", {
-})
-test_that("Quadrature-class {minocc<-.Quadrature}", {
-})
-test_that("Quadrature-class {nocc.Quadrature}", {
-})
-test_that("Quadrature-class {nocc<-.Quadrature}", {
-})
-test_that("Quadrature-class {nquad,Quadrature}", {
-})
-test_that("Quadrature-class {nquad<-.Quadrature}", {
-})
-test_that("Quadrature-class {nsubj.Quadrature}", {
-})
-test_that("Quadrature-class {nsubj<-.Quadrature}", {
-})
-test_that("Quadrature-class {isubj.Quadrature}", {
-})
-test_that("Quadrature-class {isubj<-.Quadrature}", {
+  times <- panmat(0L:4L,minocc=0L)
+  btimes <- ((1:5)-3)/2
+  bsubj <- c(-1,1)
+  thetav <- qnorm((0:10 +.5)/11)
+  q1 <- fixedQuad(times,data.frame(theta=thetav))
+  nsubj(q1) <- 2L
+  q1$resetWeights()
+  for (iocc in 1L:4L) {
+    for (isubj in 1L:2L) {
+      q1$lweight(isubj,iocc,1L:nquad(q1),
+                 dnorm(q1$qpoints(isubj,iocc)$theta,
+                       btimes[iocc]+bsubj[isubj],
+                       log=TRUE))
+    }
+  }
+  lf1 <- as_longform(q1)
+  expect_equal(nrow(lf1),length(thetav)*nocc(times)*2)
+  expect_equal(lf1[lf1$subj==1L & lf1$occ==0L,"theta"],
+               thetav)
+  expect_equal(names(lf1),c("subj","occ","quad","theta","w","times"))
+  expect_equal(sum(lf1[lf1$subj==1L & lf1$occ==1L,"w"]),
+               1.0,tolerance=.0001)
+
+
+  thetas2 <-
+    data.frame(occ=rep(0L:4L,each=11),
+               quad=rep(1L:11L,5),
+               theta=do.call("c",
+                             lapply(1L:5L, \(t) {
+                      qnorm((0:10 +.5)/11,(t-3)/2)
+              })))
+
+  q2 <- fixedQuad(times,thetas2,byocc=TRUE)
+  nsubj(q2) <- 2L
+  q2$resetWeights()
+  for (iocc in 1L:4L) {
+    for (isubj in 1L:2L) {
+      q2$lweight(isubj,iocc,1L:nquad(q2),
+                 dnorm(q2$qpoints(isubj,iocc)$theta,
+                       btimes[iocc]+bsubj[isubj],
+                       log=TRUE))
+    }
+  }
+  lf2 <- as_longform(q2)
+  expect_equal(nrow(lf2),nrow(thetas2)*2)
+  expect_equal(lf2[lf2$subj==1L & lf2$occ==2L,"theta"],
+               thetas2[thetas2$occ==2L,"theta"])
+  expect_equal(names(lf2),c("subj","occ","quad","theta","w","times"))
+  expect_equal(sum(lf2[lf2$subj==1L & lf2$occ==1L,"w"]),
+               1.0,tolerance=.0001)
+
+  thetas3 <- data.frame(subj=rep(1L:2L,each=11L),
+                       quad=rep(1L:11L,2L),
+                       theta = c(qnorm((0:10 +.5)/11,-.5),
+                                  qnorm((0:10 +.5)/11,.5)))
+  q3 <- fixedQuad(times,thetas3,
+                  nsubjects=2L,bysubj=TRUE)
+
+  q3$resetWeights()
+  for (iocc in 1L:4L) {
+    for (isubj in 1L:2L) {
+      q3$lweight(isubj,iocc,1L:nquad(q3),
+                 dnorm(q2$qpoints(isubj,iocc)$theta,
+                       btimes[iocc]+bsubj[isubj],
+                       log=TRUE))
+    }
+  }
+  lf3 <- as_longform(q3)
+  expect_equal(nrow(lf3),nrow(thetas3)*5)
+  expect_equal(lf3[lf3$subj==1L & lf3$occ==2L,"theta"],
+               thetas3[thetas3$subj==1L,"theta"])
+  expect_equal(names(lf3),c("subj","occ","quad","theta","w","times"))
+  expect_equal(sum(lf3[lf3$subj==1L & lf3$occ==1L,"w"]),
+               1.0,tolerance=.0001)
+
+
 })
 
-test_that("{FixedQuad$static:}", {
-  ## {A logical value.  If true then the quadrature
-  ##       points are the same for each occasion.}
+
+test_that("Quadrature-class {get_subj.Quadrature}", {
+
+  times <- panmat(0L:4L,minocc=0L)
+  btimes <- ((1:5)-3)/2
+  bsubj <- c(-1,1)
+  thetav <- qnorm((0:10 +.5)/11)
+  qqq <- fixedQuad(times,data.frame(theta=thetav))
+  nsubj(qqq) <- 2L
+  qqq$resetWeights()
+
+  thetas3 <- data.frame(subj=rep(1L:2L,each=11L),
+                       quad=rep(1L:11L,2L),
+                       theta = c(qnorm((0:10 +.5)/11,-.5),
+                                  qnorm((0:10 +.5)/11,.5)))
+  q3 <- fixedQuad(times,thetas3,
+                  nsubjects=2L,bysubj=TRUE)
+
+  q3$resetWeights()
+
+
+  q1 <- get_subj(qqq,1L)
+  q2 <- get_subj(qqq,2L)
+  expect_equal(isubj(q1),1L)
+  expect_equal(isubj(q2),2L)
+  expect_equal(q1$qpoints(1,1)$theta,thetav)
+  expect_equal(q2$qpoints(1,1)$theta,thetav)
+
+  q31 <- get_subj(q3,1L)
+  q32 <- get_subj(q3,2L)
+  expect_equal(isubj(q31),1L)
+  expect_equal(isubj(q32),2L)
+  expect_equal(q31$qpoints(1,1)$theta,
+               thetas3[thetas3$subj==1L,"theta"])
+  expect_equal(q32$qpoints(1,1)$theta,
+               thetas3[thetas3$subj==2L,"theta"])
+
+
+  for (iocc in 1L:4L) {
+    q1$lweight(1L,iocc,1L:nquad(q1),
+                 dnorm(q1$qpoints(1L,iocc)$theta,
+                       btimes[iocc]+bsubj[1L],
+                       log=TRUE))
+    q2$lweight(1L,iocc,1L:nquad(q2),
+                 dnorm(q2$qpoints(1L,iocc)$theta,
+                       btimes[iocc]+bsubj[2L],
+                       log=TRUE))
+    q31$lweight(1L,iocc,1L:nquad(q31),
+                 dnorm(q31$qpoints(1L,iocc)$theta,
+                       btimes[iocc]+bsubj[1L],
+                       log=TRUE))
+    q32$lweight(1L,iocc,1L:nquad(q32),
+                 dnorm(q32$qpoints(1L,iocc)$theta,
+                       btimes[iocc]+bsubj[2L],
+                       log=TRUE))
+  }
+
+  get_subj(q1,2L) <- q2
+  expect_equal(nsubj(q1),2L)
+  expect_equal(q1$qpoints(1,1)$theta,thetav)
+  expect_equal(q1$qpoints(2,2)$theta,thetav)
+  expect_equal(q1$lweight(2L,2L,1:nquad(q2)),
+               q2$lweight(1L,2L,1:nquad(q2)))
+
+  get_subj(q31,2L) <- q32
+  expect_equal(nsubj(q31),2L)
+  expect_equal(q31$qpoints(1,1)$theta,
+               thetas3[thetas3$subj==1L,"theta"])
+  expect_equal(q31$qpoints(2,2)$theta,
+               thetas3[thetas3$subj==2L,"theta"])
+  expect_equal(q31$lweight(2L,2L,1:nquad(q31)),
+               q32$lweight(1L,2L,1:nquad(q32)))
+
 })
-test_that("{FixedQuad$bysubj:}", {
-  ## {A logical value.  If false then the quadrature
-  ##       points are different for each subject.}
+
+test_that("Quadrature-class {min/maxocc.Quadrature}", {
+  times <- panmat(1L:5L)
+  thetav <- qnorm((0:10 +.5)/11)
+  q1 <- fixedQuad(times,thetav)
+
+  minocc(q1) <- 6L
+  expect_equal(minocc(q1),6L)
+  expect_equal(maxocc(q1),10L)
+  expect_equal(nocc(q1),5L)
+
+  nocc(q1) <- 4L
+  expect_equal(minocc(q1),6L)
+  expect_equal(maxocc(q1),9L)
+  expect_equal(nocc(q1),4L)
+
+  maxocc(q1) <- 10L
+  expect_equal(minocc(q1),6L)
+  expect_equal(maxocc(q1),10L)
+  expect_equal(nocc(q1),5L)
+
 })
+
+test_that("Quadrature-class {nquad,Quadrature}", {
+  times <- panmat(1L:5L)
+  thetav <- qnorm((0:10 +.5)/11)
+  q1 <- fixedQuad(times,thetav)
+
+  nquad(q1) <- 9L
+  expect_equal(nquad(q1),9L)
+  expect_equal(length(q1$qpoints(1,1)$theta),9L)
+
+  nquad(q1) <- 11L
+  expect_equal(nquad(q1),11L)
+  expect_equal(length(q1$qpoints(1,1)$theta),11L)
+
+  q1$quadpoints <- qnorm((0:5 +.5)/6)
+  expect_equal(nquad(q1),6L)
+
+
+})
+
+
+test_that("Quadrature-class {n/isubj.Quadrature}", {
+  times <- panmat(0L:4L,minocc=0L)
+  thetav <- qnorm((0:10 +.5)/11)
+  qqq <- fixedQuad(times,data.frame(theta=thetav))
+
+  expect_equal(nsubj(qqq),1L)
+  expect_true(is.na(isubj(qqq)))
+  nsubj(qqq) <- 2L
+  expect_equal(nsubj(qqq),2L)
+  qqq$resetWeights()
+
+  q1 <- get_subj(qqq,1L)
+  q2 <- get_subj(qqq,2L)
+  expect_equal(isubj(q1),1L)
+  expect_equal(isubj(q2),2L)
+
+  q3 <- q1$clone()
+  isubj(q3) <- 3L
+  expect_equal(isubj(q3),3L)
+
+  get_subj(q1,2L) <- q2
+  expect_equal(nsubj(q1),2L)
+  expect_true(is.na(isubj(q1)))
+
+})
+
 test_that("{FixedQuad$wname:}", {
   ## {The name to use for the weight object.}
+  times <- panmat(0L:4L,minocc=0L)
+  thetav <- qnorm((0:10 +.5)/11)
+  qqq <- fixedQuad(times,data.frame(theta=thetav))
+  qqq$resetWeights()
+
+  expect_equal(qqq$wname,"w")
+  qqq$wname<-"weight"
+  lf <- as_longform(qqq)
+  expect_equal(names(lf),c("subj","occ","quad","theta","weight","times"))
+
 })
-test_that("{FixedQuad$lweights:}", {
-  ## {A subj x occ x quad
-  ##       array giving the log weights.  See the $lweight() function
-  ##       for accessing parts of the array.}
-})
-test_that("{FixedQuad$thetas:}", {
-  ## {The full nsubj x nocc x
-  ##       nquad x dtheta array of quadrature points.  See the
-  ##       $theta() function below for accessing part of the array.}
-})
-test_that("{FixedQuad$tnames:}", {
+
+test_that("{FixedQuad$qnames, $dquad:}", {
   ## {A "character" vector containing the names
-  ##       for the quadrature variables.  Should have length $dtheta}
+  ##       for the quadrature variables.  Should have length $dquad}
+  times <- panmat(0L:4L,minocc=0L)
+  thetav <- qnorm((0:10 +.5)/11)
+  qqq <- fixedQuad(times,data.frame(theta=thetav))
+  qqq$resetWeights()
+
+  expect_equal(qqq$qnames,"theta")
+  expect_equal(qqq$dquad,1L)
+  qqq$qnames <- "Q"
+  expect_equal(qqq$qnames,"Q")
+  lf <- as_longform(qqq)
+  expect_equal(names(lf),c("subj","occ","quad","Q","w","times"))
+
+  q1 <- fixedQuad(times,expand.grid(x=c(-1,0,1),y=c(0,1)))
+  expect_equal(q1$qnames,c("x","y"))
+  expect_equal(q1$dquad,2L)
+
 })
-test_that("{FixedQuad$dtheta:}", {
-  ## {An "integer" containing the number of
-  ##       dimenions for each quadrature point.}
-})
+
 test_that("{FixedQuad$times:}", {
   ## {Object of class "Panmat" mapping
   ##       measurement occasions to times.}
-})
-test_that("{FixedQuad$minocc:}", {
-  ## {An "integer" giving the index for the
-  ##       smallest index in this quadrature.}
-})
-test_that("{FixedQuad$maxocc:}", {
-  ## {An "integer" giving the index for the
-  ##       largest index in this quadrature.}
-})
-test_that("{FixedQuad$nsubj:}", {
-  ## {An "integer" giving the number of
-  ##       subjects in this quadrature.}
-})
-test_that("{FixedQuad$isubj:}", {
-  ## {An integer giving the index the subject which
-  ##       is the focus of this quadrature (see \link{split_subj}).}
-})
-test_that("{FixedQuad$nquad:}", {
-  ## {An "integer" giving the number of
-  ##       quadrature points.}
+
+  times <- panmat(0L:2L,minocc=0L)
+  thetav <- qnorm((0:4 +.5)/5)
+  qqq <- fixedQuad(times,data.frame(theta=thetav))
+  nsubj(qqq)<- 2L
+  qqq$resetWeights()
+  expect_length(qqq$weights(),nsubj(qqq)*nocc(qqq)*nquad(qqq))
+
+  qqq$times <- panmat(1L:5L)
+  qqq$resetWeights()
+  expect_length(qqq$weights(),nsubj(qqq)*nocc(qqq)*nquad(qqq))
+  expect_equal(nsubj(qqq),1L)
+
 })
 
 test_that("{FixedQuad$weights(type='default')}", {
   ## {Returns normalized weights (on probability,
   ##       not log scale).}
-})
-test_that("{FixedQuad$resetWeights()}", {
-  ## {Clears the weights before re-running filter.}
-})
-test_that("{FixedQuad$theta(subj,occ,quad,value)}", {
-  ## {Gets (if value is missing)
-  ##       or sets the quadrature points for a given subject, occasion.  The
-  ##       quad field can be missing to set all quadrature points.}
-})
-test_that("{FixedQuad$lweight(subj,occ,quad,value)}", {
-  ## {Gets (if value is missing)
-  ##       or sets the log weights for a given occasion. Again, quad
-  ##       can be omitted.}
+  times <- panmat(0L:2L,minocc=0L)
+  thetav <- qnorm((0:4 +.5)/5)
+  qqq <- fixedQuad(times,data.frame(theta=thetav))
+  nsubj(qqq)<- 2L
+  qqq$resetWeights()
+
+  for (iocc in 0L:2L) {
+    for (isubj in 1L:2L) {
+      qqq$lweight(isubj,iocc,1L:nquad(qqq),0)
+    }
+  }
+  wt <- qqq$weights()
+  expect_length(wt,nsubj(qqq)*nocc(qqq)*nquad(qqq))
+  expect_true(all(wt==.2))
+
 })
 
-test_that("{FixedQuad$as_longform}", {
-  ## {signature(x = "Quadrature"): Converts the
-  ##       quadrature into very long form (with indexes subj, occ and quad). }
-})
-test_that("{FixedQuad$maxocc}", {
-  ## {signature(obj = "Quadrature"): Gets the maximum
-  ##       occasion index.}
-})
-test_that("{FixedQuad$maxocc<-}", {
-  ## {signature(obj = "Quadrature"): Sets the
-  ##       maximum occasion index. }
-})
-test_that("{FixedQuad$minocc}", {
-  ## {signature(obj = "Quadrature"): Gets the minimum
-  ##       occasion index.}
-})
-test_that("{FixedQuad$minocc<-}", {
-  ## {signature(obj = "Quadrature"): Sets the
-  ##       minimum occasion index. }
-})
-test_that("{FixedQuad$nocc}", {
-  ## {signature(obj = "Quadrature"): Gets the number of
-  ##       occasions. }
-})
-test_that("{FixedQuad$nocc<-}", {
-  ## {signature(obj = "Quadrature"): Sets the number
-  ##       of occasions.}
-})
-test_that("{FixedQuad$nquad}", {
-  ## {signature(obj = "Quadrature"): Gets the number
-  ##       of quadrature points. }
-})
-test_that("{FixedQuad$nquad<-}", {
-  ## {signature(obj = "Quadrature"): Sets the number
-  ##       of quadrature points (only works for \link{particleFilter}).}
-})
-test_that("{FixedQuad$nsubj}", {
-  ## {signature(obj = "Quadrature"): Gets the number
-  ##       of subjects. }
-})
-test_that("{FixedQuad$nsubj<-}", {
-  ## {signature(obj = "Quadrature"): Sets the number
-  ##       of subjects.}
-})
-test_that("{FixedQuad$isubj}", {
-  ## {signature(obj = "Quadrature"): Gets the index of
-  ##       the focus subject (see \link{split_subj}).}
-})
-test_that("{FixedQuad$isubj<-}", {
-  ## {signature(obj = "Quadrature"): Sets the index
-  ##       of the focus subject.}
-})
-test_that("{FixedQuad$get_subj}", {
-  ## {signature(x = "Quadrature", subj="integer"):
-  ##       Returns a
-  ##       subquadrature focused on a single individual.  See
-  ##       \link{split_subj}. }
-})
-test_that("{FixedQuad$get_subj<-}", {
-  ## {signature(x = "Quadrature", subj =
-  ## 	"integer", value = "Quadrature"): Replaces
-  ##       sub-quadrature focused on a single individual.  See
-  ##       \link{split_subj}. }
-})

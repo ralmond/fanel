@@ -51,10 +51,10 @@ setGeneric("getDT")
 "getDT<-" <- function(obj,value) {UseMethod("getDT<-")}
 setGeneric("getDT<-")
 
-tname <- function(obj) UseMethod("tname")
-setGeneric("tname")
-"tname<-" <- function(obj,value) UseMethod("tname<-")
-setGeneric("tname<-")
+qname <- function(obj) UseMethod("qname")
+setGeneric("qname")
+"qname<-" <- function(obj,value) UseMethod("qname<-")
+setGeneric("qname<-")
 
 dname <- function(obj) UseMethod("dname")
 setGeneric("dname")
@@ -69,7 +69,8 @@ setGeneric("wname<-")
 
 as_longform <- function(x,...,n=nsubj(x),mxocc=maxocc(x),
                         mnocc=minocc(x),weightType="all",
-                        name=deparse(substitute(x))) {
+                        name=deparse(substitute(x)),
+                        includeTime=TRUE) {
   UseMethod("as_longform")
 }
 setGeneric("as_longform")
@@ -149,7 +150,7 @@ FModel <- R6Class(
     pvec = function(value) {
       stop("Pvec active field not implemented for",class(self))
     },
-    tnames = function(value) {
+    qnames = function(value) {
       if (missing(value)) return(private$thetaNames)
       if (length(private$thetaNames) > 0L &&
           length(private$thetaNames) != length(value)) {
@@ -176,9 +177,9 @@ mstep.FModel <- function(obj, data, ..., its=3,control=list()) {
   obj$mstep(data,...,its=its,control=list())
 }
 
-tname.FModel <- function(obj) obj$tnames
-"tname<-.FModel" <- function(obj,value) {
-  obj$tnames <- value
+qname.FModel <- function(obj) obj$qnames
+"qname<-.FModel" <- function(obj,value) {
+  obj$qnames <- value
   obj
 }
 
@@ -203,11 +204,11 @@ ModelSet <- R6Class(
     models=list(),
     index=1L,
     initialize=function(name,models,index=1L,
-                        tname="theta",wname="w") {
+                        qname="theta",wname="w") {
       self$name <- name
       self$models <- models
       self$index <- as.Panmat(index)
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
     },
     toString=function(...) {
@@ -235,13 +236,13 @@ ModelSet <- R6Class(
     }
   ),
   active=list(
-    tnames = function(value) {
+    qnames = function(value) {
       if (length(self$models)==0L) {
         warn("No models defined.")
         return(character())
       }
-      if (missing(value)) return(self$models[[1]]$tnames)
-      lapply(self$models, \(m) m$tnames <- value)
+      if (missing(value)) return(self$models[[1]]$qnames)
+      lapply(self$models, \(m) m$qnames <- value)
     },
     wname = function(value) {
       if (length(self$models)==0L) {
@@ -357,11 +358,11 @@ retreatWeights <- function(model, isubj, iocc, rweights,
 }
 setGeneric("retreatWeights")
 
-tname.ModelSet <- function(obj) {
-  obj$tnames
+qname.ModelSet <- function(obj) {
+  obj$qnames
 }
-"tname<-.ModelSet" <- function(obj,value) {
-  obj$tnames <- value
+"qname<-.ModelSet" <- function(obj,value) {
+  obj$qnames <- value
   obj
 }
 

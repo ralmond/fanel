@@ -95,12 +95,12 @@ S3method(advanceWeights,POMDP)
 S3method(retreatWeights,POMDP)
 
 export(getTime, "getTime<-", getDT, "getDT<-", dname, "dname<-",
-       "tname", "tname<-", wname, "wname<-")
+       "qname", "qname<-", wname, "wname<-")
 
 S3method(dname,FModel)
 S3method("dname<-",FModel)
-S3method(tname,FModel)
-S3method("tname<-",FModel)
+S3method(qname,FModel)
+S3method("qname<-",FModel)
 S3method(wname,FModel)
 S3method("wname<-",FModel)
 
@@ -108,8 +108,8 @@ S3method(getDT,ModelSet)
 S3method("getDT<-",ModelSet)
 S3method(dname,ModelSet)
 S3method("dname<-",ModelSet)
-S3method(tname,ModelSet)
-S3method("tname<-",ModelSet)
+S3method(qname,ModelSet)
+S3method("qname<-",ModelSet)
 S3method(wname,ModelSet)
 S3method("wname<-",ModelSet)
 
@@ -117,8 +117,8 @@ S3method(getDT,POMDP)
 S3method("getDT<-",POMDP)
 S3method(dname,POMDP)
 S3method("dname<-",POMDP)
-S3method(tname,POMDP)
-S3method("tname<-",POMDP)
+S3method(qname,POMDP)
+S3method("qname<-",POMDP)
 S3method(wname,POMDP)
 S3method("wname<-",POMDP)
 
@@ -136,7 +136,7 @@ S3method("all.equal",Panmat)
 exportClass(Panmat, Panel_Frame, Quad_Frame, Panel_Data)
 export(Panel_Data, Panel_Frame, Quad_Frame, Panmat)
 export(panmat, mat, "mat<-", as.Panmat,
-       panel_frame, as_longform, quad_frame,
+       panel_frame, as_longform, quad_frame, na_quad_frame,
        time2occ, panel_data, long2panel, as_quad_frame)
 exportMethods(as.Panmat, as.matrix,
               "[", "[<-",as_longform, diff, cumsum, names,
@@ -145,6 +145,7 @@ exportMethods(as.Panmat, as.matrix,
 export(Quadrature, FixedQuad, ParticleQuad, BWQuad)
 exportClass(Quadrature)
 export(fixedQuad, particleQuad, BWquad)
+
 
 export(PopulationModel, NormalPop, CategoricalPop, Population)
 exportClass(Population)
@@ -163,6 +164,13 @@ export(logit, invlogit, cuts2probs)
 export(POMDP)
 exportClass(POMDP)
 export(longform)
+
+S3method("as_longform","Quadrature")
+S3method("as_longform","Population")
+S3method("as_longform","Activities")
+S3method("as_longform","Evidence")
+
+
 
 export(simulate.POMDP,particleFilter,bwFilter,qFilter)
 S3method(simulate,POMDP)
