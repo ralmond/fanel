@@ -20,7 +20,7 @@ Quadrature <- R6Class(
     wname="w",
     lweights=array(NA_real_,c(1,1,1)),
     isubj=NA_integer_,
-    initialize = function(times, quadrature, qnames=vnames(quadrature),
+    initialize = function(times, quadrature,
                           byocc=FALSE, bysubj=FALSE,
                           nsubjects=nsubj(times),
                           isubj=NA_integer_) {
@@ -220,10 +220,10 @@ FixedQuad <- R6Class(
 setOldClass(c("FixedQuad","Quadrature","R6"))
 
 
-fixedQuad <- function(times,quadrature,qnames=vnames(quadrature),
+fixedQuad <- function(times,quadrature,
                       byocc=FALSE, bysubj=FALSE,
                       nsubjects=nsubj(times),isubj=NA_integer_) {
-  FixedQuad$new(times=times, quadrature=quadrature, qnames=qnames,
+  FixedQuad$new(times=times, quadrature=quadrature,
                 byocc=byocc, bysubj=bysubj, nsubjects=nsubjects,
                 isubj=isubj)
 }
@@ -242,7 +242,7 @@ ParticleQuad <- R6Class(
       quadrature <- na_quad_frame(nsubjects,minocc(times),
                                   maxocc(times),nquadrature,
                                   qnames,isubj)
-      super$initialize(times,quadrature,qnames,byocc,bysubj,nsubjects)
+      super$initialize(times,quadrature,byocc,bysubj,nsubjects)
       self$nquad <- nquadrature
       self$isubj <- isubj
     },
@@ -300,11 +300,11 @@ BWQuad <- R6Class(
   public = list(
     wname=paste0("w.",c("full","left","right")),
     rweights=array(NA_real_,c(1,1,1)),
-    initialize = function(times, qpoints, qnames=vnames(qpoints),
+    initialize = function(times, quadrature,
                           byocc=FALSE, bysubj=FALSE,
                           nsubjects=nsubj(times),
                           isubj=NA_integer_) {
-      super$initialize(times,qpoints,qnames,byocc,bysubj,nsubjects,isubj)
+      super$initialize(times,quadrature,byocc,bysubj,nsubjects,isubj)
     },
     weights = function(type="default") {
       switch(type,
@@ -336,10 +336,10 @@ setOldClass(c("BWQuad","Quadrature","R6"))
 
 
 
-BWquad <- function(times,qpoints,tnames=vnames(qpoints),
+BWquad <- function(times,quadrature,
                    byocc=FALSE, bysubj=FALSE,
                    nsubjects=nsubj(times),isubj=NA_integer_) {
-  BWQuad$new(times=times, qpoints=qpoints, tnames=tnames,
+  BWQuad$new(times=times, quadrature=quadrature,
              byocc=byocc, bysubj=bysubj, nsubjects=nsubjects,
              isubj=isubj)
 }

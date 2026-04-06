@@ -10,7 +10,7 @@
 \alias{particleQuad}
 \alias{BWQuad-class}
 \alias{BWQuad}
-\alias{bwQuad}
+\alias{BWquad}
 \alias{as_longform.Quadrature}
 \alias{get_subj.Quadrature}
 \alias{get_subj<-.Quadrature}
