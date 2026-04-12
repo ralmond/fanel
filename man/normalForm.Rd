@@ -9,7 +9,7 @@
 
 }
 \usage{
-normalForm(data, idcol = "subj", occcol = "occ", zerostart = TRUE)
+normalForm(data, idcol = "subj", occcol = "occ", qcol="quad", zerostart = TRUE)
 }
 \arguments{
   \item{data}{A data frame in long form.}
@@ -17,6 +17,7 @@ normalForm(data, idcol = "subj", occcol = "occ", zerostart = TRUE)
     contains the subject identifier.}
   \item{occcol}{A character scalar giving the name of the column
     contiaing the occasion identifier.}
+  \item{qcol}{A character vector giving the name(s) of quadrature columns.}
   \item{zerostart}{A logical value, if true the indexing starts and zero,
     if false, then one.}
 }

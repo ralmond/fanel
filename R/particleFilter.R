@@ -5,7 +5,7 @@ particleFilter <- function (object, covars, quad=NULL, nquad=nquad(quad),
     if (missing(nquad)) {
       stop("Either 'quad' or 'nquad' must be supplied.")
     }
-    quad <- particleQuad(covars$time,nquad,population(object)$tnames)
+    quad <- particleQuad(covars$time,nquad,population(object)$qnames)
   }
 
   workers$start()

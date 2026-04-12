@@ -18,7 +18,7 @@
       not the last \code{mstep} converged.}
     \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
     \item{\code{$wname}:}{The name of the weight column(s). }
-    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$qnames}:}{The name(s) of the latent variable(s).}
   }
 }
 \section{Active Fields}{
@@ -125,12 +125,12 @@ MyNormalPop <- R6Class(
           mu <- par[1]
           sigma <- exp(par[2])
           weights <- data[[self$wname]]
-          theta <- data[[self$tnames]]
+          theta <- data[[self$qnames]]
           sum(dnorm(theta,mu,sigma,log=TRUE)*weights)
         },
         mstep=function(data,...) {
           weights <- data[[self$wname]]
-          theta <- data[[self$tnames]]
+          theta <- data[[self$qnames]]
           self$mu <- wtd.mean(theta,weights)
           self$sigma <- wtd.sd(theta,weights)
           self$lp <- sum(dnorm(theta,self$mu,self$sigma,log=TRUE)*weights)

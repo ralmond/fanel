@@ -1,9 +1,9 @@
 POMDP <- function(name,population,activities,evidence,
-                tname=population$tnames,
+                qname=population$qnames,
                 dname=evidence$dnames) {
-  population$tnames <- tname
-  activities$tnames <- tname
-  evidence$tnames <- tname
+  population$qnames <- qname
+  activities$qnames <- qname
+  evidence$qnames <- qname
   evidence$dnames <- dname
   components=list(population=population,activities=activities,
                   evidence=evidence)
@@ -121,11 +121,11 @@ longform <- function(quad,model,data) {
     dplyr::left_join(as_longform(data), by)
 }
 
-tname.POMDP <- function(obj) {
-  obj$components[[1]]$tnames
+qname.POMDP <- function(obj) {
+  obj$components[[1]]$qnames
 }
-"tname<-.POMDP" <- function(obj,value) {
-  lapply(obj$components, \(ms) ms$tnames <- value)
+"qname<-.POMDP" <- function(obj,value) {
+  lapply(obj$components, \(ms) ms$qnames <- value)
   obj
 }
 

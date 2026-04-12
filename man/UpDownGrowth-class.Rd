@@ -39,7 +39,7 @@
     \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
     \item{\code{$name}:}{A name for the model, primarily used for printing.}
     \item{\code{$wname}:}{The name of the weight column(s). }
-    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$qnames}:}{The name(s) of the latent variable(s).}
     \item{\code{$dosname}}{The name of the dosage column in the
       \code{data} for \code{mstep}, defaults to \dQuote{dose}.}
     \item{\code{$dtname}}{The name of the delta time column in the
@@ -59,7 +59,7 @@
 
   \describe{
     \item{\code{$initialize}}{\code{(name, nStates, uprate, downrate,
-	tname="theta", wname=c("w.full", "w.left", "w.right"))}:
+	qname="theta", wname=c("w.full", "w.left", "w.right"))}:
       Called by \code{$new}}
     \item{\code{$rmat}}{\code{(pvec=pvec(self), deltaT, dose=deltaT,
 	covar=list())}:  Calculates the rate matrix.  The \code{$uprate}
@@ -107,7 +107,7 @@
 
 To create a new object of this type call:
 \code{UpDownGrowth$new(\var{name}, \var{nStates}, \var{uprate},
-  \var{downrate}, \var{tname}="theta", \var{wname}=c("w.full",
+  \var{downrate}, \var{qname}="theta", \var{wname}=c("w.full",
   "w.left", "w.right"))}.
 
 }

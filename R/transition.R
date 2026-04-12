@@ -95,13 +95,13 @@ UpDownGrowth <- R6Class(
   inherit=TransitionModel,
   public=list(
     initialize = function(name,nStates,uprate,downrate,
-                          tname="theta",
+                          qname="theta",
                           wname=c("w.full", "w.left", "w.right")) {
       self$name <- name
       self$nStates <- nStates
       self$uprate <- uprate
       self$downrate <- downrate
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
     },
     uprate=0,
@@ -147,12 +147,12 @@ ActivitiesD <- R6Class(
   inherit=Activities,
   public=list(
     initialize=function(name,growthModels=list(),actions=1L,dt=1.0,
-                        dosage=NULL,tname="theta",
+                        dosage=NULL,qname="theta",
                         wname=c("w.full", "w.left", "w.right"),
                         dtname="deltaT",dosname="dose") {
       super$initialize(name=name,growthModels=growthModels,
                        actions=actions,dt=dt,dosage=dosage,
-                       tname=tname,wname=wname,dtname=dtname,
+                       qname=qname,wname=wname,dtname=dtname,
                        dosname=dosname)
     },
     advance = function(isubj,iocc,lweights,covar=NULL) {

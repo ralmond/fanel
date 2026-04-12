@@ -54,22 +54,22 @@ summaryq <- function(quad,
                                   sd=~sqrt(wtd.var(.data[[.x]],
                                                    .data[[wname]],
                                                    normwt=TRUE))),
-                  thetas=quad$tnames,
+                  qnames=quad$qnames,
                   wname=quad$wname[1]) {
   as_longform(quad) |>
     dplyr::group_by(.data$subj,.data$occ) |>
     dplyr::summarize(time=dplyr::first(.data$time),
-                     dplyr::across(thetas,sumfuns))
+                     dplyr::across(qnames,sumfuns))
 }
 
 summaryqq <- function(quad,probs=c(.025,.5,.975),
-                  thetas=quad$tnames,
+                  qnames=quad$qnames,
                   wname=quad$wname[1]) {
-  pnames <- paste0(thetas,"_p")
+  pnames <- paste0(qnames,"_p")
   as_longform(quad) |>
     dplyr::group_by(.data$subj,.data$occ) |>
     dplyr::reframe(time=dplyr::first(.data$time),
-                   dplyr::across(thetas,
+                   dplyr::across(qnames,
                                  q=~wtd.quantiles(.data[[.x]],
                                                   .data[[wname]],
                                                   probs=probs))) |>

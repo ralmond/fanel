@@ -15,7 +15,7 @@
 \section{Constructor}{
 
   The constructor is \code{Evidence$new(name, evidenceModels,
-    tasks=matrix(1L,1L,1L), tname="theta", wname="w", dname="Y")}.
+    tasks=matrix(1L,1L,1L), qname="theta", wname="w", dname="Y")}.
 
   The arguments for the constructor are:
   \describe{
@@ -24,12 +24,12 @@
       \code{\linkS4class{EvidenceModel}}s corresponding to groups.}
     \item{\code{groups}}{A \code{\linkS4class{Panmat}} giving the
       indexes of the population model to use for each student.}
-    \item{\code{tname}}{A character vector giving the names of the
+    \item{\code{qname}}{A character vector giving the names of the
       latent variables.  Needs to match the quadrature used.}
     \item{\code{w}}{A character value giving the name of the weight
       column.  Only the first value is used.  Again, this needs to match
       what is in the quadrature.}
-    \item{\code{tname}}{A character vector giving the names of the
+    \item{\code{qname}}{A character vector giving the names of the
       data variables.  Needs to match the data used.}
   }
 }
@@ -45,7 +45,7 @@
       combination.}
     \item{\code{$iname}:}{String giving the name of the index, defaults
       to \dQuote{group}.}
-    \item{\code{$tnames}:}{A \code{"character"} vector giving the names
+    \item{\code{$qnames}:}{A \code{"character"} vector giving the names
       of the latent variables. }
     \item{\code{$wname}:}{A \code{"character"} vector giving the name(s) of
       the weight columnn. }
@@ -109,7 +109,7 @@
 \author{Russell Almond}
 \note{
 
-  The \code{$tname} and \code{$wname} fields must be co-ordinated with
+  The \code{$qname} and \code{$wname} fields must be co-ordinated with
   the \code{\linkS4class{Quadrature}} class.  In particular, the
   \code{\linkS4class{BWQuad}} has weights \code{c("w.full", "w.left",
     and "w.right")} (only the first is needed for population models)
@@ -133,7 +133,7 @@ ems <- Evidence$new("BigStudy",
                     list(easy=NormalScore$new("ns",-1,1/25),
                          hard=NormalScore$new("ns",1,1/25)),
                     tasks=matrix(c(rep(1,3),rep(2,3)),1,6),
-                    tname="Ability",wname="w",dname="Score")
+                    qname="Ability",wname="w",dname="Score")
 nsubj(ems)
 nmodels(ems)
 theta <- -2:2

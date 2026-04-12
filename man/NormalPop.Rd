@@ -25,7 +25,7 @@
       not the last \code{mstep} converged.}
     \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
     \item{\code{$wname}:}{The name of the weight column(s). }
-    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$qnames}:}{The name(s) of the latent variable(s).}
   }
 
 }
@@ -37,7 +37,7 @@
 \section{Methods}{
 
   \describe{
-    \item{\code{$initialize}}{\code{(name,mu,sigma,tname,wname)}:
+    \item{\code{$initialize}}{\code{(name,mu,sigma,qname,wname)}:
       Constructor, called by \code{$new}.}
     \item{\code{$drawInit}}{\code{(npart,covars=list())}:
       Draws a random starting position. (Used with random quadratures,
@@ -56,7 +56,7 @@
 \section{Constructor}{
 
 The usual expression for building this distribution is
-\code{NormalPop$new(\var{name},\var{mean},\var{sd},\var{tname}="theta",
+\code{NormalPop$new(\var{name},\var{mean},\var{sd},\var{qname}="theta",
   \var{wname}="w")}.
 
 }

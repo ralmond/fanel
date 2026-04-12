@@ -1,8 +1,8 @@
 \name{dname}
 \alias{dname}
 \alias{dname<-}
-\alias{tname}
-\alias{tname<-}
+\alias{qname}
+\alias{qname<-}
 \alias{wname}
 \alias{wname<-}
 
@@ -18,8 +18,8 @@
 \usage{
 dname(obj)
 dname(obj) <- value
-tname(obj)
-tname(obj) <- value
+qname(obj)
+qname(obj) <- value
 wname(obj)
 wname(obj) <- value
 }

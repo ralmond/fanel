@@ -30,10 +30,11 @@
 \title{Class \code{"Quadrature"}}
 \description{
 
-  This object contains a set of quadrature points (called
-  \dQuote{thetas}) and a series of weights for each subject and
-  occasion.  The approximate value at each time point is the weighted
-  average of the \dQuote{thetas} at each time point.
+  This object contains a set of quadrature points and a series of
+  weights for each subject and occasion. Each quadrature point is a
+  \code{dquad} dimensional vector, whose column labels are given by
+  \code{qnames}.  The approximate value at each time point is the
+  weighted average of the quadrature points at each time point.
 
 }
 \section{Objects from the Class}{
@@ -45,7 +46,7 @@
   There are three principle sub-classes:
 
   \code{FixedQuad} which has constructor:
-  \code{fixedQuad(times,qpoints,tnames=vnames(qpoints),
+  \code{fixedQuad(times,qpoints,qnames=vnames(qpoints),
     static=TRUE, bysubj=FALSE),
     nsubjects=nsubj(times),isubj=NA_integer_)}.
   This variant has a fixed quadrature which is the same for all
@@ -53,7 +54,7 @@
   used with the \code{\link{qFilter}} function.
 
   \code{BWQuad} which has constructor:
-  \code{BWquad(times,qpoints,tnames=vnames(qpoints),
+  \code{BWquad(times,qpoints,qnames=vnames(qpoints),
     static=TRUE, bysubj=FALSE,
     nsubjects=nsubj(times),isubj=NA_integer_)}.  This also has a fixed
   quadrature, but it has but both forward and backwards weights.  This
@@ -71,7 +72,7 @@
 
 
   \code{ParticleQuad} which has constructor:
-  \code{particleQuad(times,nquadrature,tnames=vnames(qpoints), static=TRUE,
+  \code{particleQuad(times,nquadrature,qnames=vnames(qpoints), static=TRUE,
   bysubj=TRUE, nsubjects=nsubj(times),isubj=NA_integer_)}.
   This is a random quadrature whose points (particles) move between each
   occaions.  This is designed to be used with the
@@ -80,7 +81,7 @@
 }
 \section{Slots and Active Fields}{
   \describe{
-    \item{\code{static}:}{A logical value.  If true then the quadrature
+    \item{\code{byocc}:}{A logical value.  If false then the quadrature
       points are the same for each occasion.}
     \item{\code{bySubj}:}{A logical value.  If false then the quadrature
       points are different for each subject.}
@@ -88,12 +89,11 @@
     \item{\code{lweights}:}{A \code{subj} x \code{occ} x \code{quad}
       array giving the log weights.  See the \code{$lweight()} function
       for accessing parts of the array.}
-    \item{\code{thetas}:}{The full \code{nsubj} x \code{nocc} x
-      \code{nquad} x \code{dtheta} array of quadrature points.  See the
-      \code{$theta()} function below for accessing part of the array.}
-    \item{\code{tnames}:}{A \code{"character"} vector containing the names
-      for the quadrature variables.  Should have length \code{$dtheta}}
-    \item{\code{dtheta}:}{An \code{"integer"} containing the number of
+    \item{\code{qpoints}:}{A \code{\linkS4class{Quad_Frame}} holding the
+      quadrature points.}
+    \item{\code{qnames}:}{A \code{"character"} vector containing the names
+      for the quadrature variables.  Should have length \code{$dquad}}
+    \item{\code{dquad}:}{An \code{"integer"} containing the number of
       dimenions for each quadrature point.}
     \item{\code{times}:}{Object of class \code{"Panmat"} mapping
       measurement occasions to times.}
@@ -114,9 +114,6 @@
     \item{$weights(type="default")}{Returns normalized weights (on probability,
       not log scale).}
     \item{$resetWeights()}{Clears the weights before re-running filter.}
-    \item{$theta(subj,occ,quad,value)}{Gets (if \code{value} is missing)
-      or sets the quadrature points for a given subject, occasion.  The
-      \code{quad} field can be missing to set all quadrature points.}
     \item{$lweight(subj,occ,quad,value)}{Gets (if \code{value} is missing)
       or sets the log weights for a given occasion. Again, \code{quad}
       can be omitted.}
@@ -124,7 +121,7 @@
 
   Note that my intention was to allow expressions of the type
   \code{quad$lweight(subj,occ,) <- value} and similarly with
-  \code{$theta}. However, \code{quad$lweight(subj,occ,,value)}.
+  \code{$theta}. However, \code{quad$lweight(subj,occ,,value)} works. 
 
 }
 \section{Extends}{
@@ -172,17 +169,13 @@ Class \code{"\link[R6]{R6Class}"}, directly.
 
   The quadrature is defined by a collection of quadrature points.  These
   are named \dQuote{theta} after the latent variable in Item Response
-  Theory models.  Note that theta can be \code{$dtheta}-dimensional, the
-  names of the dimensions are the \code{$tnames}.  There is a different
+  Theory models.  Note that theta can be \code{$dquad}-dimensional, the
+  names of the dimensions are the \code{$qnames}.  There is a different
   value for eqch quadrature point.  Potentially, there
   can be a different quadrature values for different subjects and
-  occasions as well.  So the \code{$thetas} has dimension \code{$nsubj}
-  x \code{$nocc} x \code{$nquad} x \code{$dtheta}.  If \code{$bySubj} is
-  false, then the size of the first dimension is 1 (as the points are
-  the same for all individuals).  If \code{$static} is true, then the
-  size of the second dimension is 1.  The
-  \code{$theta(subj,occ,quad,value)} function gets or sets a subset of
-  that array.
+  occasions as well.  So the \code{$qpoints} field points to a
+  \code{\linkS4class{Quad_Frame}} which takes care of the replication
+  across cases is \code{byocc} or \code{bysubj} is true.
 
   Meanwhile there is one log-weight (\code{$lweights}) per particle.
   Note that even if the location of the quadrature points does not
@@ -253,15 +246,15 @@ Class \code{"\link[R6]{R6Class}"}, directly.
   There is a constructor for each of these types.
 
   \code{
-fixedQuad(times,qpoints,tnames=vnames(qpoints),
-          static=TRUE, bysubj=(nsubj(times)>1L),
+fixedQuad(times,qpoints,qnames=vnames(qpoints),
+          byocc=FALSE, bysubj=(nsubj(times)>1L),
           nsubjects=nsubj(times),isubj=NA_integer_)
-particleQuad(times,nquadrature,tnames,
-             static=FALSE, bysubj=(nsubj(times)>1L),
+particleQuad(times,nquadrature,qnames,
+             byocc=TRUE, bysubj=(nsubj(times)>1L),
              nsubjects=nsubj(times),
              isubj=NA_integer_)
-BWquad(times,qpoints,tnames=vnames(qpoints),
-       static=TRUE, bysubj=(nsubj(times)>1L),
+BWquad(times,qpoints,qnames=vnames(qpoints),
+       byocc=FALSE, bysubj=(nsubj(times)>1L),
        nsubjects=nsubj(times),isubj=NA_integer_)
   }
 
@@ -276,10 +269,10 @@ BWquad(times,qpoints,tnames=vnames(qpoints),
     \item{nquadrature}{For the \code{ParticleQuad}, the number of
       quadrature points is given.  (For the other two methods it is
       given by the size of the quadrature array.)}
-    \item{tnames}{The names of the theta variables.  The default value
+    \item{qnames}{The names of the theta variables.  The default value
       takes the names from the last dimension of the \code{qpoints}
       argument.}
-    \item{static}{A logical value.  If true, then the same quadrature
+    \item{byocc}{A logical value.  If false, then the same quadrature
       points should be used for each time point.}
     \item{bySubj}{A logical value.  If false, different quadrature
       points are used for each individual.}
@@ -292,11 +285,11 @@ BWquad(times,qpoints,tnames=vnames(qpoints),
 
   The \code{qpoints} argument needs additional explanation.  Eventually,
   it will become a 4-dimensional array with dimensions \code{(nsubj, nocc,
-  nquad, dtheta)}.  If \code{bySubj=FALSE} or \code{static=TRUE} then
+  nquad, dquad)}.  If \code{bySubj=FALSE} or \code{byocc=FALSE} then
   the first or second dimension has length 1, and can be omitted.  In
   this case, \code{qpoints} can be a data.frame (which is coerced to a
-  numeric array).  If in addition \code{dtheta=1} then \code{qpoints}
-  can be a vector.  In this case, it is best to supply the \code{tnames}
+  numeric array).  If in addition \code{dquad=1} then \code{qpoints}
+  can be a vector.  In this case, it is best to supply the \code{qnames}
   argument.
 
 }
@@ -316,6 +309,8 @@ BWquad(times,qpoints,tnames=vnames(qpoints),
   \code{\linkS4class{Panmat}} for the time argument.
   \code{\linkS4class{Panel_Data}} and \code{\linkS4class{POMDP}} as other
   objects which need to conform.
+
+  \code{\linkS4class{Quad_Frame}} which holds the quadrature points.
 
   \code{\link{split_subj}} and \code{\link{bind_subj}} for splitting and
   recombining the quadrature by subject.

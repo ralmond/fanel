@@ -34,7 +34,7 @@
 
   The constructor is
   \code{Activities$new(name, growthModels=list(),
-    actions=1L, dt=1.0, dosage=NULL, tname="theta",
+    actions=1L, dt=1.0, dosage=NULL, qname="theta",
     wname="w", dtname="deltaT", dosname="dose")} or
   \code{ActivitiesD$new(...)}. 
 
@@ -47,7 +47,7 @@
       \code{\linkS4class{TransitionModel}}s corresponding to acations.}
     \item{\code{actions}}{A \code{\linkS4class{Panmat}} giving the
       indexes of the population model to use for each student.}
-    \item{\code{tname}}{A character vector giving the names of the
+    \item{\code{qname}}{A character vector giving the names of the
       latent variables.  Needs to match the quadrature used.}
     \item{\code{w}}{A character value giving the name of the weight
       column.  Only the first value is used.  Again, this needs to match
@@ -68,7 +68,7 @@
       to \dQuote{action}.}
     \item{\code{$action(isubj,iocc)}:}{Returns the index of the growth
       model used for this subject occassion pair.}
-    \item{\code{$tnames}:}{A \code{"character"} vector giving the names
+    \item{\code{$qnames}:}{A \code{"character"} vector giving the names
       of the latent variables. }
     \item{\code{$wname}:}{A \code{"character"} vector giving the name(s) of
       the weight columnn. }
@@ -225,7 +225,7 @@
 \author{Russell Almond}
 \note{
 
-  The \code{$tname} and \code{$wname} fields must be co-ordinated with
+  The \code{$qname} and \code{$wname} fields must be co-ordinated with
   the \code{\linkS4class{Quadrature}} class.  In particular, the
   \code{\linkS4class{BWQuad}} has weights \code{c("w.full", "w.left",
     and "w.right")} (only the first is needed for population models)

@@ -42,11 +42,11 @@ GradedResponse <- R6Class(
   classname="GradedResponse",
   inherit=EvidenceModel,
   public=list(
-    initialize = function(name, a, b, tname="theta", wname="w", dname="Y") {
+    initialize = function(name, a, b, qname="theta", wname="w", dname="Y") {
       self$name <- name
       self$a <- a
       self$b <- b
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
       self$dnames <- dname
     },
@@ -64,7 +64,7 @@ GradedResponse <- R6Class(
     },
     lprob = function(data,par=self$pvec) {
       weights <- data[[self$wname]]
-      theta <- data[[self$tnames]]
+      theta <- data[[self$qnames]]
       Y <- data[[self$dnames]]
       probs <- cuts2probs(self$cuts(theta,a=exp(par[1]),b=par[-1]))
       sum(sapply(1L:length(theta),\(i) {
@@ -94,12 +94,12 @@ NormalScore <- R6Class(
   classname="NormalScore",
   inherit=EvidenceModel,
   public=list(
-    initialize = function(name, bias, se, tname="theta",wname="w",
+    initialize = function(name, bias, se, qname="theta",wname="w",
                           dname="Y") {
       self$name <- name
       self$bias <- bias
       self$se <- se
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
       self$dnames <- dname
     },
@@ -113,13 +113,13 @@ NormalScore <- R6Class(
     },
     lprob = function(data,par=self$pvec) {
       weights <- data[[self$wname]]
-      theta <- data[[self$tnames]]
+      theta <- data[[self$qnames]]
       Y <- data[[self$dnames]]
       sum(dnorm(Y,theta+par[1],exp(par[2]),log=TRUE)*weights)
     },
     mstep = function(data,...) {
       weights <- data[[self$wname]]
-      theta <- data[[self$tnames]]
+      theta <- data[[self$qnames]]
       Y <- data[[self$dnames]]
       self$bias <- wtd.mean(Y,weights) - wtd.mean(theta,weights)
       self$se <- wtd.sd(Y,weights)
@@ -152,12 +152,12 @@ Evidence <- R6Class(
     name="Evidence Set",
     initialize=function(name,evidenceModels,
                         tasks=matrix(1L,1L,1L),
-                        tname="theta",wname="w",
+                        qname="theta",wname="w",
                         dname="Y") {
       self$name <- name
       self$models <- evidenceModels
       self$index <- as.Panmat(tasks)
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
       self$dnames <- dname
     },

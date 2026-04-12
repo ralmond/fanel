@@ -2,6 +2,7 @@ Package: fanel
 Type: Package
 Title: Filters for Pannel Data
 Version: 0.1.2
+Author: Russell Almond <ralmond@fsu.edu>
 Maintainer: Russell Almond <ralmond@fsu.edu>
 Authors@R: c(
     person(given = "Russell",

@@ -172,15 +172,15 @@ as_longform.Quadrature <- function(x,..., n=nsubj(x),mxocc=maxocc(x),
 }
 
 
-get_subj.Quadrature <- function(x,isubj) {
+get_subj.Quadrature <- function(x,isub) {
   result <- x$clone()
   if (x$bysubj) {
-    result$times <- get_subj(x$times,isubj)
-    result$quadpoints <- get_subj(x$quadpoints,isubj)
+    result$times <- get_subj(x$times,isub)
+    result$quadpoints <- get_subj(x$quadpoints,isub)
   }
-  result$lweights <- x$lweights[,,isubj,drop=FALSE]
+  result$lweights <- x$lweights[,,isub,drop=FALSE]
   nsubj(result) <- 1L
-  isubj(result) <- isubj
+  isubj(result) <- isub
   result
 }
 
@@ -194,17 +194,17 @@ padSubj.QuadWeights <- function(x,isub) {
 }
 
 
-"get_subj<-.Quadrature" <-function(x,isubj,value) {
+"get_subj<-.Quadrature" <-function(x,isub,value) {
   if (x$bysubj) {
-    get_subj(x$times,isubj) <- value$times
-    get_subj(x$quadpoints,isubj) <- value$quadpoints
+    get_subj(x$times,isub) <- value$times
+    get_subj(x$quadpoints,isub) <- value$quadpoints
   }
-  if (!is.na(isubj(x)) && isubj(x)!=isubj) {
+  if (!is.na(isubj(x)) && isubj(x)!=isub) {
     isubj(x) <- NA_integer_
   }
-  nsubj(x) <- max(nsubj(x),isubj)
-  x$lweights <- padSubj.QuadWeights(x$lweights,isubj)
-  x$lweights[,,isubj] <- value$lweights
+  nsubj(x) <- max(nsubj(x),isub)
+  x$lweights <- padSubj.QuadWeights(x$lweights,isub)
+  x$lweights[,,isub] <- value$lweights
   x
 }
 

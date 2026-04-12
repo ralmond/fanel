@@ -32,7 +32,7 @@
       combination.}
     \item{\code{$iname}:}{String giving the name of the index (e.g.,
       \dQuote{group}, \dQuote{task}, or \dQuote{action}).}
-    \item{\code{$tnames}:}{A \code{"character"} vector giving the names
+    \item{\code{$qnames}:}{A \code{"character"} vector giving the names
       of the latent variables. }
     \item{\code{$wname}:}{A \code{"character"} vector giving the name(s) of
       the weight columnn. }

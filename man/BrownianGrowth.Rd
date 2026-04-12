@@ -40,7 +40,7 @@
     \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
     \item{\code{$name}:}{A name for the model, primarily used for printing.}
     \item{\code{$wname}:}{The name of the weight column(s). }
-    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$qnames}:}{The name(s) of the latent variable(s).}
     \item{\code{$pvec}:}{Either \code{c(self$gain,exp(self$inovSD))} or
       \code{c(self$gain,self$loss,exp(self$inovSD))}.}
     \item{\code{$dosname}}{The name of the dosage column in the

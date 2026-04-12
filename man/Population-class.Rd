@@ -15,7 +15,7 @@
 \section{Constructor}{
 
   The constructor is \code{Population$new(name, popModels, groups=1L,
-    tname="theta", wname="w")}.
+    qname="theta", wname="w")}.
 
   The arguments for both constructors are:
   \describe{
@@ -29,7 +29,7 @@
     \item{\code{dosage}}{A \code{\linkS4class{Panmat}} giving the
       exposure time/strenght between each occasion.  If \code{NULL},
       then the time difference will be used.}
-    \item{\code{tname}}{A character vector giving the names of the
+    \item{\code{qname}}{A character vector giving the names of the
       latent variables.  Needs to match the quadrature used.}
     \item{\code{wname}}{The column names for the weights.  For
       \code{Activities}, only the first value is used.  For
@@ -54,7 +54,7 @@
       combination.}
     \item{\code{$iname}:}{String giving the name of the index, defaults
       to \dQuote{group}.}
-    \item{\code{$tnames}:}{A \code{"character"} vector giving the names
+    \item{\code{$qnames}:}{A \code{"character"} vector giving the names
       of the latent variables. }
     \item{\code{$wname}:}{A \code{"character"} vector giving the name(s) of
       the weight columnn. }
@@ -121,7 +121,7 @@
 \author{Russell Almond}
 \note{
 
-  The \code{$tname} and \code{$wname} fields must be co-ordinated with
+  The \code{$qname} and \code{$wname} fields must be co-ordinated with
   the \code{\linkS4class{Quadrature}} class.  In particular, the
   \code{\linkS4class{BWQuad}} has weights \code{c("w.full", "w.left",
     and "w.right")} (only the first is needed for population models)
@@ -144,7 +144,7 @@ apop <- Population$new("BigStudy",
                        list(NormalPop$new("Reference",0,1),
                             NormalPop$new("Focal",-.5,1.2)),
                        groups=c(rep(1,7),rep(2,3)),
-                       tname="Ability",
+                       qname="Ability",
                        wname="w")
 nsubj(apop)
 nmodels(apop)

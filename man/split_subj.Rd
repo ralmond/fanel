@@ -16,14 +16,14 @@
 }
 \usage{
 split_subj(x)
-get_subj(x,isubj)
-get_subj(x,isubj) <- value
+get_subj(x,isub)
+get_subj(x,isub) <- value
 add_subj(x,xnew)
 bind_subj(xlist)
 }
 \arguments{
   \item{x}{An object with one of the fanel data classes.}
-  \item{isubj}{An (integer) index for a particular subject.}
+  \item{isub}{An (integer) index for a particular subject.}
   \item{xnew, value}{A new object of the same type as \code{x}
     representing the data to be added.}
   \item{xlist}{A list of fanel data objects all of the same type.}

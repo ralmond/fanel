@@ -18,9 +18,9 @@ simulate.POMDP <- function(object, nsim, seed, ...,
   workers$lapply(split(ldata,~subj),\(cov,hmm) {
     isubj <- cov$subj[1]
 
-    tnames <- tnames(hmm)
-    theta <- as.data.frame(lapply(tnames,\(n) rep(NA,nocc(cov))))
-    names(theta) <- tnames
+    qnames <- qnames(hmm)
+    theta <- as.data.frame(lapply(qnames,\(n) rep(NA,nocc(cov))))
+    names(theta) <- qnames
 
     dnames <- dnames(hmm)
     data <- as.data.frame(lapply(dnames,\(n) rep(NA,nocc(cov))))
@@ -34,7 +34,7 @@ simulate.POMDP <- function(object, nsim, seed, ...,
       data[iocc,] <- drawData(hmm,isubj,iocc, theta[iocc,],
                               cov[iocc+1L,])
     }
-    names(theta) <- paste0(tnames,"_sim")
+    names(theta) <- paste0(qnames,"_sim")
     cbind(cov,theta,data)
   }, object) |> purrr::list_rbind() -> result
 

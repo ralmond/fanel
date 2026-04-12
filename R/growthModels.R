@@ -18,12 +18,12 @@ BrownianGrowth <- R6Class(
   classname="BrownianGrowth",
   inherit=GrowthModel,
   public=list(
-    initialize = function(name,gain,inovSD,tname="theta",wname="w",
+    initialize = function(name,gain,inovSD,qname="theta",wname="w",
                           dtname="deltaT", dosname="dose") {
       self$name <- name
       self$gain <- gain
       self$inovSD <- inovSD
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
       self$dtname <- dtname
       self$dosname <- dosname
@@ -38,8 +38,8 @@ BrownianGrowth <- R6Class(
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
       if (is.null(dose)) dose <- deltaT
-      theta0 <- data[[self$tnames]]
-      theta1 <- data[[paste0(self$tnames,"_1")]]
+      theta0 <- data[[self$qnames]]
+      theta1 <- data[[paste0(self$qnames,"_1")]]
       weights <- data[[self$wname[1]]]
       mu <- theta0 + par[1]*dose
       sig <- exp(par[2])*sqrt(deltaT)
@@ -49,8 +49,8 @@ BrownianGrowth <- R6Class(
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
       if (is.null(dose)) dose <- deltaT
-      theta0 <- data[[self$tnames]]
-      theta1 <- data[[paste0(self$tnames),"_1"]]
+      theta0 <- data[[self$qnames]]
+      theta1 <- data[[paste0(self$qnames),"_1"]]
       weights <- data[[self$wname[1]]]
       inov <- wtd.mean((theta1-theta0)/dose,weights)
       self$gain <- inov
@@ -78,13 +78,13 @@ BrownianGrowth2 <- R6Class(
   classname="BrownianGrowth2",
   inherit=BrownianGrowth,
   public=list(
-    initialize = function(name,gain,loss,inovSD,tname="theta",wname="w",
+    initialize = function(name,gain,loss,inovSD,qname="theta",wname="w",
                           dtname="deltaT", dosname="dose") {
       self$name <- name
       self$gain <- gain
       self$loss <- loss
       self$inovSD <- inovSD
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
       self$dtname <- dtname
       self$dosname <- dosname
@@ -98,8 +98,8 @@ BrownianGrowth2 <- R6Class(
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
       if (is.null(dose)) dose <- deltaT
-      theta0 <- data[[self$tnames]]
-      theta1 <- data[[paste0(self$tnames,"_1")]]
+      theta0 <- data[[self$qnames]]
+      theta1 <- data[[paste0(self$qnames,"_1")]]
       weights <- data[[self$wname[1]]]
       mu <- theta0 + par[1]*dose -par[2]*deltaT
       sig <- exp(par[3])*sqrt(deltaT)
@@ -109,8 +109,8 @@ BrownianGrowth2 <- R6Class(
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
       if (is.null(dose)) dose <- deltaT
-      theta0 <- data[[self$tnames]]
-      theta1 <- data[[paste0(self$tnames),"_1"]]
+      theta0 <- data[[self$qnames]]
+      theta1 <- data[[paste0(self$qnames),"_1"]]
       weights <- data[[self$wname[1]]]
       mdt <- wtd.mean(deltaT,weights)
       mdose <- wtd.mean(dose,weights)
@@ -150,12 +150,12 @@ Activities <- R6Class(
     dt=as.Panmat(1),
     dosage=NULL,
     initialize=function(name,growthModels=list(),actions=1L,dt=1.0,
-                        dosage=NULL,tname="theta",wname="w",
+                        dosage=NULL,qname="theta",wname="w",
                         dtname="deltaT",dosname="dose") {
       self$name <- name
       self$index <- as.Panmat(actions)
       self$models <- growthModels
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
       self$dt <- as.Panmat(dt)
       if (!is.na(dosage)) self$dosage <- as.Panmat(dosage)
@@ -175,7 +175,7 @@ Activities <- R6Class(
     },
     prepData = function(data) {
       data <- dplyr::arrange(data,subj,occ) |> dplyr::group_by(subj)
-      sapply(self$tnames, \(th) {
+      sapply(self$qnames, \(th) {
         th1 <- paste0(th,"_1")
         data <- dplyr::mutate(data,"{th1}":=lag(.data[[th]]))
         th1
@@ -263,13 +263,13 @@ as_longform.Activities <- function(x,...,n=nsubj(x),mxocc=maxocc(x),
               name=x$iname) |>
     dplyr::left_join(
                as_longform(x$dt,n=n,mxocc=mxocc,mnocc=mnocc,
-                           name=dtname(x)),
+                           name=x$dtname),
                dplyr::join_by("subj","occ")) ->
       result
   if (!is.null(x$dosage))
     dplyr::left_join(result,
                      as_longform(x$dosage,n=n,mxocc=mxocc,mnocc=mnocc,
-                                 name=dosname(x)),
+                                 name=x$dosname),
                      dplyr::join_by("subj","occ")) ->
       result
   result

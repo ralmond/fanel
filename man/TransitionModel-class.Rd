@@ -25,7 +25,7 @@
       expected to be of length 3 with the first one being the overall
       weight, the second the left weights and the third the right
       weights (see \code{\linkS4class{BWQuad}}).}
-    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$qnames}:}{The name(s) of the latent variable(s).}
     \item{\code{$pvec}:}{A vector of possibly transformed parameters
       used in \code{mstep}.}
     \item{\code{$dosname}}{The name of the dosage column in the
@@ -214,7 +214,7 @@
   multidimensional.  The potential is now a \eqn{k_1 \times k_2 \times
   \ldots} tensor, which has been linearized to a vector of length
   \eqn{K= k_1 \cdot k_2 \cdots}.  The transition matrix is a \eqn{k_1
-    \times k_2 \times \ldots \timesk_1 \times k_2 \times \ldots} tensor
+    \times k_2 \times \ldots \times k_1 \times k_2 \times \ldots} tensor
   which has been collapsed into a \eqn{K \times K} matrix.  I think this
   works but it makes my head hurt to think about it too long.
 
@@ -236,13 +236,13 @@ MyUpDown <- R6Class(
   inherit=TransitionModel,
   public=list(
     initialize = function(name, nStates, uprate, downrate,
-                          tname="theta",
+                          qname="theta",
                           wname=c("w.full", "w.left", "w.right")) {
       self$name <- name
       self$nStates <- nStates
       self$uprate <- uprate
       self$downrate <- downrate
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
     },
     uprate=0,

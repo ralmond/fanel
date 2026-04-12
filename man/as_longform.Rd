@@ -6,6 +6,7 @@
 
   The \code{as_longform} methods unwind fanel objects (objects of class
   \code{\linkS4class{Panmat}}, \code{\linkS4class{Panel_Frame}},
+  \code{\linkS4class{Quad_Frame}}
   \code{\linkS4class{Panel_Data}}, \code{\linkS4class{Quadrature}},
   \code{\linkS4class{ModelSet}}, and \code{\linkS4class{POMDP}}) into a
   data frame in long form data frame (or tibble) with rows corresponding
@@ -16,16 +17,16 @@
 
 }
 \usage{
-as_longform(x, ...,n = nsubj(x), maxocc = maxocc(x), minocc = minocc(x),
+as_longform(x, ...,n = nsubj(x), mxocc = maxocc(x), mnocc = minocc(x),
             weightType="all",
-            name = deparse(substitute(x)))
+            name = deparse(substitute(x)), includeTime = TRUE)
 longform(quad,model,data)
 }
 \arguments{
   \item{x}{The data object to be converted into long form data.}
   \item{n}{The number of subjects.}
-  \item{maxocc}{The maximum occurance value.}
-  \item{minocc}{The minimum occurance value, usually 1 or 0.}
+  \item{mxocc}{The maximum occurance value.}
+  \item{mnocc}{The minimum occurance value, usually 1 or 0.}
   \item{weightType}{The types of weights to get (only used with
     \code{\linkS4class{Quadrature}} classes).}
   \item{name}{The name to give the column for a \code{Panmat}.}
@@ -34,6 +35,8 @@ longform(quad,model,data)
   \item{model}{A \code{\linkS4class{POMDP}} and
     \code{\linkS4class{ModelSet}} class.}
   \item{data}{A \code{\linkS4class{Panel_Data}} object.}
+  \item{includeTime}{A logical value indicating whether or not a column
+    for time should be included.}
 }
 \details{
 
@@ -42,7 +45,8 @@ longform(quad,model,data)
   \dQuote{subj} and \dQuote{occ}.  These are suitable for use with
   \code{\link[dplyr]{left_join}} to build up long form data.
 
-  In the case of \code{\linkS4class{Quadrature}} classes, there is an
+  In the case of \code{\linkS4class{Quadrature}} and
+  \code{\linkS4class{Quad_Frame}} classes, there is an 
   additional index \dQuote{quad} corresponding to quadrature points.
   The functions \code{\link{summaryq}} and \code{summaryqq} reduce over
   the needed dimensions.

@@ -26,7 +26,7 @@
       not the last \code{mstep} converged.}
     \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
     \item{\code{$wname}:}{The name of the weight column(s). }
-    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$qnames}:}{The name(s) of the latent variable(s).}
   }
 
 }
@@ -41,7 +41,7 @@
 \section{Methods}{
 
   \describe{
-    \item{\code{$initialize}}{\code{(name,states,probs,tnames,wname)}:
+    \item{\code{$initialize}}{\code{(name,states,probs,qnames,wname)}:
       Constructor, called by \code{$new}.}
     \item{\code{$drawInit}}{\code{(npart,covars=list())}:
       Draws a random starting position. (Used with random quadratures,
@@ -60,7 +60,7 @@
 
 The usual expression for building this distribution is
 \code{CategoricalPop$new(\var{name},\var{states}=seq(0L,2L,1L),
-  \var{probs}=rep(1/length(states),length(states)), tname="theta",
+  \var{probs}=rep(1/length(states),length(states)), qname="theta",
   wname="w")}.
 
 }

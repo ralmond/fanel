@@ -19,7 +19,7 @@
     \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
     \item{\code{$name}:}{A name for the model, primarily used for printing.}
     \item{\code{$wname}:}{The name of the weight column(s). }
-    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$qnames}:}{The name(s) of the latent variable(s).}
     \item{\code{$pvec}:}{A vector of possibly transformed parameters
       used in \code{mstep}.}
   }
@@ -100,13 +100,13 @@ MyNormalScore <- R6Class(
         },
         lprob = function(data,par=self$pvec) {
           Y <- data[[self$dnames]]
-          theta <- data[[self$tnames]]
+          theta <- data[[self$qnames]]
           weights <- data[[self$wnames]]
           sum(dnorm(Y,theta+par[1],exp(par[2]),log=TRUE)*weights)
         },
         mstep = function(data,...) {
           weights <- data[[self$wname]]
-          theta <- data[[self$tnames]]
+          theta <- data[[self$qnames]]
           Y <- data[[self$dnames]]
           self$bias <- wtd.mean(Y,weights) - wtd.mean(theta,weights)
           self$se <- wtd.sd(Y,weights)

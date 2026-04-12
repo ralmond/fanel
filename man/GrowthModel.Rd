@@ -23,7 +23,7 @@
     \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
     \item{\code{$name}:}{A name for the model, primarily used for printing.}
     \item{\code{$wname}:}{The name of the weight column(s). }
-    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$qnames}:}{The name(s) of the latent variable(s).}
     \item{\code{$pvec}:}{A vector of possibly transformed parameters
       used in \code{mstep}.}
     \item{\code{$dosname}}{The name of the dosage column in the
@@ -124,12 +124,12 @@ MyBrownianGrowth <- R6Class(
   classname="MyBrownianGrowth",
   inherit=GrowthModel,
   public=list(
-    initialize = function(name,gain,inovSD,tname="theta",wname="w",
+    initialize = function(name,gain,inovSD,qname="theta",wname="w",
                           dtname="deltaT", dosname="dose") {
       self$name <- name
       self$gain <- gain
       self$inovSD <- inovSD
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
       self$dtname <- dtname
       self$dosname <- dosname
@@ -145,8 +145,8 @@ MyBrownianGrowth <- R6Class(
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
       if (is.null(dose)) dose <- deltaT
-      theta0 <- data[[self$tnames]]
-      theta1 <- data[[paste0(self$tnames,"_1")]]
+      theta0 <- data[[self$qnames]]
+      theta1 <- data[[paste0(self$qnames,"_1")]]
       weights <- data[[self$wname[1]]]
       mu <- theta0 + par[1]*dose
       sig <- exp(par[2])*sqrt(deltaT)
@@ -156,8 +156,8 @@ MyBrownianGrowth <- R6Class(
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
       if (is.null(dose)) dose <- deltaT
-      theta0 <- data[[self$tnames]]
-      theta1 <- data[[paste0(self$tnames),"_1"]]
+      theta0 <- data[[self$qnames]]
+      theta1 <- data[[paste0(self$qnames),"_1"]]
       weights <- data[[self$wname[1]]]
       self$gain <- wtd.mean((theta1-theta0)/dose,weights)
       self$inovSD <- wtd.sd((theta1-theta0-self$gain)/sqrt(deltaT),

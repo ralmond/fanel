@@ -97,10 +97,11 @@ exponentialWindow(window=1,lambda=.8,...,symmetric=TRUE)
 
   \emph{Parzan Window}.
 
-  \deqn{w(\Delta t) = \begin{cases} 1 - 6 \left( \frac{\Delta t}{L} \right )^2
-  \left ( 1 - \frac{|\Delta t|}{L} \right )\ , \tab 0 \le |\Delta t| \le L/2\cr
-  2 \left (1 - \frac{|\Delta t|}{L} \right )^3 \tab L/2 \le |\Delta t| \le L\cr
-  \end{cases}}
+  \deqn{w(\Delta t) = \left \{
+    \begin{array}{ll} 1 - 6 \left( \frac{\Delta t}{L} \right )^2
+  \left ( 1 - \frac{|\Delta t|}{L} \right )\ , & 0 \le |\Delta t| \le L/2\cr
+  2 \left (1 - \frac{|\Delta t|}{L} \right )^3 & L/2 \le |\Delta t| \le L\cr
+  \end{array} \right.}
 
   \emph{Welch Window}.
 
@@ -145,22 +146,22 @@ exponentialWindow(window=1,lambda=.8,...,symmetric=TRUE)
   tapers off using a cosine window. At \eqn{\alpha=0} it is rectangular at
   \eqn{alpha=1} it is a cosine window.
 
-  \deqn{w(\Delta t) = \begin{cases}
+  \deqn{w(\Delta t) = \left \{ \begin{array}{ll}
     \frac{1}{2} \left (1 + \cos \left ( \frac{2\pi | (\Delta t)/L - \alpha/2|}{\alpha}
-    \right ) \right ) , \tab L \ge |\Delta t| > (1-\alpha/2) L \cr
-    1, \tab (1-\alpha/2) L \ge |\Delta t| \ge 0 \cr
-    \end{cases}.}
+    \right ) \right ) , & L \ge |\Delta t| > (1-\alpha/2) L \cr
+    1, & (1-\alpha/2) L \ge |\Delta t| \ge 0 \cr
+    \end{array} \right.}
 
   \emph{Planck Window}.  Similar to the Tukey window,
   this has a flat region of size epsilon.
 
-\deqn{w(\Delta t) = \begin{cases}
+\deqn{w(\Delta t) = \left \{ \begin{array}{ll}
 0, & |\Delta t| > L \cr
 \left ( 1 + \exp \left ( \frac{2\epsilon L}{L-\Delta t} -
 \frac{2\epsilon L}{(2\epsilon -1) L + \Delta t} \right ) \right)^{-1},
 & L \ge |\Delta t| > (1-2 \epsilon)L \cr
 1, & (1-2\epsilon) L \ge |\Delta t|\cr
-\end{cases}
+\end{array} \right.
 }
 
 

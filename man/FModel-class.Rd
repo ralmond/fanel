@@ -35,7 +35,7 @@
     \item{\code{$lp}:}{The log-posterior after the last \code{mstep}.}
     \item{\code{$name}:}{A name for the model, primarily used for printing.}
     \item{\code{$wname}:}{The name of the weight column(s). }
-    \item{\code{$tnames}:}{The name(s) of the latent variable(s).}
+    \item{\code{$qnames}:}{The name(s) of the latent variable(s).}
     \item{\code{$pvec}:}{A vector of possibly transformed parameters
       used in \code{mstep}.}
   }
@@ -82,7 +82,7 @@ reference object protocols.
   The primary purpose of this object is to capture the interface for the
   \code{\link{mstep}}.  The \code{lprob} function takes a set of data,
   which contain the quadrature values of the latent values (in the
-  \code{$tnames} columns) in their weights (in the \code{$wname}
+  \code{$qnames} columns) in their weights (in the \code{$wname}
   column).
 
   The \code{pvec} function and its corresponding getters need to get/set

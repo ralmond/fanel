@@ -39,7 +39,7 @@ covars = NULL, workers = Workers$new())
 
   The value is a new \code{\linkS4class{Panel_Data}} class which has new
   columns corresponding to \code{dname(object)} and
-  \code{tname(object)}, the latter with \dQuote{_sim} appended.
+  \code{qname(object)}, the latter with \dQuote{_sim} appended.
   
 }
 \section{Parallel Processing}{

@@ -108,9 +108,9 @@ pvec(obj) <- value
     \item{\dQuote{subj}}{The index for the subject (positive integer) }
     \item{\dQuote{occ}}{The index for occasion (non-negative integer) }
     \item{\dQuote{quad}}{The indexe for quadtrature point }
-    \item{\dQuote{theta}, \code{quad$tnames}}{The name for the latent
+    \item{\dQuote{theta}, \code{quad$qnames}}{The name for the latent
       variable(s); could be more than one column. }
-    \item{\dQuote{theta_1}, \code{paste0(quad$tnames,"_1")}}{The value
+    \item{\dQuote{theta_1}, \code{paste0(quad$qnames,"_1")}}{The value
       of theta(s) one time point ahead of the current occastion (added by
       the \code{mstep} method for \code{\linkS4class{Activities}}). }
     \item{\dQuote{w},\dQuote{w.full}, \dQuote{w.left}, \dQuote{w.right},

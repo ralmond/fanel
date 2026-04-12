@@ -19,11 +19,11 @@ NormalPop <- R6Class(
   classname = "NormalPop",
   inherit=PopulationModel,
   public=list(
-    initialize = function(name,mu,sigma,tname="theta",wname="w") {
+    initialize = function(name,mu,sigma,qname="theta",wname="w") {
       self$name <- name
       self$mu <- mu
       self$sigma <- sigma
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
     },
     mu=0,
@@ -37,7 +37,7 @@ NormalPop <- R6Class(
       mu <- par[1]
       sigma <- exp(par[2])
       weights <- data[[self$wname]]
-      theta <- data[[self$tnames]]
+      theta <- data[[self$qnames]]
       sum(dnorm(theta,mu,sigma,log=TRUE)*weights)
     },
     initProbs = function(theta,covars=list()) {
@@ -53,7 +53,7 @@ NormalPop <- R6Class(
     },
     mstep=function(data,...) {
       weights <- data[[self$wname]]
-      theta <- data[[self$tnames]]
+      theta <- data[[self$qnames]]
       self$mu <- wtd.mean(theta,weights)
       self$sigma <- wtd.sd(theta,weights)
       self$lp <- sum(dnorm(theta,self$mu,self$sigma,log=TRUE)*weights)
@@ -84,11 +84,11 @@ CategoricalPop <- R6Class(
   public=list(
       initialize = function(name,states=seq(0L,2L,1L),
                             probs=rep(1/length(states),length(states)),
-                            tname="theta",wname="w") {
+                            qname="theta",wname="w") {
       self$name <- name
       self$states <- states
       self$probs <- probs
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
     },
     states=0L:2L,
@@ -98,13 +98,13 @@ CategoricalPop <- R6Class(
     lprob = function(data,par=self$pvec) {
       lprobs <- log(softmax(par))
       weights <- data[[self$wname]]
-      theta <- data[[self$tnames]]
+      theta <- data[[self$qnames]]
       sum(lprobs[match(theta,self$states)]*weights)
     },
     mstep=function(data,...) {
       ## Force dummy entries into list so no cells are dropped
       weights <- c(rep(0,length(self$states)),data[[self$wname]])
-      theta <- c(self$states,data[[self$tnames]])
+      theta <- c(self$states,data[[self$qnames]])
       post <- wtd.table(theta,weights,normwt=FALSE)
       self$probs <- post/sum(post)
       self$lp <- sum(log(self$probs)[match(theta,self$states)]*weights)
@@ -146,14 +146,14 @@ Population <- R6Class(
     name="A Population",
     iname="group",
     initialize=function(name,popModels,groups=1L,
-                        tname="theta",wname="w") {
+                        qname="theta",wname="w") {
       self$name <- name
       self$models <- popModels
       if (!is(groups,"Panmat") && is.null(dim(groups))) {
         groups <- matrix(groups,ncol=1)
       }
       self$index <- as.Panmat(groups)
-      self$tnames <- tname
+      self$qnames <- qname
       self$wname <- wname
     },
     group = function(isubj) {
