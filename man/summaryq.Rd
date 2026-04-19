@@ -28,7 +28,7 @@ summaryqq(quad, probs = c(.025, 0.5, 0.975), qnames=quad$qnames,
   \item{sumfuns}{A list of summaries to pass to
     \code{\link[dplyr]{across}} to generate summaries, see details.}
   \item{probs}{A vector of probalities whose quantiles will be reported.}
-  \item{thetas}{A character vector giving the names of the latent variables.}
+  \item{qnames}{A character vector giving the names of the latent variables.}
   \item{wname}{A character scalar giving the name of the weight variable.}
 }
 \details{

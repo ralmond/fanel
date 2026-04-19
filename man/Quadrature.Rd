@@ -121,7 +121,7 @@
 
   Note that my intention was to allow expressions of the type
   \code{quad$lweight(subj,occ,) <- value} and similarly with
-  \code{$theta}. However, \code{quad$lweight(subj,occ,,value)} works. 
+  \code{$theta}. However, \code{quad$lweight(subj,occ,,value)} works.
 
 }
 \section{Extends}{
@@ -210,8 +210,9 @@ Class \code{"\link[R6]{R6Class}"}, directly.
   This is similar to the fixed quadrature, the difference is in the
   weights.  The Baum-Welch algorithm (\code{\link{bwFilter}})
   requires both weights on the natural scale (as matrix multiplication
-  is used in the calculation) and both forwards (\code{$lweights}) and
-  backwards (\code{$rweights}) weights.  The \code{$weights()} takes
+  is used in the calculation) and both forwards (\code{$lweights},
+  \code{$lweight}) and backwards (\code{$rweights}, \code{$rweight})
+  weights.  The \code{$weights()} function takes
   four possible values for the \code{type} argument:
   \describe{
     \item{default}{The product of the left and right weights,

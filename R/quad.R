@@ -314,12 +314,12 @@ BWQuad <- R6Class(
         },
         left = {
           weights <- self$lweights
-          as.vector(sweep(weights,2:3,apply(weights,3:4,sum),"/"))
+          as.vector(sweep(weights,2:3,apply(weights,2:3,sum),"/"))
         },
-        right = as.vector(self$rweights),
-        all=data.frame(full=self$weights("default"),
-                       left=self$weights("left"),
-                       right=self$weights("right"))
+        right = {as.vector(self$rweights)},
+        all = {data.frame(full=self$weights("default"),
+                   left=self$weights("left"),
+                   right=self$weights("right"))}
       )
     },
     resetWeights = function() {
@@ -327,6 +327,12 @@ BWQuad <- R6Class(
                              c(self$nquad,self$nocc,self$nsubj))
       self$rweights <- array(NA_real_,
                              c(self$nquad,self$nocc,self$nsubj))
+    },
+    rweight = function(subj,occ,quad,value) {
+      occ <- occ +1L
+      if (missing(quad)) quad <- 1L:nquad(self)
+      if (missing(value)) return(self$rweights[quad,occ,subj])
+      self$rweights[quad,occ,subj] <- value
     }
   )
 )
@@ -344,3 +350,15 @@ BWquad <- function(times,quadrature,
              isubj=isubj)
 }
 
+get_subj.BWQuad <- function(x,isub) {
+  result <- get_subj.Quadrature(x,isub)
+  result$rweights <- x$rweights[,,isub,drop=FALSE]
+  result
+}
+
+"get_subj<-.BWQuad" <-function(x,isub,value) {
+  x <- NextMethod()
+  x$rweights <- padSubj.QuadWeights(x$rweights,isub)
+  x$rweights[,,isub] <- value$rweights
+  x
+}

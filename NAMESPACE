@@ -71,6 +71,8 @@ S3method(nmodels,ModelSet)
 
 S3method(get_subj,Quadrature)
 S3method("get_subj<-",Quadrature)
+S3method(get_subj,BWQuad)
+S3method("get_subj<-",BWQuad)
 
 S3method(pvec,FModel)
 S3method("pvec<-",FModel)

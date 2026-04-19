@@ -43,3 +43,5 @@ Suggests:
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3
+Support:  'National Science Foundation grant "Accelerating Professional Learning Through an Intelligent Performance Assessment System": DRL-2506438'
+
