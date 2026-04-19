@@ -1,173 +1,125 @@
-test_that("ParticleQuad-class {ParticleQuad-class}", {
+# Setup helper to create test data
+create_test_times <- function(n = 5) {
+  panmat(1:n)
+}
+
+test_that("ParticleQuad initializes correctly", {
+  p <- particleQuad(times = panmat(1:3),
+                    qnames="theta",
+                    nquadrature = 5,
+                    nsubjects = 2)
+  expect_equal(p$nquad, 5)
+  expect_equal(p$isubj, NA_integer_)
+  expect_true(p$byocc)
+  expect_true(p$bysubj)
+  expect_equal(p$nsubj,2)
+  pm <- panmat(1:3)
+  nsubj(pm) <-2
+  expect_equal(p$times,pm)
 })
-test_that("ParticleQuad-class {ParticleQuad}", {
+
+test_that("ParticleQuad$weights('history') works", {
+  p <- ParticleQuad$new(
+    times = panmat(1:3),
+    nquadrature = 4,
+    byocc = TRUE,
+    bysubj = TRUE,
+    nsubjects = 2
+  )
+  p$resetWeights()
+  w <- p$weights("history")
+  expect_equal(length(w), 2*4*3)
 })
-test_that("ParticleQuad-class {particleQuad}", {
+
+test_that("ParticleQuad$weights('default') works", {
+  p <- ParticleQuad$new(
+    times = create_test_times(3),
+    nquadrature = 4,
+    byocc = TRUE,
+    bysubj = TRUE,
+    nsubjects = 2
+  )
+  p$resetWeights()
+  w <- p$weights("default")
+  expect_equal(length(w), 2*4*3)
 })
-test_that("ParticleQuad-class {as_longform.Quadrature}", {
+
+test_that("ParticleQuad$resetWeights works", {
+  p <- ParticleQuad$new(
+    times = create_test_times(3),
+    nquadrature = 3,
+    byocc = TRUE,
+    bysubj = TRUE,
+    nsubjects = 2
+  )
+  p$qpoints(1,1,runif(3))
+  p$resetWeights()
+  expect_true(all(is.na(p$quadpoints[1,1,])))
+  expect_equal(p$lweight(1,0,1),0)
+  expect_true(is.na(p$lweight(1,1,1)))
 })
-test_that("ParticleQuad-class {get_subj.Quadrature}", {
+
+test_that("ParticleQuad$initialize with invalid nquadrature raises", {
+  expect_error(
+    ParticleQuad$new(
+      times = create_test_times(3),
+      nquadrature = 0,
+      byocc = TRUE,
+      bysubj = TRUE,
+      nsubjects = 2
+    ),
+    "There must be at least 1 quadrature point."
+  )
 })
-test_that("ParticleQuad-class {get_subj<-.Quadrature}", {
+
+test_that("ParticleQuad inherits correctly", {
+  p <- ParticleQuad$new(
+    times = create_test_times(3),
+    nquadrature = 5,
+    byocc = TRUE,
+    bysubj = TRUE,
+    nsubjects = 2
+  )
+  expect_true(inherits(p, "Quadrature"))
+  expect_true(inherits(p, "R6"))
 })
-test_that("ParticleQuad-class {maxocc.Quadrature}", {
-})
-test_that("ParticleQuad-class {maxocc<-.Quadrature}", {
-})
-test_that("ParticleQuad-class {minocc.Quadrature}", {
-})
-test_that("ParticleQuad-class {minocc<-.Quadrature}", {
-})
-test_that("ParticleQuad-class {nocc.Quadrature}", {
-})
-test_that("ParticleQuad-class {nocc<-.Quadrature}", {
-})
+
+
 test_that("ParticleQuad-class {nquad,Quadrature}", {
-})
-test_that("ParticleQuad-class {nquad<-.Quadrature}", {
-})
-test_that("ParticleQuad-class {nsubj.Quadrature}", {
-})
-test_that("ParticleQuad-class {nsubj<-.Quadrature}", {
-})
-test_that("ParticleQuad-class {isubj.Quadrature}", {
-})
-test_that("ParticleQuad-class {isubj<-.Quadrature}", {
+  p <- particleQuad(times = panmat(1:3),
+                    qnames="theta",
+                    nquadrature = 5,
+                    nsubjects = 2)
+  expect_equal(nquad(p),5)
+  p$resetWeights()
+  expect_equal(dim(p$lweights),c(5,3,2))
+  expect_equal(nrow(p$quadpoints@dat),5*3*2)
+
+  nquad(p) <- 7
+  p$resetWeights()
+  expect_equal(dim(p$lweights),c(7,3,2))
+  expect_equal(nrow(p$quadpoints@dat),7*3*2)
+
 })
 
-test_that("{ParticleQuad$static:}", {
-  ## {A logical value.  If true then the quadrature
-  ##       points are the same for each occasion.}
-})
-test_that("{ParticleQuad$bySubj:}", {
-  ## {A logical value.  If false then the quadrature
-  ##       points are different for each subject.}
-})
-test_that("{ParticleQuad$wname:}", {
-  ## {The name to use for the weight object.}
-})
-test_that("{ParticleQuad$lweights:}", {
-  ## {A subj x occ x quad
-  ##       array giving the log weights.  See the $lweight() function
-  ##       for accessing parts of the array.}
-})
-test_that("{ParticleQuad$thetas:}", {
-  ## {The full nsubj x nocc x
-  ##       nquad x dtheta array of quadrature points.  See the
-  ##       $theta() function below for accessing part of the array.}
-})
-test_that("{ParticleQuad$tnames:}", {
-  ## {A "character" vector containing the names
-  ##       for the quadrature variables.  Should have length $dtheta}
-})
-test_that("{ParticleQuad$dtheta:}", {
-  ## {An "integer" containing the number of
-  ##       dimenions for each quadrature point.}
-})
-test_that("{ParticleQuad$times:}", {
-  ## {Object of class "Panmat" mapping
-  ##       measurement occasions to times.}
-})
-test_that("{ParticleQuad$minocc:}", {
-  ## {An "integer" giving the index for the
-  ##       smallest index in this quadrature.}
-})
-test_that("{ParticleQuad$maxocc:}", {
-  ## {An "integer" giving the index for the
-  ##       largest index in this quadrature.}
-})
-test_that("{ParticleQuad$nsubj:}", {
-  ## {An "integer" giving the number of
-  ##       subjects in this quadrature.}
-})
-test_that("{ParticleQuad$isubj:}", {
-  ## {An integer giving the index the subject which
-  ##       is the focus of this quadrature (see \link{split_subj}).}
-})
-test_that("{ParticleQuad$nquad:}", {
-  ## {An "integer" giving the number of
-  ##       quadrature points.}
+
+test_that("ParticleQuad$qnames", {
+  p <- particleQuad(times = panmat(1:3),
+                    qnames="theta",
+                    nquadrature = 5,
+                    nsubjects = 2)
+  expect_equal(nquad(p),5)
+  p$resetWeights()
+  expect_equal(dim(p$lweights),c(5,3,2))
+  expect_equal(nrow(p$quadpoints@dat),5*3*2)
+  expect_equal(ncol(p$quadpoints@dat),1)
+  expect_equal(p$dquad,1)
+
+  p$qnames <- c("theta1","theta2")
+  p$resetWeights()
+  expect_equal(dim(p$lweights),c(5,3,2))
+  expect_equal(nrow(p$quadpoints@dat),5*3*2)
+  expect_equal(ncol(p$quadpoints@dat),2)
+  expect_equal(p$dquad,2)
 })
 
-test_that("{ParticleQuad$$weights(type='default')}", {
-  ## {Returns normalized weights (on probability,
-  ##       not log scale).}
-})
-test_that("{ParticleQuad$$resetWeights()}", {
-  ## {Clears the weights before re-running filter.}
-})
-test_that("{ParticleQuad$$theta(subj,occ,quad,value)}", {
-  ## {Gets (if value is missing)
-  ##       or sets the quadrature points for a given subject, occasion.  The
-  ##       quad field can be missing to set all quadrature points.}
-})
-test_that("{ParticleQuad$$lweight(subj,occ,quad,value)}", {
-  ## {Gets (if value is missing)
-  ##       or sets the log weights for a given occasion. Again, quad
-  ##       can be omitted.}
-})
-
-test_that("{ParticleQuad$as_longform}", {
-  ## {signature(x = "Quadrature"): Converts the
-  ##       quadrature into very long form (with indexes subj, occ and quad). }
-})
-test_that("{ParticleQuad$maxocc}", {
-  ## {signature(obj = "Quadrature"): Gets the maximum
-  ##       occasion index.}
-})
-test_that("{ParticleQuad$maxocc<-}", {
-  ## {signature(obj = "Quadrature"): Sets the
-  ##       maximum occasion index. }
-})
-test_that("{ParticleQuad$minocc}", {
-  ## {signature(obj = "Quadrature"): Gets the minimum
-  ##       occasion index.}
-})
-test_that("{ParticleQuad$minocc<-}", {
-  ## {signature(obj = "Quadrature"): Sets the
-  ##       minimum occasion index. }
-})
-test_that("{ParticleQuad$nocc}", {
-  ## {signature(obj = "Quadrature"): Gets the number of
-  ##       occasions. }
-})
-test_that("{ParticleQuad$nocc<-}", {
-  ## {signature(obj = "Quadrature"): Sets the number
-##       of occasions.}
-})
-test_that("{ParticleQuad$nquad}", {
-  ## {signature(obj = "Quadrature"): Gets the number
-  ##       of quadrature points. }
-})
-test_that("{ParticleQuad$nquad<-}", {
-  ## {signature(obj = "Quadrature"): Sets the number
-  ##       of quadrature points (only works for \link{particleFilter}).}
-})
-test_that("{ParticleQuad$nsubj}", {
-  ## {signature(obj = "Quadrature"): Gets the number
-  ##       of subjects. }
-})
-test_that("{ParticleQuad$nsubj<-}", {
-  ## {signature(obj = "Quadrature"): Sets the number
-  ##       of subjects.}
-})
-test_that("{ParticleQuad$isubj}", {
-  ## {signature(obj = "Quadrature"): Gets the index of
-  ##       the focus subject (see \link{split_subj}).}
-})
-test_that("{ParticleQuad$isubj<-}", {
-  ## {signature(obj = "Quadrature"): Sets the index
-  ##       of the focus subject.}
-})
-test_that("{ParticleQuad$get_subj}", {
-  ## {signature(x = "Quadrature", subj="integer"):
-  ##       Returns a
-  ##       subquadrature focused on a single individual.  See
-  ##       \link{split_subj}. }
-})
-test_that("{ParticleQuad$get_subj<-}", {
-  ## {signature(x = "Quadrature", subj =
-  ## 	"integer", value = "Quadrature"): Replaces
-  ##       sub-quadrature focused on a single individual.  See
-  ##       \link{split_subj}. }
-})

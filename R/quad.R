@@ -262,7 +262,7 @@ ParticleQuad <- R6Class(
     },
     resetWeights = function() {
       self$lweights <- array(NA_real_,
-                             c(self$nquad,self$nocc,self$subj))
+                             c(self$nquad,self$nocc,self$nsubj))
       self$lweights[,1L,] <- 0
       private$Theta <-
        na_quad_frame(self$nsubj,self$minocc, self$maxocc,
@@ -276,6 +276,15 @@ ParticleQuad <- R6Class(
     nquad = function(value) {
       if (missing(value)) return(private$nq)
       private$nq <- value
+    },
+    qnames = function(value) {
+      if (missing(value)) return(qname(private$Theta))
+      if (length(value) != length(qname(private$Theta))) {
+        private$Theta <-  na_quad_frame(self$nsubj,self$minocc, self$maxocc,
+                                        self$nquad,value,self$isubj)
+      } else {
+        qname(private$Theta) <- value
+      }
     }
   )
 )

@@ -272,7 +272,8 @@ BWquad(times,qpoints,qnames=vnames(qpoints),
       given by the size of the quadrature array.)}
     \item{qnames}{The names of the theta variables.  The default value
       takes the names from the last dimension of the \code{qpoints}
-      argument.}
+      argument.  Note that setting the \code{$qnames} on a \code{ParticleQuad}
+      might reset the quadrature points.}
     \item{byocc}{A logical value.  If false, then the same quadrature
       points should be used for each time point.}
     \item{bySubj}{A logical value.  If false, different quadrature

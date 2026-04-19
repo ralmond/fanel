@@ -1,19 +1,17 @@
-context("Utility: vnames")
+
 test_that("vnames works for data frame", {
   df <- data.frame(a = 1:3, b = 1:3)
-  expect_equal(vnames(df, prefix = "x"), c("xa", "xb"))
+  expect_equal(vnames(df, prefix = "x"), c("a", "b"))
 })
 
-context("Utility: vnames")
 test_that("vnames works for array", {
   arr <- array(1:24, dim = c(4,3,2))
-  expect_equal(vnames(arr, prefix = "v"), c("v1.1.1", "v1.1.2", "v1.2.1",
-                                            "v1.2.2", "v2.1.1", "v2.1.2"))
+  expect_equal(vnames(arr, prefix = "v"), c("v1", "v2"))
 })
 
 # Setup helper to create test data
 create_test_times <- function(n = 5) {
-  panmat::as_Panmat(1:n)
+  panmat(1:n)
 }
 
 
@@ -176,9 +174,15 @@ test_that("Quadrature-class {as_longform.Quadrature}", {
 })
 
 test_that("Quadrature setters work", {
-  x <- Quadrature$new(times = create_test_times(3))
+  times <- panmat(1L:5L)
+  thetas <- data.frame(subj=rep(1L:2L,each=11L),
+                       quad=rep(1L:11L,2L),
+                       theta = c(qnorm((0:10 +.5)/11,-.5),
+                                 qnorm((0:10 +.5)/11,.5)))
+  x <- fixedQuad(times,thetas,
+                  nsubjects=2L,bysubj=TRUE)
   x$times <- create_test_times(4)
-  expect_true(length(x$times) == 4)
+  expect_true(nocc(x$times) == 4)
 })
 
 
@@ -326,16 +330,19 @@ test_that("Quadrature-class {n/isubj.Quadrature}", {
 
 
 test_that("Quadrature$weights('history') works", {
-  x <- Quadrature$new(times = create_test_times(3))
+  times <- panmat(0L:4L,minocc=0L)
+  thetav <- qnorm((0:10 +.5)/11)
+  x <- fixedQuad(times,data.frame(theta=thetav))
   x$resetWeights()
   w <- x$weights("history")
-  expect_equal(length(w), 6)
+  expect_equal(length(w), 5*11)
 })
 
-context("Inheritance and cloning")
 test_that("Quadrature clone works", {
-  x <- Quadrature$new(times = create_test_times(3))
-  x_clone <- clone(x)
+  times <- panmat(0L:4L,minocc=0L)
+  thetav <- qnorm((0:10 +.5)/11)
+  x <- fixedQuad(times,data.frame(theta=thetav))
+  x_clone <- x$clone()
   expect_true(inherits(x_clone, "Quadrature"))
   expect_equal(x_clone$times, x$times)
 })
@@ -343,7 +350,6 @@ test_that("Quadrature clone works", {
 
 
 
-context("FixedQuad")
 test_that("{FixedQuad$wname:}", {
   ## {The name to use for the weight object.}
   times <- panmat(0L:4L,minocc=0L)
@@ -421,7 +427,7 @@ test_that("{FixedQuad$weights(type='default')}", {
 test_that("FixedQuad inherits correctly", {
   f <- FixedQuad$new(
     times = create_test_times(3),
-    quadrature = c("theta"),
+    quadrature = qnorm((0:4 +.5)/5),
     byocc = TRUE,
     bysubj = FALSE,
     nsubjects = 2,

@@ -331,11 +331,13 @@ quad_frame <- function(data,idcol="subj",occcol="occ",
 
 na_quad_frame <- function(nsubj,minocc,maxocc,nquad,qnames="theta",
                           isubj=NA_integer_) {
+  if (nquad < 1L) stop("There must be at least 1 quadrature point.")
   len <- (maxocc-minocc+1L)*nsubj*nquad
   dat <- as.data.frame(lapply(qnames,\(qn) rep(NA_real_,len)))
   names(dat) <- qnames
-  new("Quad_Frame",dat=dat,nsubj=nsubj,minocc=minocc,
-      nocc1=maxocc-minocc,nquad=nquad, isubj=isubj,
+  new("Quad_Frame",dat=dat,nsubj=as.integer(nsubj),
+      minocc=as.integer(minocc), nocc1=as.integer(maxocc-minocc),
+      nquad=as.integer(nquad), isubj=as.integer(isubj),
       bysubj=nsubj>1L,byocc=maxocc>minocc)
 }
 
