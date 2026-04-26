@@ -1,4 +1,4 @@
-### Panel_Data
+### Panel_Data ----
 
 ### This file needs to be loaded after panAmat and before panframe
 
@@ -189,6 +189,7 @@ dname.Panel_Data <- function(obj) obj$dnames
   obj
 }
 
+### as_longform,Panel_Data ----
 setMethod(as_longform,"Panel_Data",
           function(x,...,n=nsubj(x),mxocc=maxocc(x),
                                     mnocc=minocc(x)) {

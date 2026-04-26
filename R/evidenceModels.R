@@ -1,3 +1,5 @@
+### EvidenceModel ----
+
 EvidenceModel <- R6Class(
   classname="EvidenceModel",
   inherit=FModel,
@@ -27,7 +29,7 @@ EvidenceModel <- R6Class(
 
 setOldClass(c("EvidenceModel","FModel"))
 
-
+### GradedResponse ----
 
 logit <- function(p) log(p/(1-p))
 invlogit <- function(x) 1/(1+exp(-x))
@@ -89,6 +91,7 @@ GradedResponse <- R6Class(
 
 setOldClass(c("GradedResponse","EvidenceModel","FModel"))
 
+### Normal Score ----
 
 NormalScore <- R6Class(
   classname="NormalScore",
@@ -144,6 +147,8 @@ NormalScore <- R6Class(
 )
 
 setOldClass(c("NormalScore","EvidenceModel","FModel"))
+
+### Evidence ----
 
 Evidence <- R6Class(
   "Evidence",
@@ -201,5 +206,10 @@ evalEvidence.Evidence<- function(model, isubj, iocc, theta, data,
   model$evalEvidence(isubj,iocc,theta,data,covar)
 }
 
-
+as_longform.Evidence <- function(x,...,n=nsubj(x),
+                                 mxocc=maxocc(x),
+                                 mnocc=minocc(x)) {
+  as_longform(x$index,n=n,mxocc=mxocc,mnocc=mnocc,
+              name=x$iname)
+}
 
