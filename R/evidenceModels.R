@@ -128,7 +128,7 @@ NormalScore <- R6Class(
       self$se <- wtd.sd(Y,weights)
       self$converged <- true
       self$lp <- self$lprob(data)
-      list(name=self$name,list(self$bias,self$se))
+      self
     },
     toString=function(digits=2,...) {
       paste0("<NS: ", self$name, " ( ",

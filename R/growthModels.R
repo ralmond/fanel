@@ -1,3 +1,5 @@
+### GrowthModel ----
+
 GrowthModel <- R6Class(
   classname="GrowthModel",
   inherit=FModel,
@@ -13,6 +15,8 @@ GrowthModel <- R6Class(
 )
 
 setOldClass(c("GrowthModel","FModel"))
+
+### BrownianGrowth ----
 
 BrownianGrowth <- R6Class(
   classname="BrownianGrowth",
@@ -55,7 +59,7 @@ BrownianGrowth <- R6Class(
       inov <- wtd.mean((theta1-theta0)/dose,weights)
       self$gain <- inov
       self$inovSD <- wtd.sd((theta1-theta0-inov*dose)/sqrt(deltaT),weights)
-      list(name=self$name,lprob(data=data))
+      self
     },
     toString=function(digits=2,...) {
       paste0("<BrownianGrowth: ", self$name, " ( ",
@@ -73,6 +77,8 @@ BrownianGrowth <- R6Class(
 )
 
 setOldClass(c("BrownianGrowth","GrowthModel","FModel"))
+
+### BrownianGrowth2 ----
 
 BrownianGrowth2 <- R6Class(
   classname="BrownianGrowth2",
@@ -121,7 +127,7 @@ BrownianGrowth2 <- R6Class(
       self$loss <- self$loss - (minov-einov)/mdose
       self$inovSD <- wtd.sd((theta1-theta0-minov)/sqrt(deltaT),
                              weights)
-      list(name=self$name,lprob(data=data))
+      self
     },
     toString=function(digits=2,...) {
       paste0("<BrownianGrowth: ", self$name, " ( ",
@@ -141,6 +147,8 @@ BrownianGrowth2 <- R6Class(
   )
 )
 
+
+### Activities ----
 
 Activities <- R6Class(
   "Activities",

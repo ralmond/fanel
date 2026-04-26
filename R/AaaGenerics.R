@@ -1,4 +1,4 @@
-
+### Generic Functions ----
 setGeneric("as.Panmat",function(obj,minocc=1L) {standardGeneric("as.Panmat")})
 
 nsubj <- function(obj) {UseMethod("nsubj")}
@@ -114,11 +114,12 @@ mstep <- function(obj, data, ..., its=3,control=list(),
 }
 setGeneric("mstep")
 
+### FModel ----
 
 FModel <- R6Class(
   classname="FModel",
   public=list(
-    covergence=NA,
+    convergence=NA,
     lp=NA,
     name="FModel",
     wname="w",
@@ -134,7 +135,7 @@ FModel <- R6Class(
       self$lp <- result$value
       self$pvec <- result$par
       self$convergence <- result$convergence
-      list(name=self$name,result)
+      self
     },
     print=function(...) {
       print(self$toString(...),...)
@@ -195,6 +196,7 @@ wname.FModel <- function(obj) obj$wname
   obj
 }
 
+### ModelSet ----
 
 ModelSet <- R6Class(
   "ModelSet",
@@ -202,6 +204,7 @@ ModelSet <- R6Class(
     name="Model Set",
     iname=character(),
     models=list(),
+    lp=NA,
     index=1L,
     initialize=function(name,models,index=1L,
                         qname="theta",wname="w") {
@@ -219,13 +222,18 @@ ModelSet <- R6Class(
       print(self$toString(...),...)
     },
     mstep = function(data, ..., its=3, control=list(),
-                     workers=Workers$new(nmodels(self))) {
-      workers.start()
-      result <- workers.lapply(self$split_m(data), \(pair) {
-        pair[[1]]$mstep(pair[[2]])
+                     workers=Workers$new(nmodels(self)),
+                     debug=FALSE) {
+      workers$debug <- debug
+      workers$start()
+      self$models <- workers$lapply(self$split_m(data), \(pair) {
+        pair[[1]]$mstep(pair[[2]],...,its=its,control=control)
       })
-      workers$stopFlag()
-      result
+      workers$flagStop()
+      self$lp <- 0
+      for (imod in 1:nmodels(self))
+        self$lp <- self$lp + self$models[[imod]]$lp
+      self
     },
     prepData = identity,
     split_m = function(data) {

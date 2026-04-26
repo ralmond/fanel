@@ -1,3 +1,5 @@
+### PopulationModel ----
+
 PopulationModel <- R6Class(
   classname="PopulationModel",
   inherit=FModel,
@@ -14,6 +16,7 @@ PopulationModel <- R6Class(
 
 setOldClass(c("PopulationModel","FModel"))
 
+### NormalPop ----
 
 NormalPop <- R6Class(
   classname = "NormalPop",
@@ -58,7 +61,7 @@ NormalPop <- R6Class(
       self$sigma <- wtd.sd(theta,weights)
       self$lp <- sum(dnorm(theta,self$mu,self$sigma,log=TRUE)*weights)
       self$convergence <- TRUE
-      list(name=self$name,list(mu=self$mu,sigma=self$sigma))
+      self
     }
   ),
   active=list(
@@ -72,11 +75,12 @@ NormalPop <- R6Class(
 
 setOldClass(c("NormalPop","PopulationModel","FModel"))
 
+### CategoricalPop ----
+
 softmax <- function (vec) {
   evec <- exp(vec)
   evec/sum(evec)
 }
-
 
 CategoricalPop <- R6Class(
   classname = "CategoricalPop",
@@ -109,7 +113,7 @@ CategoricalPop <- R6Class(
       self$probs <- post/sum(post)
       self$lp <- sum(log(self$probs)[match(theta,self$states)]*weights)
       self$convergence <- TRUE
-      list(name=self$name,probs=self$probs)
+      self
     },
     initProbs = function(theta,covars=list()) {
        self$probs[theta]
@@ -139,6 +143,8 @@ CategoricalPop <- R6Class(
 
 setOldClass(c("CategoricalPop","PopulationModel","FModel"))
 
+### Population ----
+
 Population <- R6Class(
   "Population",
   inherit=ModelSet,
@@ -152,7 +158,7 @@ Population <- R6Class(
       if (!is(groups,"Panmat") && is.null(dim(groups))) {
         groups <- matrix(groups,ncol=1)
       }
-      self$index <- as.Panmat(groups)
+      self$index <- as.Panmat(groups,minocc=0L)
       self$qnames <- qname
       self$wname <- wname
     },
@@ -171,6 +177,9 @@ Population <- R6Class(
   )
 )
 
+
+
+
 setOldClass(c("Population","ModelSet"))
 
 drawInitial.Population <- function(model, isubj, npart, covar=NULL) {
@@ -181,5 +190,9 @@ probInit.Population <- function(model, isubj, thetas, covar=NULL) {
   model$initProbs(isubj,thetas,covar)
 }
 
+as_longform.Population <- function(x,...,n=nsubj(x)) {
+  result <- as_longform(x$index,n=n,name=x$iname)
+  result[-2]
+}
 
 

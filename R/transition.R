@@ -1,3 +1,5 @@
+### TransitionModel ----
+
 expLambdaT <- function(Lambda,nmoments=10) {
   result <- diag(nrow(Lambda)) + Lambda/(2^nmoments)
   for (mm in 1L:nmoments)
@@ -89,6 +91,7 @@ TransitionModel <- R6Class(
 
 setOldClass(c("TransitionModel","FModel"))
 
+### UpDownGrowth ----
 
 UpDownGrowth <- R6Class(
   classname="UpDownGrowth",
@@ -141,6 +144,8 @@ UpDownGrowth <- R6Class(
 
 setOldClass(c("UpDownGrowth","TransitionModel","FModel"))
 
+
+### ActivitiesD ----
 
 ActivitiesD <- R6Class(
   "ActivitiesD",
