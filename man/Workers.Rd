@@ -1,4 +1,4 @@
-\name{HMM}
+\name{Workers}
 \Rdversion{1.1}
 \docType{class}
 \alias{Workers-class}
@@ -144,7 +144,7 @@
 
 
   processCases <- function(caseList, workers=w) {
-    w.lapply(caseList,\(x) {commands})
+    w$lapply(caseList,\(x) {commands})
     w$flagStop() # So cluster will close when function exits.
   }
 

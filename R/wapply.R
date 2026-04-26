@@ -25,13 +25,13 @@ Workers <- R6Class(
       self$debug <- debug
     },
     lapply=function(...) {
-      if (is.null(private$cl))
+      if (self$debug || is.null(private$cl))
         lapply(...)
       else
         parLapply(private$cl,...)
     },
     sapply=function(...) {
-      if (is.null(private$cl))
+      if (self$debug || is.null(private$cl))
         sapply(...)
       else
         parSapply(private$cl,...)
