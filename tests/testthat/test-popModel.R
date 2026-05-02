@@ -39,10 +39,22 @@ test_that("NormalPop cdf",{
 })
 
 test_that("NormalPop mstep",{
+  apop <- NormalPop$new("standard",0,1)
+  qq <- qnorm(((0:10)+.5)/11)
+  tdat <- rnorm(10,1,.5)
+  lapply(1:length(tdat), \(isubj) {
+    weight <- dnorm(qq,tdat[isubj])
+    weight <- weight/sum(weight)
+    data.frame(subj=isubj,theta=qq,w=weight)
+  }) |> dplyr::bind_rows() -> testdata
+  apop <- apop$mstep(testdata)
+  expect_true(apop$convergence)
+  covwt <- cov.wt(testdata["theta"],testdata$w,method="ML")
+  expect_equal(apop$mu,covwt$center,tolerance=.001,
+               ignore_attr=TRUE)
+  expect_equal(apop$sigma,sqrt(covwt$cov),tolerance=.001,
+               ignore_attr=TRUE)
 
 })
 
 
-test_that("CategoricalPop",{
-
-})

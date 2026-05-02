@@ -18,21 +18,21 @@
 }
 \usage{
 wtd.Ecdf(x, weights = NULL, type = c("i/n", "(i-1)/(n-1)", "i/(n+1)"),
-    normwt = TRUE, na.rm = TRUE)
+    normwt = FALSE, na.rm = TRUE)
 wtd.loess.noiter(x, y, weights = rep(1, length(x)), span = 2/3, degree = 1,
     cell = 0.13333, type = c("all", "ordered all", "evaluate"),
     evaluation = 100, na.rm = TRUE)
 wtd.mean(x, weights = NULL, normwt = "ignored", na.rm = TRUE)
 wtd.quantile(x, weights = NULL, probs = c(0, 0.25, 0.5, 0.75, 1),
        type = c("quantile", "(i-1)/(n-1)", "i/(n+1)", "i/n"),
-       normwt = TRUE, na.rm = TRUE)
-wtd.rank(x, weights = NULL, normwt = TRUE, na.rm = TRUE)
-wtd.sd(x, weights = NULL, normwt = TRUE, na.rm = TRUE, method = c("unbiased",
-    "ML"))
-wtd.table(x, weights = NULL, type = c("list", "table"), normwt = TRUE,
+       normwt = FALSE, na.rm = TRUE)
+wtd.rank(x, weights = NULL, normwt = FALSE, na.rm = TRUE)
+wtd.sd(x, weights = NULL, normwt = FALSE, na.rm = TRUE, method = c("ML",
+    "unbiased"))
+wtd.table(x, weights = NULL, type = c("list", "table"), normwt = FALSE,
     na.rm = TRUE)
-wtd.var(x, weights = NULL, normwt = TRUE, na.rm = TRUE, method = c("unbiased",
-    "ML"))
+wtd.var(x, weights = NULL, normwt = FALSE, na.rm = TRUE, method = c("ML",
+    "unbiased"))
 }
 \arguments{
   \item{x,y}{A data vector}

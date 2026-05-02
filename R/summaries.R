@@ -5,39 +5,39 @@
 wtd.mean <- function (x, weights = NULL, normwt = "ignored", na.rm = TRUE) {
   Hmisc::wtd.mean(x,weights,normwt,na.rm)
 }
-wtd.var <- function(x, weights = NULL, normwt = TRUE,
-                    na.rm = TRUE, method = c("unbiased", "ML")) {
-  Hmisc::wtd.var(x,weights,normwt,na.rm,method)
+wtd.var <- function(x, weights = NULL, normwt = FALSE,
+                    na.rm = TRUE, method = c("ML", "unbiased")) {
+  Hmisc::wtd.var(x,weights,normwt,na.rm,method[1])
 }
-wtd.sd <- function(x, weights = NULL, normwt = TRUE,
-                    na.rm = TRUE, method = c("unbiased", "ML")) {
-  sqrt(Hmisc::wtd.var(x,weights,normwt,na.rm,method))
+wtd.sd <- function(x, weights = NULL, normwt = FALSE,
+                    na.rm = TRUE, method = c("ML", "unbiased")) {
+  sqrt(Hmisc::wtd.var(x,weights,normwt,na.rm,method[1]))
 }
 wtd.quantile <- function(x, weights = NULL, probs = c(0, 0.25, 0.5, 0.75, 1),
                          type = c("quantile", "(i-1)/(n-1)", "i/(n+1)", "i/n"),
-                         normwt = TRUE, na.rm = TRUE) {
+                         normwt = FALSE, na.rm = TRUE) {
   data.frame(
-      val=Hmisc::wtd.quantile(x,weights,probs,type,normwt,na.rm),
+      val=Hmisc::wtd.quantile(x,weights,probs,type[1],normwt,na.rm),
       prob=probs
   )
 }
 wtd.Ecdf <- function(x, weights = NULL, type = c("i/n", "(i-1)/(n-1)",
                                                  "i/(n+1)"),
-                     normwt = TRUE, na.rm = TRUE) {
-  Hmisc::wtd.Ecdf(x, weights, type, normwt, na.rm)
+                     normwt = FALSE, na.rm = TRUE) {
+  Hmisc::wtd.Ecdf(x, weights, type[1], normwt, na.rm)
 }
-wtd.rank <- function(x, weights = NULL, normwt = TRUE, na.rm = TRUE) {
+wtd.rank <- function(x, weights = NULL, normwt = FALSE, na.rm = TRUE) {
   Hmisc::wtd.rank(x, weights, normwt, na.rm)
 }
 wtd.table <- function(x, weights = NULL, type = c("list", "table"),
-                      normwt = TRUE, na.rm = TRUE) {
-  Hmisc::wtd.table(x,weights,type,normwt,na.rm)
+                      normwt = FALSE, na.rm = TRUE) {
+  Hmisc::wtd.table(x,weights,type[1],normwt,na.rm)
 }
 wtd.loess.noiter <- function(x, y, weights = rep(1, length(x)), span = 2/3,
                              degree = 1, cell = 0.13333,
                              type = c("all", "ordered all", "evaluate"),
                              evaluation = 100, na.rm = TRUE) {
-  Hmisc::wtd.loess.noiter(x,y,weights,span,degree,cell,type,
+  Hmisc::wtd.loess.noiter(x,y,weights,span,degree,cell,type[1],
                            evaluation,na.rm)
 }
 
