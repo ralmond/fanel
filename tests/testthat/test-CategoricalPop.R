@@ -1,6 +1,10 @@
 test_that("CategoricalPop-class {CategoricalPop-class}", {
-})
-test_that("CategoricalPop-class {CategoricalPop}", {
+  apop <- CategoricalPop$new("standard",0:3,rep(1/4,4))
+  expect_equal(apop$probs,rep(1/4,4))
+  expect_equal(apop$states,0:3)
+  expect_equal(apop$name,"standard")
+  expect_equal(apop$qnames,"theta")
+  expect_equal(apop$wname,"w")
 })
 
 
@@ -19,6 +23,10 @@ test_that("{CategoricalPop$convergence:}", {
 })
 test_that("{CategoricalPop$lp:}", {
   ## {The log-posterior after the last mstep.}
+  apop <- CategoricalPop$new("standard",0:3,rep(1/4,4))
+  apop$drawInit(3)
+  apop$lprob(data.frame(theta=0:3,w=c(1,2,2,1)/6),c(0,0))
+  apop$initProbs(c(0:3))
 })
 test_that("{CategoricalPop$wname:}", {
   ## {The name of the weight column(s). }

@@ -12,13 +12,6 @@
 }
 \section{Public Fields}{
 
-  Local to this class.
-  \describe{
-    \item{\code{$states}}{The set of possible values.  This should have
-      the same length as \code{$probs}.  It should also be the values of
-      the \dQuote{theta} element in the \code{\link{Quadrature}}.}
-  }
-
   Inherited fields:
     \describe{
     \item{\code{$name}:}{A name for the model, primarily used for printing.}
@@ -34,6 +27,9 @@
   \describe{
     \item{\code{$pvec}}{The the log of the probabilities.  Setting this
       field converts back using softmax to covert back to a simplex. }
+    \item{\code{$states}}{The set of possible values.  This should have
+      the same length as \code{$probs}.  It should also be the values of
+      the \dQuote{theta} element in the \code{\link{Quadrature}}.}
     \item{\code{$probs}}{The probabilities for each state.  Note that
       the setter requires a normalized vector.}
   }

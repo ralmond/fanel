@@ -95,7 +95,6 @@ CategoricalPop <- R6Class(
       self$qnames <- qname
       self$wname <- wname
     },
-    states=0L:2L,
     drawInit = function(npart,covars=list()) {
       self$states[rowSums(outer(runif(npart),cumsum(self$probs),"<"))]
     },
@@ -123,14 +122,24 @@ CategoricalPop <- R6Class(
              self$name, " ( ",paste(self$states,collapse=",")," )>")
     }
   ),
-  private=list(ppp=rep(1/3,3)),
+  private=list(ppp=rep(1/3,3),
+               sts=0L:2L),
   active=list(
+    states = function(value) {
+      if (missing(value)) return(private$sts)
+      if (length(value) != length(private$ppp) ||
+          !numeric(value)) {
+        stop("Value must be numeric vector of length ",
+             length(private$ppp),".")
+        }
+      private$sts <- states
+    }
     probs = function(value) {
       if (missing(value)) return(private$ppp)
-      if (length(value) != length(self$states) ||
+      if (length(value) != length(private$sts) ||
           any(value < 0) || abs(sum(value)-1) > .0001) {
         stop("Value must be non-negative vector of length ",
-             length(self$states),", which sums to one.")
+             length(private$sts),", which sums to one.")
       }
       private$ppp <- value
     },
