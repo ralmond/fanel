@@ -128,13 +128,14 @@ FModel <- R6Class(
     },
     mstep=function(data, ..., its=3,control=list()) {
       control$maxits <- its
-      result <- stats::optim(self$pvec,\(pv) obj$lprob(data,pv))
+      result <- stats::optim(self$pvec,\(pv) self$lprob(data,pv),
+                             ...,control)
       if (result$convergence > 1)
         warning("Convergence issues with ",
                 self$toString(), "\n", result$message)
       self$lp <- result$value
       self$pvec <- result$par
-      self$convergence <- result$convergence
+      self$convergence <- result$convergence==0
       self
     },
     print=function(...) {
@@ -171,7 +172,6 @@ pvec.FModel <- function(obj) {obj$pvec}
 }
 lprob.FModel <- function(obj,data,par=pvec(obj)) {
   obj$lprob(data,par)
-  obj
 }
 
 mstep.FModel <- function(obj, data, ..., its=3,control=list()) {
