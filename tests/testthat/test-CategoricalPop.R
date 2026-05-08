@@ -5,70 +5,78 @@ test_that("CategoricalPop-class {CategoricalPop-class}", {
   expect_equal(apop$name,"standard")
   expect_equal(apop$qnames,"theta")
   expect_equal(apop$wname,"w")
+  expect_equal(apop$toString(),
+  "<CategoricalPopulation: standard ( 0, 1, 2, 3 )>")
 })
 
 
 test_that("{CategoricalPop$states}", {
-  ## {The set of possible values.  This should have
-  ##       the same length as $probs.  It should also be the values of
-  ##       the \dQuote{theta} element in the \link{Quadrature}.}
+  apop <- CategoricalPop$new("standard",0:3,(4:1)/10)
+  expect_equal(apop$states,0:3)
+  apop$states <- 1:4
+  expect_equal(apop$states,1:4)
+  expect_error(apop$states <- 1:3)
+  expect_error(apop$probs <- rep(1/5,5))
+  expect_error(apop$probs <- rep(1,4))
+
 })
 
-test_that("{CategoricalPop$name:}", {
-  ## {A name for the model, primarily used for printing.}
-})
-test_that("{CategoricalPop$convergence:}", {
-  ## {Logical variable indicating whether or
-  ##       not the last mstep converged.}
-})
-test_that("{CategoricalPop$lp:}", {
-  ## {The log-posterior after the last mstep.}
-  apop <- CategoricalPop$new("standard",0:3,rep(1/4,4))
-  apop$drawInit(3)
-  apop$lprob(data.frame(theta=0:3,w=c(1,2,2,1)/6),c(0,0))
-  apop$initProbs(c(0:3))
-})
 test_that("{CategoricalPop$wname:}", {
-  ## {The name of the weight column(s). }
-})
-test_that("{CategoricalPop$tnames:}", {
-  ## {The name(s) of the latent variable(s).}
+  apop <- CategoricalPop$new("standard",0:3,(4:1)/10,
+                             qname="level",wname="wei")
+  expect_equal(apop$qnames,"level")
+  expect_equal(apop$wname,"wei")
 })
 
 test_that("{CategoricalPop$pvec}", {
-  ## {The the log of the probabilities.  Setting this
-  ##       field converts back using softmax to covert back to a simplex. }
-})
-test_that("{CategoricalPop$probs}", {
-  ## {The probabilities for each state.  Note that
-  ##       the setter requires a normalized vector.}
-})
-
-test_that("{CategoricalPop$initialize}", {
-  ## {(name,states,probs,tnames,wname):
-  ##       Constructor, called by $new.}
+  apop <- CategoricalPop$new("standard",0:3,(4:1)/10)
+  expect_equal(apop$pvec,log((4:1)/10))
+  apop$pvec <- rep(0,4)
+  expect_equal(apop$probs,rep(0.25,4))
 })
 test_that("{CategoricalPop$drawInit}", {
   ## {(npart,covars=list()):
   ##       Draws a random starting position. (Used with random quadratures,
   ##       i.e., particle filter, and simulations.)}
+  apop <- CategoricalPop$new("standard",0:3,(4:1)/10)
+  withr::local_seed(123334)
+  N <- 500
+  obs <- as.numeric(table(apop$drawInit(N)))
+  #print(obs)
+  exp <- apop$probs*N
+  #print(exp)
+  expect_lt(sum((obs-exp)^2/exp),qchisq(.99,3))
 })
 test_that("{CategoricalPop$initProbs}", {
   ## {signature(theta,covars=list()):
   ##       Calculates the probability of the initial quadrature.}
+  probs <- (4:1)/10
+  apop <- CategoricalPop$new("standard",0:3,probs)
+  expect_equal(apop$initProbs(3:0),rev(probs))
 })
+
 test_that("{CategoricalPop$lprob}", {
   ## {signature(data,par=self$pvec):
   ##       Calculates the log probability of the the starting position.}
+  probs <- (4:1)/10
+  weights <- c(1,2,2,1)/6
+  apop <- CategoricalPop$new("standard",0:3,probs)
+  lp <- apop$lprob(data.frame(theta=0:3,w=weights))
+  expect_equal(lp,sum(log(probs)*weights),tolerance=.00001)
 })
 test_that("{CategoricalPop$mstep}", {
   ## {(data, ...):
   ## 	Does the optimization directly using expected counts of states.}
-})
+  weights <- (4:1)/10
+  apop <- CategoricalPop$new("standard",0:3,rep(1/4,4))
+  N <- 5
+  testdat <- data.frame(theta=rep(0:3,N), w=rep(weights,N))
+  apop <- apop$mstep(testdat)
+  expect_true(apop$convergence)
+  expect_equal(apop$probs,weights,ignore_attr=TRUE)
+  expect_equal(apop$lp,sum(N*weights*log(weights)),
+               tolerance=.00001)
 
 
-test_that("CategoricalPop Constructor)",{
-  ## CategoricalPop$new(\var{name,\var{states}=seq(0L,2L,1L),
-  ##   \var{probs}=rep(1/length(states),length(states)), tname="theta",
-  ##   wname="w")}.
 })
+

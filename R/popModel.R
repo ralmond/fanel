@@ -90,13 +90,16 @@ CategoricalPop <- R6Class(
                             probs=rep(1/length(states),length(states)),
                             qname="theta",wname="w") {
       self$name <- name
-      self$states <- states
+      if (!is.numeric(states)) {
+        stop("States must be numeric")
+      }
+      private$sts <- states
       self$probs <- probs
       self$qnames <- qname
       self$wname <- wname
     },
     drawInit = function(npart,covars=list()) {
-      self$states[rowSums(outer(runif(npart),cumsum(self$probs),"<"))]
+      self$states[rowSums(outer(runif(npart),cumsum(self$probs),">"))+1]
     },
     lprob = function(data,par=self$pvec) {
       lprobs <- log(softmax(par))
@@ -108,18 +111,19 @@ CategoricalPop <- R6Class(
       ## Force dummy entries into list so no cells are dropped
       weights <- c(rep(0,length(self$states)),data[[self$wname]])
       theta <- c(self$states,data[[self$qnames]])
-      post <- wtd.table(theta,weights,normwt=FALSE)
+      post <- wtd.table(theta,weights,normwt=FALSE)$sum.of.weights
+      post <- post[order(self$states)]
       self$probs <- post/sum(post)
       self$lp <- sum(log(self$probs)[match(theta,self$states)]*weights)
       self$convergence <- TRUE
       self
     },
     initProbs = function(theta,covars=list()) {
-       self$probs[theta]
+       self$probs[match(theta,self$states)]
     },
     toString=function(digits=2,...) {
       paste0("<CategoricalPopulation: ",
-             self$name, " ( ",paste(self$states,collapse=",")," )>")
+             self$name, " ( ",paste(self$states,collapse=", ")," )>")
     }
   ),
   private=list(ppp=rep(1/3,3),
@@ -128,12 +132,12 @@ CategoricalPop <- R6Class(
     states = function(value) {
       if (missing(value)) return(private$sts)
       if (length(value) != length(private$ppp) ||
-          !numeric(value)) {
+          !is.numeric(value)) {
         stop("Value must be numeric vector of length ",
              length(private$ppp),".")
         }
-      private$sts <- states
-    }
+      private$sts <- value
+    },
     probs = function(value) {
       if (missing(value)) return(private$ppp)
       if (length(value) != length(private$sts) ||
