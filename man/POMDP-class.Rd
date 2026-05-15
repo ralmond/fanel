@@ -61,27 +61,27 @@
     \item{\code{maxocc}}{\code{(obj)}:  Returns the maximum occasion number.}
     \item{\code{drawInitial}}{\code{(model, isubj, npart, covar=NULL)}:
       Draws initial values for latent variables. (see
-      \code{\link{drawData}})} 
+      \code{\link{drawData}})}
     \item{\code{probInit}}{\code{(model, isubj, thetas, covar=NULL)}:
       Calculates probabilities of initial values.}
     \item{\code{drawGrowth}}{\code{(model, isubj, iocc, theta,
-	covar=NULL)}: Draw next value for latent variable.} 
+	covar=NULL)}: Draw next value for latent variable.}
     \item{\code{advanceWeights}}{\code{(model, isubj, iocc, lweights,
-	covar=NULL)}: Update weights going forwards.} 
+	covar=NULL)}: Update weights going forwards.}
     \item{\code{retreatWeights}}{\code{(model, isubj, iocc, rweights,
-	covar=NULL)}: Update weights going backwards.} 
+	covar=NULL)}: Update weights going backwards.}
     \item{\code{drawData}}{\code{(model, isubj, iocc, theta,
-	covar=NULL)}: Draw data values.} 
+	covar=NULL)}: Draw data values.}
     \item{\code{evalEvidence}}{\code{(model, isubj, iocc, theta, data,
-	covar=NULL)}: Calculate likelihood of data values. } 
+	covar=NULL)}: Calculate likelihood of data values. }
     \item{\code{as_longform}}{\code{(x =
-	"POMDP",n=nsubj(x),maxocc=maxocc(x), 
+	"POMDP",n=nsubj(x),maxocc=maxocc(x),
         minocc=minocc(x),weightType="all",
         name=deparse(substitute(x)))}: combines long form
       information from component models. (see \code{\link{as_longform}})}
     \item{mstep}{\code{(obj = "POMDP", data, \ldots, its=3,
-	control=list(), workers=Workers$new(nmodels(obj))
-      )}: Runs the \code{mstep} algorithm, see \code{\link{mstep}}.} 
+	control=list())
+      )}: Runs the \code{mstep} algorithm, see \code{\link{mstep}}.}
   }
 }
 \author{Russell Almond}
@@ -94,7 +94,7 @@
 \seealso{
 
   \code{\linkS4class{Population}}, \code{\linkS4class{Activities}},
-  \code{\link{Evidence}}. 
+  \code{\link{Evidence}}.
 
   \code{\link{nsubj}}, \code{\link{drawData}},
   \code{\link{as_longform}}, \code{\link{mstep}}

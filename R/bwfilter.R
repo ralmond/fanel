@@ -1,8 +1,6 @@
-bwFilter <- function(object,covars,quad,...,workers=Workers$new()) {
+bwFilter <- function(object,covars,quad,...) {
 
-  workers$start()
-
-  workers$lapply(split_subj(covars), \(cov,hmm,qua) {
+  lapply(split_subj(covars), \(cov,hmm,qua) {
     isubj <- cov$isubj
     qua <- get_subj(qua,isubj)
     maxocc(qua) <- maxocc(cov)
@@ -46,6 +44,5 @@ bwFilter <- function(object,covars,quad,...,workers=Workers$new()) {
     qua
   },object,get_subj(quad,1)) -> qlist
 
-  workers$stopFlag()
   bind_subj(qlist)
 }

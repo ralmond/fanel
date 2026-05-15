@@ -48,17 +48,17 @@
     \item{\code{$cache}}{A \code{\linkS4class{memoTree}} used to cache
       matrixes.}
   }
-  
+
 }
 \section{Methods}{
 
   Interited from \code{\linkS4class{GrowthModel}}.
   \describe{
      \item{mstep}{\code{(obj = "FModel", data= "data.frame", its="integer",
-	control="list", workers = "Workers")}:  Runs the m-step to
+	control="list")}:  Runs the m-step to
       optimize parameters (inherited from \code{\linkS4class{FModel}}).}
-    \item{\code{$mstep}}{\code{(data, ..., its=3,control=list(),
-	workers = NULL)}:  This method does the optimization (see
+    \item{\code{$mstep}}{\code{(data, ..., its=3,control=list())}:
+    This method does the optimization (see
       \code{\linkS4class{FModel}}).}
     \item{lprob}{\code{(obj = "FModel", data= "data.frame",
 	pvec = "numeric",)}:
@@ -76,7 +76,7 @@
       variables.}
     \item{\code{$lprob}}{\code{signature(data,par=pvec(self))}:
       Calculated the log likelihood of the estimated growth given
-      argument parameters.} 
+      argument parameters.}
     \item{\code{$print}}{\code{signature(...)}: Prints the object.}
     \item{\code{$toString}}{\code{signature(...)}: Creates a string
       represenation of the object.}
@@ -88,11 +88,11 @@
   \describe{
     \item{theta}{The value of the latent variable at the initial time.}
     \item{deltaT}{The time elapsed between the previous and current
-      occasion.} 
+      occasion.}
     \item{dose}{The amount to which the activity was done between the
-      previous and current  occasion.} 
+      previous and current  occasion.}
     \item{covars}{A data-frame containing covariates at the current
-      occasion.} 
+      occasion.}
     \item{par}{The vectorized parameter.}
     \item{data}{A combined data set which contains columns for thetas
       and weights.}
@@ -127,11 +127,11 @@
   \describe{
     \item{theta}{The value of the latent variable at the initial time.}
     \item{deltaT}{The time elapsed between the previous and current
-      occasion.} 
+      occasion.}
     \item{dose}{The amount to which the activity was done between the
-      previous and current  occasion.} 
+      previous and current  occasion.}
     \item{covars}{A data-frame containing covariates at the current
-      occasion.} 
+      occasion.}
     \item{par}{The vectorized parameter.}
     \item{data}{A combined data set which contains columns for thetas
       and weights.}
@@ -147,7 +147,7 @@
 \section{Superclasses and Subclasses}{
 
   Its superclass are \code{\linkS4class{FModel}} and
-  \code{\linkS4class{GrowthModel}}. 
+  \code{\linkS4class{GrowthModel}}.
 
   Generally, a subclass needs to implment the \code{$pvec} active field
   and the \code{$rmat} and \code{$initialize} methods.  If covariates
@@ -187,7 +187,7 @@
   \code{$xtimes}. The cache is cleared when the parameters are changed.
 
   When scoring a large number of subjects using
-  \code{\linkS4class{Workers}}, the worker threads will not share the
+  workers, the worker threads will not share the
   cache.  Therefore, the cache can be pre-filled by using the
   \code{$fillCache} function.  This function is passed the data set
   (from the last \code{\link{mstep}} to get the time vectors for which
@@ -228,7 +228,7 @@
   \code{\linkS4class{UpDownGrowth}}
 
   \code{\link{expLambdaT}}, \code{\link{bwFilter}},
-  \code{\link{BWQuad}}. 
+  \code{\link{BWQuad}}.
 }
 \examples{
 MyUpDown <- R6Class(

@@ -12,7 +12,7 @@
 
 }
 \usage{
-bwFilter(object, covars, quad, ..., workers = Workers$new())
+bwFilter(object, covars, quad, ...)
 }
 \arguments{
   \item{object}{A \code{\linkS4class{POMDP}} giving the information
@@ -21,8 +21,6 @@ bwFilter(object, covars, quad, ..., workers = Workers$new())
     any other needed covariates.}
   \item{quad}{A \code{\linkS4class{BWQuad}} to store the results.}
   \item{\dots}{Separates required from optional parameters.}
-  \item{workers}{A \code{\link{Workers}} object to control parallel
-    processing.}
 }
 \details{
 
@@ -30,7 +28,7 @@ bwFilter(object, covars, quad, ..., workers = Workers$new())
   where each quadrature point represents a possible state of the latent
   variable. It then works in two directions:  forward and back.
 
-  In the forward phase, initial weights are assigned based on calling 
+  In the forward phase, initial weights are assigned based on calling
   \code{\link{probInit}} on the \code{\linkS4class{Population}}.  For
   each observation/growth period, the weights are updated using
   \code{\link{advanceWeights}} and the result is multiplied by the value
@@ -59,12 +57,9 @@ bwFilter(object, covars, quad, ..., workers = Workers$new())
 
 }
 \section{Parallel Processing}{
-  
+
   The work is separated by subject, and each subject is scored
-  independently.  These are split among the \code{workers}.
-  Turning on the debug option in the
-  workers argument (\code{\linkS4class{Workers}$new(debug=TRUE)}) will
-  run all in a single thread which makes debugging easier.
+  independently.  These are split among the workers.
 
 }
 \references{
@@ -72,9 +67,9 @@ bwFilter(object, covars, quad, ..., workers = Workers$new())
 Almond, R. G. (2025). A Partially Observed Markov Decision Process for
 Learning Progressions. Annual Meeting of the Florida Educational
 Research Association, Ft. Myers, Florida. https://ralmond.net/LearnDP
-  
+
 [Baum-Welch Algorithm
-(Wikipedia)](https://en.wikipedia.org/wiki/Baum%E2%80%93Welch_algorithm) 
+(Wikipedia)](https://en.wikipedia.org/wiki/Baum%E2%80%93Welch_algorithm)
 
 }
 \author{Russell Almond}
@@ -93,7 +88,7 @@ Research Association, Ft. Myers, Florida. https://ralmond.net/LearnDP
 
   For a multidimensional continuous or mixed latent variable, I suggest
   giving up and using the \code{\link{particleFilter}}.
-  
+
 
 }
 \seealso{
@@ -101,9 +96,8 @@ Research Association, Ft. Myers, Florida. https://ralmond.net/LearnDP
   \code{\linkS4class{POMDP}}, \code{\linkS4class{ActivitiesD}},
   \code{\linkS4class{TransitionModel}},
   \code{\linkS4class{Panel_Data}}, \code{\linkS4class{BWQuad}},
-  \code{\linkS4class{Workers}}, 
   \code{\link{evalEvidence}}, \code{\link{probInit}},
-  \code{\link{advanceWeights}}, \code{\link{retreatWeights}}  
+  \code{\link{advanceWeights}}, \code{\link{retreatWeights}}
 
 }
 \examples{

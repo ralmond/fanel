@@ -1,6 +1,5 @@
 simulate.POMDP <- function(object, nsim, seed, ...,
-                         covars=NULL,
-                         workers=Workers$new()) {
+                         covars=NULL) {
   if (missing(covars)) {
     covars <- panel_data(dt=getDT(object))
   } else if (!isTRUE(all.equal(getTime(object),getTime(covars)))) {
@@ -9,13 +8,12 @@ simulate.POMDP <- function(object, nsim, seed, ...,
 
   if (missing(nsim)) nsim=nsubj(object)
   if (!missing(seed)) {
-    workers$seed <- seed
+    #workers$seed <- seed
   }
-  workers$start()
 
   ldata <- as_longform(covars)
 
-  workers$lapply(split(ldata,~subj),\(cov,hmm) {
+  lapply(split(ldata,~subj),\(cov,hmm) {
     isubj <- cov$subj[1]
 
     qnames <- qnames(hmm)
@@ -38,7 +36,6 @@ simulate.POMDP <- function(object, nsim, seed, ...,
     cbind(cov,theta,data)
   }, object) |> purrr::list_rbind() -> result
 
-  workers$stopFlag()
   long2panel(result,dnames=evidence(object)$dnames,
              invcols=covars$invarnames)
 }

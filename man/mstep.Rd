@@ -14,7 +14,7 @@
 
 }
 \usage{
-mstep(obj, data, ..., its = 3, control = list(), workers = Workers$new())
+mstep(obj, data, ..., its = 3, control = list())
 lprob(obj, data, par=pvec(obj))
 pvec(obj)
 pvec(obj) <- value
@@ -32,8 +32,6 @@ pvec(obj) <- value
   \item{control}{The default algorithm runs the
     \code{\link[stats]{optim}}; the \code{control} parameter is passed
     to \code{\link[stats]{optim}}.}
-  \item{workers}{A \code{\linkS4class{Workers}} object used to support
-    multiprocessing.}
 }
 \details{
 
@@ -191,16 +189,16 @@ pvec(obj) <- value
 }
 \section{Multiprocessing Support}{
 
-  The \code{workers} argument is used to split th processing across
-  worker threads (see \code{\linkS4class{Workers}}).
+  The \code{workers} argument is used to split the processing across
+  worker threads.
 
-  The \code{workers} argument is ignored with the
+  The worker are ignored with the
   \code{\linkS4class{FModel}} classes.
 
   The \code{\linkS4class{ModelSet}} class uses the worker class to split
-  the \code{mstep} operation for the component models.  The default
-  method tries to generate as many workers as it contains models.  The
-  \code{\linkS4class{POMDP}} method first calls the \code{$split_m}
+  the \code{mstep} operation for the component models.
+
+  The \code{\linkS4class{POMDP}} method first calls the \code{$split_m}
   methods on the model sets to build a combined list of (model,data)
   pairs.  It then uses the worker class to split this processing among
   the available pool of workers.

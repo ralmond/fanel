@@ -89,16 +89,14 @@ evalEvidence.POMDP <- function(model, isubj, iocc, theta, data, covar=NULL) {
 
 
 setMethod("mstep","POMDP",
-           function(obj, data, ..., its=3,control=list(),
-                    workers=Workers$new(nmodels(obj))) {
-             workers$start()
+           function(obj, data, ..., its=3,control=list()) {
+
              obj$components |>
                lapply(\(com) com$split_m(data)) |>
                purrr::list_flatten() |>
-               workers$lapply(\(pair) {
+               lapply(\(pair) {
                  pair[[1]]$mstep(pair[[2]])
                }) -> result
-             Workers$flagStop()
              result
            })
 

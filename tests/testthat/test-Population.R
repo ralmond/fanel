@@ -10,7 +10,7 @@ test_that(" {Population}", {
   expect_equal(nmodels(apop),2)
 
   expect_equal(apop$name,"BigStudy")
-  expect_equal(apop$toString(),"<: BigStudy:  >")
+  expect_equal(apop$toString(),"<Population: BigStudy: 2 >")
 
   expect_length(apop$models,2)
   expect_true(is(apop$models[[2]],"NormalPop"))
