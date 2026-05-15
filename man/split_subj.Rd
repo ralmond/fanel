@@ -32,7 +32,7 @@ bind_subj(xlist)
 
   These tools basically exist to allow splitting the data into a list of
   smaller objects which can then be processed in parallel by
-  \code{\link{Workers}} (or other parallel processing solutions).  The
+  Workers (or other parallel processing solutions).  The
   function \code{split_subj} turns a data object into a list of objects
   each focused on a single subject.  The function \code{bind_subj} glues
   them back together again.
@@ -77,9 +77,6 @@ bind_subj(xlist)
 
   Utility functions:
   \code{\link{isubj}} and \code{\link{nsubj}}.
-
-  The \code{\link{Workers}} class provides a mechanism for splitting the
-  workload according to a split.
 
 }
 \examples{

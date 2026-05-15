@@ -8,7 +8,7 @@ export(wtd.Ecdf,wtd.loess.noiter,
        wtd.var,wtd.sd,wtd.mean)
 
 
-export(Workers,memoTree)
+export(memoTree)
 
 export(FModel,ModelSet)
 exportClass(FModel,ModelSet)

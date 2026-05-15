@@ -10,7 +10,7 @@
 }
 \usage{
 particleFilter(object, covars, quad = NULL, nquad = nquad(quad),
-               ..., workers = Workers$new())
+               ...)
 }
 \arguments{
   \item{object}{A \code{\linkS4class{POMDP}} giving the information
@@ -22,8 +22,6 @@ particleFilter(object, covars, quad = NULL, nquad = nquad(quad),
   \item{nquad}{The number of quadrature points to use.  Either
     \code{quad} or \code{nquad} must be supplied.}
   \item{\dots}{Separates required from optional parameters.}
-  \item{workers}{A \code{\link{Workers}} object to control parallel
-    processing.}
 }
 \details{
 
@@ -38,7 +36,7 @@ particleFilter(object, covars, quad = NULL, nquad = nquad(quad),
 
   The trajectories are calculated incrementally, and the
   \code{\linkS4class{ParticleQuad}} stores both the final weights
-  (\code{quad$weights("default")}) and the incremental weights 
+  (\code{quad$weights("default")}) and the incremental weights
   (\code{quad$weights("history")}).  The default weights take both
   current and future observations into account, while the history
   weights only take observations prior to each time point into account.
@@ -48,15 +46,12 @@ particleFilter(object, covars, quad = NULL, nquad = nquad(quad),
 
   A \code{\linkS4class{ParticleQuad}} object containing the generated
   trajectories (the theta fields) and the weights.
-  
+
 }
 \section{Parallel Processing}{
-  
+
   The work is separated by subject, and each subject is scored
-  independently.  These are split among the \code{workers}.
-  Turning on the debug option in the
-  workers argument (\code{\linkS4class{Workers}$new(debug=TRUE)}) will
-  run all in a single thread which makes debugging easier.
+  independently.  These are split among the workers.
 
 }
 \references{
@@ -79,9 +74,8 @@ particleFilter(object, covars, quad = NULL, nquad = nquad(quad),
 
   \code{\linkS4class{POMDP}}, \code{\linkS4class{Evidence}},
   \code{\linkS4class{Panel_Data}}, \code{\linkS4class{ParticleQuad}},
-  \code{\linkS4class{Workers}}, 
   \code{\link{evalEvidence}}, \code{\link{drawInitial}},
-  \code{\link{drawGrowth}} 
+  \code{\link{drawGrowth}}
 
 }
 \examples{

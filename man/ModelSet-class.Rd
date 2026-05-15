@@ -20,12 +20,12 @@
 
 }
 \section{Objects from the Class}{A virtual Class: No objects may be
-  created from it.} 
+  created from it.}
 \section{Public and Active Fields}{
   \describe{
     \item{\code{$name}:}{A \code{"character"} scalar giving the
       a name for the collection. }
-    \item{\code{$models}:}{A \code{"list"} of 
+    \item{\code{$models}:}{A \code{"list"} of
       \code{\linkS4class{FModel}} objects containing the actual models.}
     \item{\code{$index}:}{Object of class \code{"Panmat"} giving the
       indexes of which model is used by which (subject, occasion)
@@ -45,8 +45,8 @@
 
   The subclasses are:  \code{\linkS4class{Population}},
   \code{\linkS4class{Activities}}, \code{\linkS4class{ActivitiesD}} and
-  \code{\linkS4class{Evidence}}. 
-  
+  \code{\linkS4class{Evidence}}.
+
 }
 \section{S4 Methods and Class methods }{
   \describe{
@@ -64,7 +64,7 @@
       variable. }
   }
 
-  Some additional object methods 
+  Some additional object methods
 
   \describe{
     \item{\code{$toString}}{Generates a charcter representation.}
@@ -72,11 +72,11 @@
       \code{$toString} so only that needs to be modified.}
     \item{\code{$prepData}}{Prepares data for the mstep calculations.
       Defaults to identity function, but is often overridden by
-      subclasses.} 
+      subclasses.}
     \item{\code{$split_m}}{Assigns data to models and builds a list of
       (model, data) pairs.}
     \item{\code{$mstep}}{\code{signature(data = "Panel_Data",...,
-	its = "integer", control = "list", workers = "Workers")}:
+	its = "integer", control = "list")}:
       This is the implementation of the m-step.  Generic method calls
       \code{$prepData} and \code{$split_m} and then runs over the pairs.}
   }
@@ -89,7 +89,7 @@
 
   The m-step method implementations generally split the data according
   to models being used, and then delegates to the models to do the
-  calculation. 
+  calculation.
 
 }
 \section{M-step}{
@@ -105,7 +105,7 @@
   The \code{\linkS4class{Population}} class filters the data to include
   just Occasion 0.  The \code{\linkS4class{Activities}} class adds the
   \dQuote{theta_1} columns.  This may need to be overridden for
-  new subclasses of \code{ModelSet}.  
+  new subclasses of \code{ModelSet}.
 
   Next, \code{$split_m} splits the data according to the \code{$iname}
   column (by default \dQuote{group}, \dQuote{task}, or \dQuote{action}).
@@ -114,19 +114,19 @@
   which are associated with that model.
 
   The \code{$mstep} method takes the \code{(model, data)} pairs and
-  apply \code{model$mstep(data)} method.  It uses the \code{workers}
-  argument to divide the work among threads on the computer.  In order
+  apply \code{model$mstep(data)} method.  It uses workers
+  to divide the work among threads on the computer.  In order
   to allow the workers to be shared among the three model sets, the
   \code{mstep(\linkS4class{POMDP})} method calls \code{$split_m} on the
   models and builds a master list of \code{model, data)} pairs and then
   assigns them to the workers.
-  
+
 }
 \author{Russell Almond}
 \seealso{
   The subclasses are:  \code{\linkS4class{Population}},
   \code{\linkS4class{Activities}}, \code{\linkS4class{ActivitiesD}} and
-  \code{\linkS4class{Evidence}}. 
+  \code{\linkS4class{Evidence}}.
 
   \code{\linkS4class{FModel}}
 

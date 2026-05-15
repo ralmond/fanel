@@ -13,7 +13,7 @@
 
 }
 \usage{
-qFilter(object, covars, quad, wfun, ..., workers = Workers$new())
+qFilter(object, covars, quad, wfun, ...)
 }
 \arguments{
   \item{object}{A \code{\linkS4class{POMDP}} or
@@ -28,8 +28,6 @@ qFilter(object, covars, quad, wfun, ..., workers = Workers$new())
     Note that the window functions, like \code{\link{squareWindow}},
     return a function suitable for the \code{wfun} argument. See details.}
   \item{\dots}{A separator for optional arguments.}
-  \item{workers}{A \code{\link{Workers}} object to control parallel
-    processing.}
 }
 \details{
 
@@ -75,7 +73,7 @@ qFilter(object, covars, quad, wfun, ..., workers = Workers$new())
   population distribution for the latent variable, \eqn{P_i(\theta)}.
   If the \code{population(\linkS4class{POMDP})} is supplied, then the
   likelihood equation becomes:
-  
+
   \deqn{Q_i(\theta,t_{*}) = \sum_j w(t_{*},t_j) Q_{ij}(\theta) +
     w(t_{*},t_0)\log P_{i}(\theta).}
 
@@ -90,12 +88,9 @@ qFilter(object, covars, quad, wfun, ..., workers = Workers$new())
   Returns a \code{\linkS4class{FixedQuad}} with the weights populated.
 }
 \section{Parallel Processing}{
-  
+
   The work is separated by subject, and each subject is scored
-  independently.  These are split among the \code{workers}.
-  Turning on the debug option in the
-  workers argument (\code{\linkS4class{Workers}$new(debug=TRUE)}) will
-  run all in a single thread which makes debugging easier.
+  independently.  These are split among the workers.
 
 }
 \references{
@@ -103,15 +98,15 @@ qFilter(object, covars, quad, wfun, ..., workers = Workers$new())
 Almond, R. G., Krumm, A. E., Kubie-Carpenter, B., Tajik, E., & Li,
 J. (2025). Filters for IRT models with data collected across
 time. Annual meeting of the National Council on Measurement in
-Education. 
+Education.
 
-  
+
 }
 \author{Russell Almond}
 \seealso{
   \code{\linkS4class{POMDP}}, \code{\linkS4class{Evidence}},
   \code{\linkS4class{Panel_Data}}, \code{\linkS4class{FixedQuad}},
-  \code{\linkS4class{Workers}}, \code{\link{window}},
+  \code{\link{window}},
   \code{\link{evalEvidence}}, \code{\link{probInit}}
 }
 \examples{

@@ -39,10 +39,9 @@
 
   \describe{
      \item{mstep}{\code{(obj = "FModel", data= "data.frame", its="integer",
-	control="list", workers = "Workers")}:  Runs the m-step to
+	control="list")}:  Runs the m-step to
       optimize parameters (inherited from \code{\linkS4class{FModel}}).}
-    \item{\code{$mstep}}{\code{(data, ..., its=3,control=list(),
-	workers = NULL)}:  This method does the optimization (see
+    \item{\code{$mstep}}{\code{(data, ..., its=3,control=list())}:  This method does the optimization (see
       \code{\linkS4class{FModel}}).}
     \item{lprob}{\code{(obj = "FModel", data= "data.frame",
 	pvec = "numeric",)}:

@@ -1,5 +1,5 @@
 particleFilter <- function (object, covars, quad=NULL, nquad=nquad(quad),
-                                ..., workers=Workers$new()) {
+                                ...) {
 
   if (missing(quad)) {
     if (missing(nquad)) {
@@ -8,9 +8,8 @@ particleFilter <- function (object, covars, quad=NULL, nquad=nquad(quad),
     quad <- particleQuad(covars$time,nquad,population(object)$qnames)
   }
 
-  workers$start()
 
-  workers$lapply(split_subj(covars), \(cov,hmm,qua) {
+  lapply(split_subj(covars), \(cov,hmm,qua) {
     nq <- nquad(qua)
     isubj <- cov$isubj
     qua <- qua$clone()
@@ -33,7 +32,6 @@ particleFilter <- function (object, covars, quad=NULL, nquad=nquad(quad),
     qua
   }, object,quad) -> qlist
 
-  workers$stopFlag()
   bind_subj(qlist)
 }
 

@@ -112,7 +112,7 @@
     \item{\code{$split_m}}{Assigns data to models and builds a list of
       (model, data) pairs.}
     \item{\code{$mstep}}{\code{signature(data = "Panel_Data",...,
-	its = "integer", control = "list", workers = "Workers")}:
+	its = "integer", control = "list")}:
       This is the implementation of the m-step.  Generally only the
       \code{$prepData} method needs to be overridden.}
   }

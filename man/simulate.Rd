@@ -11,7 +11,7 @@
 }
 \usage{
 \method{simulate}{POMDP}(object, nsim, seed, ...,
-covars = NULL, workers = Workers$new())
+covars = NULL)
 }
 \arguments{
   \item{object}{A \code{\linkS4class{POMDP}} object which describes the
@@ -23,8 +23,6 @@ covars = NULL, workers = Workers$new())
     covariates.  If supplied, these will be returned with the output
     data.  If not supplied, a new one will be made based on the times in
     the \code{POMDP}.}
-  \item{workers}{If a \code{\linkS4class{Workers}} object which allows
-    the work of the simulation to be split among threads.}
 }
 \details{
 
@@ -40,15 +38,12 @@ covars = NULL, workers = Workers$new())
   The value is a new \code{\linkS4class{Panel_Data}} class which has new
   columns corresponding to \code{dname(object)} and
   \code{qname(object)}, the latter with \dQuote{_sim} appended.
-  
+
 }
 \section{Parallel Processing}{
-  
+
   The work is separated by subject, and each subject is simulated
-  independently.  These are split among the \code{workers}.
-  Turning on the debug option in the
-  workers argument (\code{\linkS4class{Workers}$new(debug=TRUE)}) will
-  run all in a single thread which makes debugging easier.
+  independently.  These are split among the workers.
 
 }
 \author{Russell Almond}
@@ -56,7 +51,6 @@ covars = NULL, workers = Workers$new())
 
   \code{\linkS4class{POMDP}}, \code{\linkS4class{Panel_Data}},
   \code{\link{drawInitial}}
-  \code{\linkS4class{Workers}}
 }
 \examples{
 

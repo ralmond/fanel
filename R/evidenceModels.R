@@ -14,16 +14,6 @@ EvidenceModel <- R6Class(
   ),
   private=list(
     dataNames=character()
-  ),
-  active=list(
-    dnames = function(value) {
-      if (missing(value)) return(private$dataNames)
-      if (length(private$dataNames) > 0L &&
-          length(private$dataNames) != length(value)) {
-        stop("Data names must have length",length(private$dataNames))
-      }
-      private$dataNames <- value
-    }
   )
 )
 

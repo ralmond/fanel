@@ -10,7 +10,7 @@
 \description{
 
   Accesses the column names of the data (\code{dname}), latent variable 
-  (\code{tname}), or weight (\code{wname}) columns, for an
+  (\code{qname}), or weight (\code{wname}) columns, for an
   \code{\linkS4class{FModel}}, \code{\linkS4class{ModelSet}}, or
   \code{\linkS4class{POMDP}} object.
 

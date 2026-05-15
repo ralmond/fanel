@@ -108,8 +108,7 @@ lprob <- function(obj,data,par=pvec(obj)) {
 }
 setGeneric("lprob")
 
-mstep <- function(obj, data, ..., its=3,control=list(),
-                  workers=Workers$new()) {
+mstep <- function(obj, data, ..., its=3,control=list()) {
   UseMethod("mstep")
 }
 setGeneric("mstep")
@@ -223,15 +222,11 @@ ModelSet <- R6Class(
     print=function(...) {
       print(self$toString(...),...)
     },
-    mstep = function(data, ..., its=3, control=list(),
-                     workers=Workers$new(nmodels(self)),
-                     debug=FALSE) {
-      workers$debug <- debug
-      workers$start()
-      self$models <- workers$lapply(self$split_m(data), \(pair) {
+    mstep = function(data, ..., its=3, control=list()) {
+
+      self$models <- lapply(self$split_m(data), \(pair) {
         pair[[1]]$mstep(pair[[2]],...,its=its,control=control)
       })
-      workers$flagStop()
       self$lp <- 0
       self$convergence <- logical()
       for (imod in 1:nmodels(self)) {
@@ -284,9 +279,8 @@ ModelSet <- R6Class(
 
 setOldClass("ModelSet")
 
-mstep.ModelSet <- function(obj, data, ..., its=3,control=list(),
-                   workers=Workers$new()) {
-  obj$mstep(data,...,its=its,control=control, workers=workers)
+mstep.ModelSet <- function(obj, data, ..., its=3,control=list()) {
+  obj$mstep(data,...,its=its,control=control)
 }
 
 nsubj.ModelSet <- function(obj) {nsubj(obj$index)}
@@ -315,9 +309,8 @@ maxocc.ModelSet <- function(obj) {maxocc(obj$index)}
   obj
 }
 
-mstep.ModelSet <- function(obj, data, ..., its=3,control=list(),
-                           workers=Workers$new()) {
-  obj$mstep(data, ..., its=its, control=control, workers=workers)
+mstep.ModelSet <- function(obj, data, ..., its=3,control=list()) {
+  obj$mstep(data, ..., its=its, control=control)
 }
 
 as_longform.ModelSet <- function(x,...,n=nsubj(x),mxocc=maxocc(x),

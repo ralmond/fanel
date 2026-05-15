@@ -172,11 +172,10 @@ ActivitiesD <- R6Class(
       mod <- self$models[[self$action(isubj,iocc)]]
       mod$tmat(pvec(mod),self$deltaT(isubj,iocc),self$dose(isubj,iocc),covar)
     },
-    fillCache = function(data,workers=Workers$new()) {
+    fillCache = function(data) {
       data <- dplyr::left_join(as_longform(self),data,
                                dplyr::join_by("self","occ"))
-      workers$start()
-      workers$lapply(unique(data$action), \(act) {
+      lapply(unique(data$action), \(act) {
         mod <- self$growthModels[[act]]
         mod$fillCache(pvec(mod),dplyr::filter(data,action==act))
       })

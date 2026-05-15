@@ -28,7 +28,7 @@
   \code{ActivitiesD} supports the \code{$rmat()}, \code{$tmat()},
   \code{$advance()} and \code{$retreat()} methods needed for that filter.
 
-  
+
 }
 \section{Constructor}{
 
@@ -36,7 +36,7 @@
   \code{Activities$new(name, growthModels=list(),
     actions=1L, dt=1.0, dosage=NULL, qname="theta",
     wname="w", dtname="deltaT", dosname="dose")} or
-  \code{ActivitiesD$new(...)}. 
+  \code{ActivitiesD$new(...)}.
 
 
   The arguments for the constructor are:
@@ -91,7 +91,7 @@
       dosage.}
   }
 
-  
+
 }
 \section{Extends}{
 
@@ -140,7 +140,7 @@
     \item{\code{$split_m}}{Assigns data to models and builds a list of
       (model, data) pairs.}
     \item{\code{$mstep}}{\code{(data = "Panel_Data",...,
-	its = "integer", control = "list", workers = "Workers")}:
+	its = "integer", control = "list")}:
       This is the implementation of the m-step.  Generally only the
       \code{$prepData} method needs to be overridden.}
   }
@@ -155,16 +155,16 @@
     \item{\code{retreatWeights},\code{$retreat}}{\code{(model, isubj,
 	iocc, lweights, covar=NULL)}:  Calculates updated right weights in
       the reverse part of the Baum--Welch algorithm
-      (\code{\link{bwFilter}}).} 
+      (\code{\link{bwFilter}}).}
     \item{\code{$tmat}}{\code{(isubj,iocc,covar)}:  calculates the
       transition matrix for a given subject, occasion pair.}
-    \item{\code{$fillCache}}{\code{(workers=Workers$new())}: Does some
+    \item{\code{$fillCache}}{\code{(data)}: Does some
       caching of the matrix construction, to make scoring more
       efficient.}
     \item{\code{$nmoments}}{\code{(value)}: The number of matrix
       multiplications do to in \code{\link{expLambdaT}}.}
-    \item{\code{$nstates}}{\code{(value)}: The size of the matrix.} 
-    
+    \item{\code{$nstates}}{\code{(value)}: The size of the matrix.}
+
   }
 }
 \section{Time and Dosage}{
@@ -182,7 +182,7 @@
 }
 \section{ActivitiesD and Transition Models}{
 
-  Although the \code{\linkS4class{TransitionModel}} is a subclass of the 
+  Although the \code{\linkS4class{TransitionModel}} is a subclass of the
   \code{\link{GrowthModel}}s, it differs in a number of ways.  First,
   the transition model assumes that the latent variable space is
   discrete, and therefore the growth can be represented with a
@@ -213,7 +213,7 @@
   use the cached code.  However, if the computations are done on
   different threads, they will not be able to share the cache.  The
   \code{$fillCache} method precalculates the caches, using multiple
-  threads if \code{\linkS4class{Workers}} are supplied.
+  threads if workers are supplied.
 
 }
 \references{
@@ -241,14 +241,14 @@
   contained by \code{Activities}.  \code{\linkS4class{BrownianGrowth}} and
   \code{\linkS4class{BrownianGrowth2}} are the current implementing
   classes.  These are used with the \code{\link{particleFilter}}
-  algorithm. 
+  algorithm.
 
   \code{\linkS4class{TransitionModel}} is the abstract class models
   contained by \code{ActivitiesD}.  \code{\linkS4class{UpDownGrowth}} is
   the current implementing class.  These are used with the
   \code{\link{bwFilter}} algorithm.  The \code{\linkS4class{memoTree}}
   is used to cache transition matrixes.
-  
+
 }
 \examples{
 \dontrun{

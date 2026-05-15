@@ -47,11 +47,10 @@ reference object protocols.
 \section{Methods}{
   \describe{
     \item{mstep}{\code{(obj = "FModel", data= "data.frame", ...,
-	its="integer", control="list", workers = "Workers")}:  Runs the
+	its="integer", control="list")}:  Runs the
       m-step to optimize parameters (see section below).}
-    \item{\code{$mstep}}{\code{(data, ..., its=3,control=list(),
-	workers = NULL)}:  This method does the optimization (see
-      section below).}
+    \item{$mstep}{\code{(data= "data.frame", ...,
+	its="integer", control="list")}:  Does the optimization.}
     \item{lprob}{\code{(obj = "FModel", data= "data.frame",
 	pvec = "numeric",)}:
       Calculates the log probability of the data (which includes imputed
