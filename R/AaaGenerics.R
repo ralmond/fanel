@@ -123,6 +123,7 @@ FModel <- R6Class(
     lp=NA,
     name="FModel",
     wname="w",
+    dnames="data",
     lprob = function(data,par=self$pvec) {
       stop("Lprob not implemented for ", class(self))
     },
@@ -205,6 +206,7 @@ ModelSet <- R6Class(
     iname=character(),
     models=list(),
     lp=NA,
+    convergence=NA,
     index=1L,
     initialize=function(name,models,index=1L,
                         qname="theta",wname="w") {
@@ -215,8 +217,8 @@ ModelSet <- R6Class(
       self$wname <- wname
     },
     toString=function(...) {
-      paste0("<",nameOfClass(self),": ",self$name,": ",
-             self$nsubjects, " >")
+      paste0("<",class(self)[1],": ",self$name,": ",
+             nmodels(self), " >")
     },
     print=function(...) {
       print(self$toString(...),...)
@@ -231,15 +233,24 @@ ModelSet <- R6Class(
       })
       workers$flagStop()
       self$lp <- 0
-      for (imod in 1:nmodels(self))
+      self$convergence <- logical()
+      for (imod in 1:nmodels(self)) {
         self$lp <- self$lp + self$models[[imod]]$lp
+        self$convergence <- c(self$convergence,
+                              self$models[[imod]]$convergence)
+      }
       self
     },
-    prepData = identity,
+    prepData = function(data) {
+      data[!is.na(data[[self$iname]]),]
+    },
     split_m = function(data) {
       data <- self$prepData(data)
-      lapply(unique(data[[self$iname]]),\(im) {
-        list(self$models[[im]],dplyr::filter(data,.data[[self$iname]]==im))
+      mods <- na.omit(unique(data[[self$iname]]))
+      lapply(mods,
+             \(im) {
+               list(self$models[[im]],
+                    dplyr::filter(data,.data[[self$iname]]==im))
       })
     }
   ),
