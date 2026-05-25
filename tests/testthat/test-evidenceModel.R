@@ -4,6 +4,7 @@ test_that("GradedResponse initialize",{
   expect_equal(em$name,"gr")
   expect_equal(em$a,1)
   expect_equal(em$b,c(-1,1))
+  expect_equal(em$toString(),"<GR: gr ( 1; -1, 1 )>")
 })
 
 test_that("GradedResponse pvec", {
@@ -70,14 +71,13 @@ test_that("GradedResponse llike", {
                log(cuts[,2]))
 })
 
-
-
 test_that("NormalScore initialize",{
   em <- NormalScore$new("ns",0,1)
   expect_s3_class(em,"EvidenceModel")
   expect_equal(em$name,"ns")
   expect_equal(em$bias,0)
   expect_equal(em$se,1)
+  expect_equal(em$toString(),"<NS: ns ( 0, 1 )>")
 })
 
 test_that("NormalScore pvec", {
@@ -113,49 +113,20 @@ test_that("NormalScore llike", {
   expect_equal(em$llike(0,theta),dnorm(theta,log=TRUE))
 })
 
-
-test_that("{evidenceModel$convergence:}", {
-  ## {Logical variable indicating whether or
-  ##     not the last mstep converged.}
-})
-test_that("{evidenceModel$lp:}", {
-  ## {The log-posterior after the last mstep.}
-})
-test_that("{evidenceModel$name:}", {
-  ## {A name for the model, primarily used for printing.}
-})
-test_that("{evidenceModel$wname:}", {
-  ## {The name of the weight column(s). }
-})
-test_that("{evidenceModel$tnames:}", {
-  ## {The name(s) of the latent variable(s).}
-})
-test_that("{evidenceModel$pvec:}", {
-  ## {A vector of possibly transformed parameters
-  ##     used in mstep.}
-  ## }
-})
-
-test_that("{evidenceModel$drawObs}", {
-  ## {signature(theta,covars=list()):  Draws a random
-  ##     response.}
-})
-test_that("{evidenceModel$llike}", {
-  ## {signature(Y,theta,context=list()): Calculates the log
-  ##     likelihood of the observations given the latent variable and
-  ##     current parameters.}
-})
-test_that("{evidenceModel$lprob}", {
-  ## {signature(data,par=self$pvec): Calculated the
-  ##     log likelihood of the observations given estimated theta and
-  ##     argument parameters.} 
-})
-test_that("{evidenceModel$mstep}", {
+test_that("NormalScore mstep", {
   ## {signature(data,...,
   ##       its=3,control=list()):  Runs the optimizer for its steps.}
+  em <- NormalScore$new("ns",0,1)
+  theta <- rep(qnorm((0:4 +.5)/5),10)
+  weights <- rep (c(.1,.2,.4,.2,.1),10)
+  Y <- rnorm(10,.1,.1)
+  test_dat <- data.frame(theta=theta,w=weights,
+                         Y=rep(Y,each=5))
+  em$mstep(test_dat)
+  expect_true(em$convergence)
+  expect_equal(em$bias,mean(Y),tolerance=.0001)
+  expect_equal(em$se,sd(Y),tolerance=.1)
+  expect_equal(em$lp,em$lprob(test_dat))
+
 })
-test_that("{evidenceModel$print}", {
-  ## {signature(...): Prints the object.}
-  ##   \item{$toString}{signature(...): Creates a string
-  ##     represenation of the object.}
-})
+

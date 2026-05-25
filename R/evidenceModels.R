@@ -18,8 +18,12 @@ setOldClass(c("EvidenceModel","FModel"))
 
 ### GradedResponse ----
 
-logit <- function(p) log(p/(1-p))
-invlogit <- function(x) 1/(1+exp(-x))
+logit <- function(p) {
+  log(p/(1-p))
+}
+invlogit <- function(x) {
+  1/(1+exp(-x))
+}
 
 cuts2probs <- function(cuts) {
   if (!is.matrix(cuts)) cuts <- matrix(cuts,1L,length(cuts))
@@ -63,7 +67,7 @@ GradedResponse <- R6Class(
     toString=function(digits=2,...) {
       paste0("<GR: ", self$name, " ( ",
              round(self$a,digits=digits),
-             ", ",paste(round(self$b,digits=digits),
+             "; ",paste(round(self$b,digits=digits),
                         collapse = ", "), " )>")
     }
   ),
@@ -113,15 +117,15 @@ NormalScore <- R6Class(
       Y <- data[[self$dnames]]
       self$bias <- wtd.mean(Y,weights) - wtd.mean(theta,weights)
       self$se <- wtd.sd(Y,weights)
-      self$converged <- true
+      self$convergence <- TRUE
       self$lp <- self$lprob(data)
       self
     },
     toString=function(digits=2,...) {
       paste0("<NS: ", self$name, " ( ",
              round(self$bias,digits=digits),
-             ", ",paste(round(self$se,digits=digits),
-                        collapse = ", "), " )>")
+             ", ",round(self$se,digits=digits),
+             " )>")
     }
   ),
   active=list(
