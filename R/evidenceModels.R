@@ -146,6 +146,7 @@ Evidence <- R6Class(
   inherit=ModelSet,
   public=list(
     name="Evidence Set",
+    iname="task",
     initialize=function(name,evidenceModels,
                         tasks=matrix(1L,1L,1L),
                         qname="theta",wname="w",
@@ -160,15 +161,10 @@ Evidence <- R6Class(
     task = function(isubj,iocc) {
       self$index[isubj,iocc]
     },
-    toString=function(...) {
-      paste0("<Evidence: ",self$name,": ",
-             self$nsubjects, " x ",
-             self$macocc, " >")
-    },
     evalEvidence = function(isubj,iocc,theta,Y,covar=NULL) {
       task <- self$task(isubj,iocc)
       if (all(is.na(Y)) || is.na(task)) {
-        return(rep(0,dim(self$theta)[1]))
+        return(rep(0,length(self$dnames)))
       } else {
         self$models[[task]]$llike(Y,theta,cov)
       }
@@ -176,7 +172,7 @@ Evidence <- R6Class(
     drawObs = function(isubj,iocc,theta,covar=NULL) {
       task <- self$task(isubj,iocc)
       if (is.na(task)) {
-        return(rep(NA,dim(self$theta)[1]))
+        return(rep(NA,length(self$dnames)))
       } else {
         self$models[[task]]$drawObs(theta,cov)
       }
