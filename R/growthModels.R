@@ -54,11 +54,13 @@ BrownianGrowth <- R6Class(
       dose <- data[[self$dosname]]
       if (is.null(dose)) dose <- deltaT
       theta0 <- data[[self$qnames]]
-      theta1 <- data[[paste0(self$qnames),"_1"]]
+      theta1 <- data[[paste0(self$qnames,"_1")]]
       weights <- data[[self$wname[1]]]
       inov <- wtd.mean((theta1-theta0)/dose,weights)
       self$gain <- inov
       self$inovSD <- wtd.sd((theta1-theta0-inov*dose)/sqrt(deltaT),weights)
+      self$convergence <- TRUE
+      self$lp <- self$lprob(data)
       self
     },
     toString=function(digits=2,...) {
@@ -114,23 +116,37 @@ BrownianGrowth2 <- R6Class(
     mstep = function(data,...) {
       deltaT <- data[[self$dtname]]
       dose <- data[[self$dosname]]
-      if (is.null(dose)) dose <- deltaT
+      if (is.null(dose)) {
+        dose <- deltaT
+        regress <- FALSE
+      } else {
+        regress <-
+          svd(cbind(deltaT,dose))$d[2] > .001
+      }
       theta0 <- data[[self$qnames]]
-      theta1 <- data[[paste0(self$qnames),"_1"]]
+      theta1 <- data[[paste0(self$qnames,"_1")]]
       weights <- data[[self$wname[1]]]
-      mdt <- wtd.mean(deltaT,weights)
-      mdose <- wtd.mean(dose,weights)
-      mdtd <- mdt + mdose
-      minov <- wtd.mean((theta1-theta0),weights)
-      einov <- self$gain*mdose-self$loss*deltaT
-      self$gain <- self$gain + (minov-einov)/mdt
-      self$loss <- self$loss - (minov-einov)/mdose
-      self$inovSD <- wtd.sd((theta1-theta0-minov)/sqrt(deltaT),
-                             weights)
+      if (regress) {
+        coef <- lm(y~dt+ds-1,
+                   data.frame(y=theta1-theta0,
+                              dt=deltaT,
+                              ds=dose),
+                   weights=weights) |> coef()
+        self$gain <- coef[2]
+        self$loss <- -coef[1]
+      } else {
+        inov <- theta1-theta0-self$loss*deltaT
+        self$gain <- wtd.mean(inov/dose,weights)
+      }
+      einov <- theta1-theta0-self$gain*dose+self$loss*deltaT
+      self$inovSD <- wtd.sd(einov/sqrt(deltaT),
+                            weights)
+      self$convergence <- TRUE
+      self$lp <- self$lprob(data)
       self
     },
     toString=function(digits=2,...) {
-      paste0("<BrownianGrowth: ", self$name, " ( ",
+      paste0("<BrownianGrowth2: ", self$name, " ( ",
              paste(
                  round(c(self$gain,self$loss,self$inovSD),
                        digits=digits),

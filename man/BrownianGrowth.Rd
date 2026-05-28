@@ -56,7 +56,7 @@
 
   \describe{
     \item{initialize}{\code{signature(name,gain,inovSD)} or
-      \code{signature(name,loss,gain,inovSD)}:  Called by
+      \code{signature(name,gain,loss,inovSD)}:  Called by
       \code{$new}}
   }
 
@@ -95,7 +95,7 @@ To create a new object of this type call:
 
   Subclass of \code{\linkS4class{GrowthModel}}, which is in turn a
   subclass of \code{\linkS4class{FModel}}.  \code{BrownianGrowth2} is a
-  subclass. 
+  subclass.
 
 }
 \author{Russell G. Almond}
