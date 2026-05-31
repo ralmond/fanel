@@ -66,7 +66,7 @@
       combination.}
     \item{\code{$iname}:}{String giving the name of the index, defaults
       to \dQuote{action}.}
-    \item{\code{$action(isubj,iocc)}:}{Returns the index of the growth
+    \item{\code{$action(isubj,iocc,value)}:}{Returns/sets the index of the growth
       model used for this subject occassion pair.}
     \item{\code{$qnames}:}{A \code{"character"} vector giving the names
       of the latent variables. }

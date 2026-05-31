@@ -171,6 +171,7 @@ Activities <- R6Class(
   inherit=ModelSet,
   public=list(
     name="ActitivitySet",
+    iname="action",
     dt=as.Panmat(1),
     dosage=NULL,
     initialize=function(name,growthModels=list(),actions=1L,dt=1.0,
@@ -182,11 +183,11 @@ Activities <- R6Class(
       self$qnames <- qname
       self$wname <- wname
       self$dt <- as.Panmat(dt)
-      if (!is.na(dosage)) self$dosage <- as.Panmat(dosage)
+      if (!is.null(dosage)) self$dosage <- as.Panmat(dosage)
       self$dosname <- dosname
-      nsubj(self) <- max(self$index$nsubj,self$dt$nsubj,self$dosage$nsubj)
-      minocc(self) <- max(self$index$minocc,self$dt$minocc,self$dosage$minocc)
-      maxocc(self) <- max(self$index$maxocc,self$dt$maxocc,self$dosage$maxocc)
+      nsubj(self) <- max(nsubj(self$index),nsubj(self$dt),nsubj(self$dosage))
+      minocc(self) <- min(minocc(self$index),minocc(self$dt),minocc(self$dosage))
+      maxocc(self) <- max(maxocc(self$index),maxocc(self$dt),maxocc(self$dosage))
     },
     drawNext = function(isubj, iocc, theta, covar=NULL) {
       deltaT <- self$deltaT(isubj,iocc)
@@ -198,40 +199,48 @@ Activities <- R6Class(
         drawNext(theta,deltaT,dose,covar)
     },
     prepData = function(data) {
-      data <- dplyr::arrange(data,subj,occ) |> dplyr::group_by(subj)
-      sapply(self$qnames, \(th) {
+      data <- dplyr::arrange(data,subj,occ,quad) |>
+        dplyr::group_by(subj)
+      nq <- length(unique(data$quad))
+      for(th in self$qnames) {
         th1 <- paste0(th,"_1")
-        data <- dplyr::mutate(data,"{th1}":=lag(.data[[th]]))
-        th1
-      })
-      data
+        data <- dplyr::mutate(data,"{th1}":=dplyr::lead(.data[[th]],nq))
+      }
+      dplyr::filter(data,!is.na(.data[[th1]]))
     },
     toString=function(...) {
       paste0("<Activities: ",self$name,": ",
-             self$nsubjects, " x ",
-             self$macocc, " >")
+             nsubj(self), " x ",
+             maxocc(self), " >")
     },
-    action = function(isubj,iocc) {
-      self$index[isubj,iocc]
-    }
-  ),
-  active=list(
+    action = function(isubj,iocc,value) {
+      if (missing(value)) return(self$index[isubj,iocc])
+      self$index[isubj,iocc] <- value
+    },
     dose = function(isubj,iocc,value) {
-      if (is.null(self$dosage)) return(self$deltaT(isubj,iocc))
-      if (missing(value)) return(self$dosage[isubj,iocc])
+      if (is.null(self$dosage)) {
+        if (!missing(value)) {
+          stop("Trying to set a NULL dosage")
+        } else {
+          return(self$deltaT(isubj,iocc))
+        }
+      }
+      if (missing(value)) return(self$dosage[isubj,iocc,drop=TRUE])
       self$dosage[isubj,iocc] <- value
     },
     deltaT = function(isubj,iocc,value) {
-      if (missing(value)) return(self$dt[isubj,iocc])
+      if (missing(value)) return(self$dt[isubj,iocc,drop=TRUE])
       self$dt[isubj,iocc] <- value
-    },
+    }
+  ),
+  active=list(
     dtname = function(value) {
-      if (missing(value)) self$models[[1L]]$dtname
-      purrr:::walk(self$models, \(mod) mod$dtname <- value)
+      if (missing(value)) return(self$models[[1L]]$dtname)
+      lapply(self$models, \(mod) {mod$dtname <- value})
     },
     dosname = function(value) {
-      if (missing(value)) self$models[[1L]]$dosname
-      purrr:::walk(self$models, \(mod) mod$dosname <- value)
+      if (missing(value)) return(self$models[[1L]]$dosname)
+      lapply(self$models, \(mod) {mod$dosname <- value})
     }
   )
 )

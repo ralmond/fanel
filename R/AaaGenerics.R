@@ -3,8 +3,10 @@ setGeneric("as.Panmat",function(obj,minocc=1L) {standardGeneric("as.Panmat")})
 
 nsubj <- function(obj) {UseMethod("nsubj")}
 setGeneric("nsubj")
+setMethod("nsubj","NULL",function(obj) -Inf)
 "nsubj<-" <- function(obj,value) {UseMethod("nsubj<-")}
 setGeneric("nsubj<-")
+
 
 bysubj <- function(obj) {UseMethod("bysubj")}
 setGeneric("bysubj")
@@ -18,6 +20,7 @@ setGeneric("isubj<-")
 
 nocc <- function(obj) {UseMethod("nocc")}
 setGeneric("nocc")
+setMethod("nocc","NULL",function(obj) -Inf)
 "nocc<-" <- function(obj,value) {UseMethod("nocc<-")}
 setGeneric("nocc<-")
 
@@ -28,11 +31,13 @@ setGeneric("byocc<-")
 
 maxocc <- function(obj) {UseMethod("maxocc")}
 setGeneric("maxocc")
+setMethod("maxocc","NULL",function(obj) -Inf)
 "maxocc<-" <- function(obj,value) {UseMethod("maxocc<-")}
 setGeneric("maxocc<-")
 
 minocc <- function(obj) {UseMethod("minocc")}
 setGeneric("minocc")
+setMethod("minocc","NULL",function(obj) Inf)
 "minocc<-" <- function(obj,value) {UseMethod("minocc<-")}
 setGeneric("minocc<-")
 

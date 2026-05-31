@@ -47,6 +47,13 @@ nquad(obj) <- value
   number of occasions, or the minimum/maximum occasion index.
 }
 \author{Russell Almond}
+\note{
+
+  NULL methods exist for many of these functions which
+  return \code{-Inf} or \code{Inf}, to use as
+  defaults in \code{max} and \code{min} operations.
+
+}
 \seealso{
   \code{\linkS4class{Panmat}}, \code{\linkS4class{Panel_Frame}}
     \code{\link{Panel_Data}}
