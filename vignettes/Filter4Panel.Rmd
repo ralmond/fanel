@@ -1,0 +1,84 @@
+---
+title: "fanel:  Filters for Panel Data"
+author: "Russell G. Almond"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Partially Observed Markov Decision Processes and Panel Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, notice=FALSE}
+library(fanel)
+library(tidyverse)
+```
+
+# POMDP Model Framework
+
+## Basic Diagram
+
+## Filters
+
+## Covariates
+
+# Temporal Data
+
+## Panmat
+
+## Panel_Frame
+
+## Panel_Data
+
+## Quadrature
+
+## Longform Data
+
+# POMDP Models
+
+## Basic Model Classes
+
+### PopulationModel
+
+### EvidenceModel
+
+### GrowthModel
+
+### Transition Model
+
+## Model Containers
+
+### Population
+
+### Evidence
+
+### Activities
+
+### ActivitiesD
+
+### POMDP
+
+# The Filters
+
+## Simulating Data from a Model
+
+## Simple Likelihood Filters
+
+## Particle Filter
+
+## Baum-Welch Filter
+
+# Parameter Estimation
+
+## EM Algorithm
+
+## E-Step
+
+## M-Step
+

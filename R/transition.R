@@ -11,7 +11,7 @@ expLambdaT <- function(Lambda,nmoments=10) {
 
 TransitionModel <- R6Class(
   classname="TransitionModel",
-  inherit=FModel,
+  inherit=GrowthModel,
   public = list(
     name="TransitionModel",
     continuous=FALSE,
@@ -23,10 +23,14 @@ TransitionModel <- R6Class(
       stop("No matrix definition provided for ", class(self))
     },
     tmat = function(pvec=pvec(self),deltaT,dose=deltaT,covars=list()) {
-      key <- c(deltaT,dose,as.numeric(covars[1L,self$xtime]))
+      if (length(covars) > 0) {
+        key <- c(deltaT,dose,as.numeric(covars[1L,self$xtime]))
+      } else {
+        key <- c(deltaT,dose)
+      }
       cached <- self$cache(key)$get(key)
       if (is.null(cached)) {
-        cached <- expLambdaT(rmat(pvec,deltaT,dose,covars),self$nmoments)
+        cached <- expLambdaT(self$rmat(pvec,deltaT,dose,covars),self$nmoments)
         self$cache(key)$assign(key,cached)
       }
       cached
@@ -54,7 +58,7 @@ TransitionModel <- R6Class(
         dplyr::select(result)
     },
     lprob=function(data,par=pvec(self)) {
-      self$cache$clear()
+      if (!is.null(private$acache)) private$acache$clear()
       split(data,self$splitter) |>
         purrr::map_dbl(\(sdata) self$lpinner(sdata,par)) |>
         purrr::reduce("+")
@@ -74,18 +78,16 @@ TransitionModel <- R6Class(
         purrr::walk(\(sdata) {
           self$tmat(par,data[1,"deltaT"],data[1,])
         })
-    }
-  ),
-  private=list(
-    acache=NULL
-  ),
-  active=list(
+    },
     cache=function(key) {
       if (is.null(private$acache)) {
         private$acache <- memoTree$new(length(key))
       }
       private$acache
     }
+  ),
+  private=list(
+    acache=NULL
   )
 )
 

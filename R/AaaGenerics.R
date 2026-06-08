@@ -147,7 +147,7 @@ FModel <- R6Class(
       print(self$toString(...),...)
     },
     toString=function(...) {
-      paste0("<",self$name,">")
+      paste0("<",class(self)[1], ":  ",self$name," >")
     }
   ),
   private=list(
