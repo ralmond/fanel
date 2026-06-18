@@ -62,8 +62,8 @@ test_that("{FModel$name:}", {
   fm$name <- "Fred"
   expect_equal(fm$name,"Fred")
   expect_equal(fm$toString(),
-               "<Fred>")
-  expect_output(print(fm),"<Fred>")
+               "<FModel:  Fred >")
+  expect_output(print(fm),"<FModel:  Fred >")
 })
 test_that("{FModel$wname:}", {
   ## {The name of the weight column(s). }
