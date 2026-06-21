@@ -228,15 +228,99 @@ test_that("Activities-class {{mstep}}",{
 
 ### ActivitiesD ----
 test_that("Activities-class {ActivitiesD}",{
+  udg1 <- UpDownGrowth$new("Level1",3,c(.2,.1),.01)
+  udg2 <- UpDownGrowth$new("Level2",3,c(.1,.2),.01)
+  actD <- ActivitiesD$new("Levels12",list(udg1,udg2),
+                          action=c(1,1,2,2),dt=1,dosage=c(1,2,1,2))
+
+  expect_equal(actD$wname,c("w.full","w.left","w.right"))
+  expect_equal(actD$toString(),
+               "<ActivitiesD: Levels12: 1 x 4 >")
+
+  actD$nmoments <- 1L
+  expect_equal(actD$models[[1]]$nmoments,1L)
+  expect_equal(actD$models[[2]]$nmoments,1L)
+
 })
-test_that("ActivitiesD {{advanceWeights},{$advance}}",{
-})
-test_that("ActivitiesD {{retreatWeights},{$retreat}}",{
-})
+
 test_that("ActivitiesD {{$tmat}}",{
+  udg1 <- UpDownGrowth$new("Level1",3,c(.2,.1),.01)
+  udg2 <- UpDownGrowth$new("Level2",3,c(.1,.2),.01)
+  actD <- ActivitiesD$new("Levels12",list(udg1,udg2),
+                          action=c(1,1,2,2),dt=1,dosage=c(1,2,1,2))
+  actD$nmoments <- 1L
+  rm111 <- diag(3)+matrix(c(-.1,.1,0,
+                         .005,-.055,.05,
+                         0,.005,-.005),3,3,byrow=TRUE)
+  rm112 <- diag(3)+matrix(c(-.2,.2,0,
+                         .005,-.105,.10,
+                         0,.005,-.005),3,3,byrow=TRUE)
+  rm211 <- diag(3)+matrix(c(-.05,.05,0,
+                            .005,-.105,.10,
+                            0,.005,-.005),3,3,byrow=TRUE)
+  rm212 <- diag(3)+matrix(c(-.1,.1,0,
+                            .005,-.205,.20,
+                            0,.005,-.005),3,3,byrow=TRUE)
+
+  expect_equal(actD$tmat(1,1),rm111%*%rm111)
+  expect_equal(actD$tmat(1,2),rm112%*%rm112)
+  expect_equal(actD$tmat(1,3),rm211%*%rm211)
+  expect_equal(actD$tmat(1,4),rm212%*%rm212)
+
 })
+
+test_that("ActivitiesD {{advanceWeights},{$advance}, {$retreat}",{
+  udg1 <- UpDownGrowth$new("Level1",3,c(.2,.1),.01)
+  udg2 <- UpDownGrowth$new("Level2",3,c(.1,.2),.01)
+  actD <- ActivitiesD$new("Levels12",list(udg1,udg2),
+                          action=c(1,1,2,2),dt=1,dosage=c(1,2,1,2))
+  actD$nmoments <- 1L
+  rm111 <- diag(3)+matrix(c(-.1,.1,0,
+                            .005,-.055,.05,
+                            0,.005,-.005),3,3,byrow=TRUE)
+  rm112 <- diag(3)+matrix(c(-.2,.2,0,
+                            .005,-.105,.10,
+                            0,.005,-.005),3,3,byrow=TRUE)
+  rm211 <- diag(3)+matrix(c(-.05,.05,0,
+                            .005,-.105,.10,
+                            0,.005,-.005),3,3,byrow=TRUE)
+  rm212 <- diag(3)+matrix(c(-.1,.1,0,
+                            .005,-.205,.20,
+                            0,.005,-.005),3,3,byrow=TRUE)
+
+  lw <- rep(1,3)
+
+  expect_equal(actD$advance(1,1,lw),rm111%*%rm111%*%lw)
+  expect_equal(actD$advance(1,2,lw),rm112%*%rm112%*%lw)
+  expect_equal(actD$advance(1,3,lw),rm211%*%rm211%*%lw)
+  expect_equal(actD$advance(1,4,lw),rm212%*%rm212%*%lw)
+
+  expect_equal(actD$retreat(1,1,lw),lw%*%rm111%*%rm111)
+  expect_equal(actD$retreat(1,2,lw),lw%*%rm112%*%rm112)
+  expect_equal(actD$retreat(1,3,lw),lw%*%rm211%*%rm211)
+  expect_equal(actD$retreat(1,4,lw),lw%*%rm212%*%rm212)
+
+})
+
+
+
+
+
 test_that("ActivitiesD {{$fillCache}}",{
+  udg1 <- UpDownGrowth$new("Level1",3,c(.2,.1),.01)
+  udg2 <- UpDownGrowth$new("Level2",3,c(.1,.2),.01)
+  actD <- ActivitiesD$new("Levels12",list(udg1,udg2),
+                          action=c(1,1,2,2),dt=1,dosage=c(1,2,1,2))
+  actD$nmoments <- 1L
+  testdat <- read.csv(test_path("transDtest.csv"))
+  actD$fillCache(testdat)
+  expect_false(is.null(actD$models[[1]]$cacheGet(c(1,1))))
+  expect_false(is.null(actD$models[[1]]$cacheGet(c(1,2))))
+  expect_false(is.null(actD$models[[2]]$cacheGet(c(1,1))))
+  expect_false(is.null(actD$models[[2]]$cacheGet(c(1,2))))
+
 })
-test_that("ActivitiesD {{$nmoments}}",{
-})
+
+
+
 

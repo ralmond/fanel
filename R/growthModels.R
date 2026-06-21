@@ -209,7 +209,7 @@ Activities <- R6Class(
       dplyr::filter(data,!is.na(.data[[th1]]))
     },
     toString=function(...) {
-      paste0("<Activities: ",self$name,": ",
+      paste0("<",class(self)[1],": ",self$name,": ",
              nsubj(self), " x ",
              maxocc(self), " >")
     },

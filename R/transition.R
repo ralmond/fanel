@@ -194,16 +194,16 @@ ActivitiesD <- R6Class(
       self$models[[self$action(isubj,iocc)]]$
         retreat(rweights,self$deltaT(isubj,iocc),self$dose(isubj,iocc),covar)
     },
-    tmat = function(isubj,iocc,covar) {
+    tmat = function(isubj,iocc,covar=list()) {
       mod <- self$models[[self$action(isubj,iocc)]]
       mod$tmat(pvec(mod),self$deltaT(isubj,iocc),self$dose(isubj,iocc),covar)
     },
     fillCache = function(data) {
       data <- dplyr::left_join(as_longform(self),data,
-                               dplyr::join_by("self","occ"))
+                               dplyr::join_by("subj","occ"))
       lapply(unique(data$action), \(act) {
-        mod <- self$growthModels[[act]]
-        mod$fillCache(pvec(mod),dplyr::filter(data,action==act))
+        mod <- self$models[[act]]
+        mod$fillCache(dplyr::filter(data,action==act),pvec(mod))
       })
     },
     prepData = identity
