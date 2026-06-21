@@ -19,70 +19,94 @@ TransitionModel <- R6Class(
     splitter = ~deltaT+dose,
     xtime=character(),
     nStates=2,
-    rmat = function(pvec=pvec(self),deltaT,dose=deltaT,covars=list()) {
+    rmat = function(pv=pvec(self),deltaT,dose=deltaT,covars=list()) {
       stop("No matrix definition provided for ", class(self))
     },
-    tmat = function(pvec=pvec(self),deltaT,dose=deltaT,covars=list()) {
-      if (length(covars) > 0) {
+    tmat = function(pv=pvec(self),deltaT,dose=deltaT,covars=list()) {
+      if (length(self$xtime) > 0) {
         key <- c(deltaT,dose,as.numeric(covars[1L,self$xtime]))
       } else {
         key <- c(deltaT,dose)
       }
-      cached <- self$cache(key)$get(key)
+      cached <- self$cacheGet(key)
       if (is.null(cached)) {
-        cached <- expLambdaT(self$rmat(pvec,deltaT,dose,covars),self$nmoments)
-        self$cache(key)$assign(key,cached)
+        cached <- expLambdaT(self$rmat(pv,deltaT,dose,covars),self$nmoments)
+        self$cacheSet(key,cached)
       }
       cached
     },
     advance = function(lweights,deltaT,dose=deltaT,covars=list()) {
       if (abs(deltaT) < .0001) return(lweights)
-      tmat(self(pvec),deltaT,dose,covars) %*% lweights
+      self$tmat(pvec(self),deltaT,dose,covars) %*% lweights
     },
     retreat = function(rweights,deltaT,dose=deltaT,covars=list()) {
       if (abs(deltaT) < .0001) return(rweights)
-      tmat(self(pvec),deltaT,dose,covars) %*% rweights
+      rweights %*% self$tmat(pvec(self),deltaT,dose,covars)
     },
     drawNext = function(theta,deltaT,dose=deltaT,covars=list()) {
-      split(data.frame(theta=theta,deltaT=deltaT,
-                       dose=dose,covars,order=1L:nrow(covars)),
-            self$splitter) |>
+      tnames <- names(theta)
+      if (is.null(tnames)) tnames <- 1L
+      if (length(covars)==0L) {
+        df <- data.frame(theta,deltaT=deltaT,dose=dose)
+      } else {
+        df <- data.frame(theta,deltaT=deltaT,dose=dose,covars)
+      }
+      df$order <- 1L:nrow(df)
+      split(df, self$splitter) |>
         purrr::map(\(sdata) {
           G <- self$tmat(self$pvec,sdata[1,"deltaT"],sdata[1,"dose"],
                          sdata[1,])
-          probs <- t(apply(G[sdata$theta,],1,cumsum))
-          data.frame(result=rowSums(outer(runif(length(theta)),">",probs)),
-                     order=sdata$order)
+          probs <- t(apply(G[sdata[,tnames],],1,\(r) {
+            rev(cumsum(rev(r)))
+          }))
+          result <- sweep(probs,1,runif(nrow(sdata)),">")
+          data.frame(result=rowSums(result),order=sdata$order)
         }) |> purrr::list_rbind() |>
-        dplyr::arange(order) |>
-        dplyr::select(result)
+        dplyr::arrange(order) |>
+        dplyr::pull(result)
     },
     lprob=function(data,par=pvec(self)) {
-      if (!is.null(private$acache)) private$acache$clear()
+      self$cacheClear()
       split(data,self$splitter) |>
         purrr::map_dbl(\(sdata) self$lpinner(sdata,par)) |>
-        purrr::reduce("+")
+        sum()
     },
     lpinner = function(data,par=pvec(self)) {
-      G = self$tmat(par,data[1,"deltaT"],data[1,])
-      split(data,~subj) |>
+      G = self$tmat(par,data[1,"deltaT"],data[1,"dose"],data[1,])
+      split(data,~subj+occ) |>
         purrr::map_dbl(\(sdata) {
           lweight=sdata[[self$wname[2]]]
           rweight=sdata[[self$wname[3]]]
           sum(lweight*log(rweight%*%G))
-        }) |> purrr::reduce("+")
+        }) |> sum()
     },
     fillCache = function(data,par=pvec(self)) {
-      self$cache$clear()
+      self$cacheClear()
+      if (is.na(match("dose",names(data))))
+        data$dose <- data$deltaT
+      data <- model.frame(self$splitter,data)
+      dd <- match(c("deltaT","dose"),names(data))
       split(data,self$splitter) |>
         purrr::walk(\(sdata) {
-          self$tmat(par,data[1,"deltaT"],data[1,])
+          self$tmat(par,sdata[1,"deltaT"],sdata[1,"dose"],sdata[1,-dd])
         })
     },
-    cache=function(key) {
-      if (is.null(private$acache)) {
+    cacheGet=function(key) {
+      if (is.null(private$acache)) return(NULL)
+      private$acache$get(key)
+    },
+    cacheSet=function(key,value) {
+      if (is.null(private$acache))
         private$acache <- memoTree$new(length(key))
-      }
+      private$acache$assign(key,value)
+    },
+    cacheClear=function() {
+      if (!is.null(private$acache))
+        private$acache$clear()
+    }
+  ),
+  active=list(
+    cache=function() {
       private$acache
     }
   ),
@@ -111,9 +135,9 @@ UpDownGrowth <- R6Class(
     },
     uprate=0,
     downrate=0,
-    rmat = function(pvec=pvec(self),deltaT,dose=deltaT, covar=list()) {
-      up <- exp(pvec[1:(self$nStates-1)])
-      down <- exp(pvec[self$nStates:length(pvec)])
+    rmat = function(pv=pvec(self),deltaT,dose=deltaT, covar=list()) {
+      up <- exp(pv[1:(self$nStates-1)])
+      down <- exp(pv[self$nStates:length(pv)])
       matR <- matrix(0,self$nStates,self$nStates)
       mgcv::sdiag(matR,1) <- up*dose
       mgcv::sdiag(matR,-1) <- down*deltaT
